@@ -12,7 +12,8 @@
     "test": "biome check . && npm run typecheck && vitest run --config vitest.config.ts",
     "test:integration": "vite build && vitest run --config vitest.integration.config.ts",
     "check": "npm test && npm run test:integration",
-    "docs:interfaces": "node scripts/docs-interfaces.ts"
+    "docs:interfaces": "node scripts/docs-interfaces.ts",
+    "screenshot": "node scripts/screenshot.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.8",
@@ -21,6 +22,7 @@
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.3.0",
+    "playwright": "1.65.1",
     "typescript": "7.0.2",
     "vite": "8.3.8",
     "vitest": "5.1.0",

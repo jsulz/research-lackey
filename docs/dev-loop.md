@@ -31,7 +31,7 @@ There are no preview deployments. Cloudflare preview versions share production D
 | --------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | unit test, integration test | `npm run check > <run folder>/preflight/<ts>.log 2>&1`; quote the summary lines                                             |
 | captured API response       | `curl -s <base>/api/<path> \| jq` against local or production                                                               |
-| screenshot                  | `npx playwright screenshot --full-page <url> <file>.png` (first run: `npx playwright install chromium`)                     |
+| screenshot | `npm run screenshot -- <url> <file>.png --wait <selector>` (Playwright; first run on a machine: `npx playwright install chromium`). Add `--map lackey.jsulz.com=<ip>` when this machine cannot resolve a freshly deployed domain. Claude in Chrome also works when connected (`/chrome`) |
 | log excerpt                 | `wrangler dev` terminal output locally; `npx wrangler tail --format json` in production                                     |
 | D1 or R2 state              | `npx wrangler d1 execute ...` and `npx wrangler r2 object get research-lackey/<key> --pipe` (add `--remote` for production) |
 | deployed smoke              | The ticket's production Verify step against `https://lackey.jsulz.com`                                                      |
@@ -59,4 +59,5 @@ After merge to `main`, in order. Each step runs only after Jared approves it.
 - `exports.default` is untyped in integration tests: `wrangler types` ran before `main` existed. Rerun `npm run types`.
 - `biome migrate` can rewrite `"recommended": true` to `"preset": "none"`, which turns off every lint rule. Keep `"preset": "recommended"`.
 - npm blocks dependency install scripts by default (`npm install-scripts ls`). The `esbuild` and `workerd` binaries work without them. Approve one only if a tool fails to start.
+- `curl` or the browser cannot resolve `lackey.jsulz.com` right after a deploy: a lookup before the domain existed cached a negative answer on this machine. Check with `dig @1.1.1.1 lackey.jsulz.com`, then use `curl --resolve lackey.jsulz.com:443:<ip>` and `npm run screenshot -- ... --map lackey.jsulz.com=<ip>`. Don't look up the domain locally before a first deploy.
 - Integration tests read `.dev.vars` ("Using secrets defined in .dev.vars"). Tests must never log `env` values.
