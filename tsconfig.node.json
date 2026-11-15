@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": { "types": ["node"] },
+  "include": [
+    "scripts",
+    "test/unit",
+    "vite.config.ts",
+    "vitest.config.ts",
+    "vitest.integration.config.ts"
+  ]
+}

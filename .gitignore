@@ -1,4 +1,11 @@
 CLAUDE.md
 .claude/settings.local.json
 
-docs/
+# Private agent config (may reference local paths). Everything else in docs/ is committed.
+docs/agents/
+
+.dev.vars
+
+node_modules/
+dist/
+.wrangler/
