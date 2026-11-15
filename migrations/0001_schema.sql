@@ -2,7 +2,7 @@
 -- Times are ISO 8601 UTC text. IDs are text.
 
 CREATE TABLE topics (
-  id TEXT PRIMARY KEY,
+  id TEXT NOT NULL PRIMARY KEY,
   name TEXT NOT NULL,
   research_goal TEXT NOT NULL,
   -- Schedule preset: every_n_hours (interval_hours), daily (time_utc), weekly (weekday 0-6 = Sun-Sat, time_utc).
@@ -14,7 +14,7 @@ CREATE TABLE topics (
 );
 
 CREATE TABLE sources (
-  id TEXT PRIMARY KEY,
+  id TEXT NOT NULL PRIMARY KEY,
   topic_id TEXT NOT NULL REFERENCES topics(id),
   kind TEXT NOT NULL CHECK (kind IN ('feed')),
   format TEXT NOT NULL CHECK (format IN ('rss2', 'atom', 'hf_daily_papers')),
@@ -25,7 +25,7 @@ CREATE TABLE sources (
 CREATE INDEX sources_topic ON sources(topic_id);
 
 CREATE TABLE runs (
-  id TEXT PRIMARY KEY, -- equals the Workflow instance ID
+  id TEXT NOT NULL PRIMARY KEY, -- equals the Workflow instance ID
   topic_id TEXT NOT NULL REFERENCES topics(id),
   kind TEXT NOT NULL CHECK (kind IN ('scheduled', 'manual', 'replay')),
   scheduled_slot TEXT,
@@ -74,7 +74,7 @@ CREATE TABLE run_steps (
 );
 
 CREATE TABLE reports (
-  id TEXT PRIMARY KEY,
+  id TEXT NOT NULL PRIMARY KEY,
   run_id TEXT NOT NULL UNIQUE REFERENCES runs(id),
   topic_id TEXT NOT NULL REFERENCES topics(id),
   published_at TEXT NOT NULL,
@@ -86,7 +86,7 @@ CREATE TABLE reports (
 CREATE INDEX reports_public_published ON reports(public, published_at);
 
 CREATE TABLE findings (
-  id TEXT PRIMARY KEY,
+  id TEXT NOT NULL PRIMARY KEY,
   report_id TEXT NOT NULL REFERENCES reports(id),
   title TEXT NOT NULL,
   what_is_new TEXT NOT NULL,

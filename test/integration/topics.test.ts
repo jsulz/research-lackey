@@ -88,6 +88,14 @@ describe("runs schema", () => {
     await expect(insert("second")).rejects.toThrow(/UNIQUE constraint failed/);
   });
 
+  it("rejects a Run without an id", async () => {
+    await expect(
+      env.DB.prepare(
+        "INSERT INTO runs (topic_id, kind, status) VALUES ('ai-infra', 'manual', 'queued')",
+      ).run(),
+    ).rejects.toThrow(/NOT NULL constraint failed/);
+  });
+
   it("allows manual Runs without a slot", async () => {
     await env.DB.prepare(
       "INSERT INTO runs (id, topic_id, kind, status) VALUES ('m1', 'ai-infra', 'manual', 'queued'), ('m2', 'ai-infra', 'manual', 'queued')",
