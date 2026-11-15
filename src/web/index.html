@@ -4,8 +4,65 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Research Lackey</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --fg: #1c1c1e;
+        --muted: #5f6368;
+        --bg: #ffffff;
+        --rule: #e3e3e6;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --fg: #ececee;
+          --muted: #a1a1a8;
+          --bg: #141416;
+          --rule: #2c2c30;
+        }
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+      main {
+        max-width: 44rem;
+        margin: 0 auto;
+        padding: 2.5rem 1rem;
+      }
+      h1 {
+        font-size: 1.6rem;
+        margin: 0 0 2rem;
+      }
+      h2 {
+        font-size: 1.1rem;
+        margin: 0 0 0.75rem;
+      }
+      .topics {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        border-top: 1px solid var(--rule);
+      }
+      .topics li {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 0.25rem 1rem;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--rule);
+      }
+      .topic-name {
+        font-weight: 600;
+      }
+      .topic-checked {
+        color: var(--muted);
+      }
+    </style>
   </head>
   <body>
-    <h1>Research Lackey</h1>
+    <div id="root"></div>
+    <script type="module" src="./main.tsx"></script>
   </body>
 </html>
