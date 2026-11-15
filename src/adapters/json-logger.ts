@@ -5,7 +5,7 @@ const RANK: Record<LogLevel, number> = { debug: 10, info: 20, warn: 30, error: 4
 /** Parses a LOG_LEVEL value. Anything unrecognized falls back to `info`. */
 export function parseLogLevel(value: string | undefined): LogLevel {
   const v = (value ?? "").trim().toLowerCase();
-  return v in RANK ? (v as LogLevel) : "info";
+  return Object.hasOwn(RANK, v) ? (v as LogLevel) : "info";
 }
 
 type Sink = (line: string) => void;

@@ -40,7 +40,9 @@ CREATE TABLE runs (
   duration_ms INTEGER,
   config_snapshot TEXT,
   config_hash TEXT,
-  prompt_hashes TEXT
+  prompt_hashes TEXT,
+  -- A scheduled Run always has a slot, so runs_topic_slot can enforce one Run per Topic and slot.
+  CHECK (kind != 'scheduled' OR scheduled_slot IS NOT NULL)
 );
 CREATE INDEX runs_topic_created ON runs(topic_id, created_at);
 CREATE UNIQUE INDEX runs_topic_slot ON runs(topic_id, scheduled_slot) WHERE kind = 'scheduled';

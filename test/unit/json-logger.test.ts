@@ -41,6 +41,8 @@ describe("parseLogLevel", () => {
     [" WARN ", "warn"],
     [undefined, "info"],
     ["verbose", "info"],
+    ["constructor", "info"],
+    ["__proto__", "info"],
   ])("parses %j as %s", (input, expected) => {
     expect(parseLogLevel(input)).toBe(expected);
   });

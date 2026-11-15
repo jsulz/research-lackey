@@ -9,10 +9,11 @@ async function getJson(path: string) {
 }
 
 async function insertRun(id: string, kind: string, status: string, createdAt: string) {
+  const slot = kind === "scheduled" ? createdAt : null;
   await env.DB.prepare(
-    "INSERT INTO runs (id, topic_id, kind, status, created_at) VALUES (?, 'ai-infra', ?, ?, ?)",
+    "INSERT INTO runs (id, topic_id, kind, status, created_at, scheduled_slot) VALUES (?, 'ai-infra', ?, ?, ?, ?)",
   )
-    .bind(id, kind, status, createdAt)
+    .bind(id, kind, status, createdAt, slot)
     .run();
 }
 
@@ -60,5 +61,38 @@ describe("unknown API routes", () => {
   it("returns 404 for non-GET methods on /api/topics", async () => {
     const res = await exports.default.fetch(`${BASE}/api/topics`, { method: "POST" });
     expect(res.status).toBe(404);
+  });
+});
+
+describe("runs schema", () => {
+  afterEach(async () => {
+    await env.DB.prepare("DELETE FROM runs").run();
+  });
+
+  it("rejects a scheduled Run without a slot", async () => {
+    await expect(
+      env.DB.prepare(
+        "INSERT INTO runs (id, topic_id, kind, status) VALUES ('no-slot', 'ai-infra', 'scheduled', 'queued')",
+      ).run(),
+    ).rejects.toThrow(/CHECK constraint failed/);
+  });
+
+  it("rejects a second scheduled Run for the same Topic and slot", async () => {
+    const insert = (id: string) =>
+      env.DB.prepare(
+        "INSERT INTO runs (id, topic_id, kind, status, scheduled_slot) VALUES (?, 'ai-infra', 'scheduled', 'queued', '2026-11-16T12:00:00Z')",
+      )
+        .bind(id)
+        .run();
+    await insert("first");
+    await expect(insert("second")).rejects.toThrow(/UNIQUE constraint failed/);
+  });
+
+  it("allows manual Runs without a slot", async () => {
+    await env.DB.prepare(
+      "INSERT INTO runs (id, topic_id, kind, status) VALUES ('m1', 'ai-infra', 'manual', 'queued'), ('m2', 'ai-infra', 'manual', 'queued')",
+    ).run();
+    const row = await env.DB.prepare("SELECT count(*) AS n FROM runs").first<{ n: number }>();
+    expect(row?.n).toBe(2);
   });
 });
