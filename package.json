@@ -1,0 +1,33 @@
+{
+  "name": "research-lackey",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite build && wrangler d1 migrations apply research-lackey --local && wrangler dev",
+    "build": "vite build",
+    "deploy": "vite build && wrangler deploy",
+    "types": "wrangler types",
+    "lint": "biome check .",
+    "typecheck": "tsc --noEmit -p tsconfig.worker.json && tsc --noEmit -p tsconfig.node.json",
+    "test": "biome check . && npm run typecheck && vitest run --config vitest.config.ts",
+    "test:integration": "vite build && vitest run --config vitest.integration.config.ts",
+    "check": "npm test && npm run test:integration",
+    "docs:interfaces": "node scripts/docs-interfaces.ts"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.8",
+    "@cloudflare/vitest-plugin": "1.8.2",
+    "@types/node": "26.6.6",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.3.0",
+    "typescript": "7.0.2",
+    "vite": "8.3.8",
+    "vitest": "5.1.0",
+    "wrangler": "4.162.0"
+  },
+  "dependencies": {
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  }
+}
