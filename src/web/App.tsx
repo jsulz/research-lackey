@@ -10,9 +10,18 @@ export function App() {
   const [state, setState] = useState<State>({ kind: "loading" });
 
   useEffect(() => {
+    // Only the latest effect may update state; an earlier request that settles late is ignored.
+    let active = true;
     fetchTopics()
-      .then((topics) => setState({ kind: "loaded", topics }))
-      .catch(() => setState({ kind: "error" }));
+      .then((topics) => {
+        if (active) setState({ kind: "loaded", topics });
+      })
+      .catch(() => {
+        if (active) setState({ kind: "error" });
+      });
+    return () => {
+      active = false;
+    };
   }, []);
 
   return (
