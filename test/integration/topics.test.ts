@@ -104,3 +104,55 @@ describe("runs schema", () => {
     expect(row?.n).toBe(2);
   });
 });
+
+describe("topics schedule constraints", () => {
+  const insertTopic = (
+    id: string,
+    kind: string,
+    interval: number | null,
+    weekday: number | null,
+    time: string | null,
+  ) =>
+    env.DB.prepare(
+      "INSERT INTO topics (id, name, research_goal, schedule_kind, schedule_interval_hours, schedule_weekday, schedule_time_utc) VALUES (?, 'T', 'G', ?, ?, ?, ?)",
+    )
+      .bind(id, kind, interval, weekday, time)
+      .run();
+
+  afterEach(async () => {
+    await env.DB.prepare("DELETE FROM topics WHERE id != 'ai-infra'").run();
+  });
+
+  it.each([
+    ["every_n_hours", 6, null, null],
+    ["daily", null, null, "00:00"],
+    ["daily", null, null, "23:59"],
+    ["weekly", null, 0, "08:30"],
+    ["weekly", null, 6, "19:05"],
+  ] as const)("accepts %s (%s, %s, %s)", async (kind, interval, weekday, time) => {
+    await expect(
+      insertTopic(`ok-${kind}-${time}-${weekday}`, kind, interval, weekday, time),
+    ).resolves.toBeTruthy();
+  });
+
+  it.each([
+    ["hour 24", "daily", null, null, "24:00"],
+    ["hour 29", "daily", null, null, "29:59"],
+    ["minute 60", "daily", null, null, "12:60"],
+    ["malformed time", "daily", null, null, "9:00"],
+    ["daily without time", "daily", null, null, null],
+    ["daily with interval", "daily", 6, null, "12:00"],
+    ["every_n_hours without interval", "every_n_hours", null, null, null],
+    ["every_n_hours interval 0", "every_n_hours", 0, null, null],
+    ["every_n_hours interval 169", "every_n_hours", 169, null, null],
+    ["every_n_hours with time", "every_n_hours", 6, null, "12:00"],
+    ["weekly without weekday", "weekly", null, null, "12:00"],
+    ["weekly weekday 7", "weekly", null, 7, "12:00"],
+    ["weekly without time", "weekly", null, 3, null],
+    ["unknown kind", "monthly", null, null, "12:00"],
+  ] as const)("rejects %s", async (_label, kind, interval, weekday, time) => {
+    await expect(insertTopic("bad", kind, interval, weekday, time)).rejects.toThrow(
+      /CHECK constraint failed/,
+    );
+  });
+});

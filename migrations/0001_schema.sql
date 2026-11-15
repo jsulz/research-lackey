@@ -5,12 +5,32 @@ CREATE TABLE topics (
   id TEXT NOT NULL PRIMARY KEY,
   name TEXT NOT NULL,
   research_goal TEXT NOT NULL,
-  -- Schedule preset: every_n_hours (interval_hours), daily (time_utc), weekly (weekday 0-6 = Sun-Sat, time_utc).
-  schedule_kind TEXT NOT NULL CHECK (schedule_kind IN ('every_n_hours', 'daily', 'weekly')),
-  schedule_interval_hours INTEGER CHECK (schedule_interval_hours IS NULL OR schedule_interval_hours BETWEEN 1 AND 168),
-  schedule_weekday INTEGER CHECK (schedule_weekday IS NULL OR schedule_weekday BETWEEN 0 AND 6),
-  schedule_time_utc TEXT CHECK (schedule_time_utc IS NULL OR schedule_time_utc GLOB '[0-2][0-9]:[0-5][0-9]'),
-  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))
+  -- Schedule preset. Each kind requires exactly its own parameters (see the CHECK below):
+  --   every_n_hours: schedule_interval_hours (1-168)
+  --   daily:         schedule_time_utc ('HH:MM', 00:00-23:59)
+  --   weekly:        schedule_weekday (0-6 = Sun-Sat) and schedule_time_utc
+  schedule_kind TEXT NOT NULL,
+  schedule_interval_hours INTEGER,
+  schedule_weekday INTEGER,
+  schedule_time_utc TEXT,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
+  CHECK (
+    schedule_time_utc IS NULL
+    OR schedule_time_utc GLOB '[01][0-9]:[0-5][0-9]'
+    OR schedule_time_utc GLOB '2[0-3]:[0-5][0-9]'
+  ),
+  CHECK (
+    (schedule_kind = 'every_n_hours'
+      AND typeof(schedule_interval_hours) = 'integer' AND schedule_interval_hours BETWEEN 1 AND 168
+      AND schedule_weekday IS NULL AND schedule_time_utc IS NULL)
+    OR (schedule_kind = 'daily'
+      AND schedule_time_utc IS NOT NULL
+      AND schedule_interval_hours IS NULL AND schedule_weekday IS NULL)
+    OR (schedule_kind = 'weekly'
+      AND typeof(schedule_weekday) = 'integer' AND schedule_weekday BETWEEN 0 AND 6
+      AND schedule_time_utc IS NOT NULL
+      AND schedule_interval_hours IS NULL)
+  )
 );
 
 CREATE TABLE sources (
