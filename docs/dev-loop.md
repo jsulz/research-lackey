@@ -6,7 +6,7 @@ Read by the `ship-ticket` skill. Committed and public: no secrets, no private pa
 
 | Purpose | Command | Notes |
 |---|---|---|
-| Install | `npm ci` | Node version in `.nvmrc` |
+| Install | `npm ci` | Exact Node version in `.nvmrc`, shared with CI. Match it locally before running checks |
 | Fast check | `npm test` | Biome lint and format, `tsc` type checks, unit tests in Node. No Workers runtime |
 | Full check | `npm run check` | Fast check, then `npm run test:integration` (Vite build, then the Worker in the Workers runtime with local D1). Includes the `docs/interfaces.md` freshness test |
 | Run locally | `npm run dev` | Builds the SPA, applies local D1 migrations, starts `wrangler dev` on `http://localhost:8787`. Set `LOG_LEVEL=debug` in `.dev.vars` |
