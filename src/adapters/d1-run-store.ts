@@ -2,6 +2,7 @@ import type {
   FinalStatus,
   Item,
   Run,
+  RunConfigRecord,
   RunRef,
   RunStatus,
   RunStore,
@@ -117,6 +118,15 @@ export class D1RunStore implements RunStore {
          WHERE runs.status IN ('queued', 'running')`,
       )
       .bind(run.id, run.topic_id, run.kind, run.scheduled_slot, at.toISOString())
+      .run();
+  }
+
+  async recordRunConfig(runId: string, record: RunConfigRecord): Promise<void> {
+    await this.db
+      .prepare(
+        "UPDATE runs SET config_snapshot = ?, config_hash = ?, prompt_hashes = ? WHERE id = ?",
+      )
+      .bind(record.config_snapshot, record.config_hash, JSON.stringify(record.prompt_hashes), runId)
       .run();
   }
 

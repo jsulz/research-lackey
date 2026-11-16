@@ -1,3 +1,4 @@
+import { runConfigRecord } from "./hashing";
 import type {
   ArtifactStore,
   Clock,
@@ -23,6 +24,8 @@ export interface PipelineDeps {
   /** Only Step artifacts: stages write their own data through their own dependencies. */
   artifacts: Pick<ArtifactStore, "putStepArtifact" | "getStepArtifact">;
   step: StepRunner;
+  /** The effective config and prompt texts. The Run stores a snapshot and their hashes. */
+  runConfig: { config: unknown; prompts: Record<string, string> };
   clock: Clock;
   log: Logger;
 }
@@ -33,7 +36,8 @@ const MAX_REASON = 1000;
 /**
  * Runs one Run through its stages and records its final status.
  *
- * Steps, in order: `start` (Run becomes `running`), one step per stage (runs the stage and
+ * Steps, in order: `start` (Run becomes `running` and records its config snapshot and hashes),
+ * one step per stage (runs the stage and
  * writes its Step artifact), `complete`. Each stage step returns only its artifact key, so
  * step results stay small. When a step exhausts its retries, a `fail` step records the
  * failing stage and reason, and the error is rethrown so the Workflow instance errors too.
@@ -41,10 +45,17 @@ const MAX_REASON = 1000;
  * stage runs.
  */
 export async function runPipeline(deps: PipelineDeps): Promise<FinalStatus> {
-  const { run, stages, store, artifacts, step, clock, log } = deps;
+  const { run, stages, store, artifacts, step, runConfig, clock, log } = deps;
   let current = "start";
   try {
-    const started = await step.do("start", () => store.markRunning(run, clock.now()));
+    const started = await step.do("start", async () => {
+      const result = await store.markRunning(run, clock.now());
+      if (result === "running") {
+        const record = await runConfigRecord(runConfig.config, runConfig.prompts);
+        await store.recordRunConfig(run.id, record);
+      }
+      return result;
+    });
     if (started === "topic_busy") {
       // Another scheduled or manual Run of this Topic is active. Record this one, run nothing.
       const reason = "Topic has an active Run";

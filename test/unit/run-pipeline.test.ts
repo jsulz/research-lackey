@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
+import { sha256Hex } from "../../src/core/hashing";
 import type {
   ArtifactStore,
   Clock,
   FinalStatus,
   Logger,
+  RunConfigRecord,
   RunRef,
   RunStore,
   StepArtifact,
@@ -20,14 +22,20 @@ const RUN: RunRef = {
 };
 
 /** In-memory RunStore that records every status the Run passes through. */
-class FakeRunStore implements Pick<RunStore, "markRunning" | "completeRun" | "failRun"> {
+class FakeRunStore
+  implements Pick<RunStore, "markRunning" | "completeRun" | "failRun" | "recordRunConfig">
+{
   statuses: string[] = ["queued"];
+  configs: { runId: string; record: RunConfigRecord }[] = [];
   failure: { stage: string; reason: string } | null = null;
   topicBusy = false;
   async markRunning(_run: RunRef): Promise<"running" | "topic_busy"> {
     if (this.topicBusy) return "topic_busy";
     this.statuses.push("running");
     return "running";
+  }
+  async recordRunConfig(runId: string, record: RunConfigRecord): Promise<void> {
+    this.configs.push({ runId, record });
   }
   async completeRun(_id: string, status: FinalStatus): Promise<void> {
     this.statuses.push(status);
@@ -78,6 +86,7 @@ function setup(stages: Stage[], retries = 2) {
       store: store as unknown as RunStore,
       artifacts,
       step: retryingSteps(retries),
+      runConfig: { config: { b: 2, a: 1 }, prompts: { synthesis: "abc" } },
       clock,
       log,
     });
@@ -89,6 +98,24 @@ describe("runPipeline", () => {
     const { store, run } = setup([{ name: "fetch", run: async () => ({ items: [] }) }]);
     await expect(run()).resolves.toBe("completed_no_new_findings");
     expect(store.statuses).toEqual(["queued", "running", "completed_no_new_findings"]);
+  });
+
+  it("records the config snapshot, its hash and each prompt's hash when the Run starts", async () => {
+    const { store, run } = setup([{ name: "fetch", run: async () => ({ items: [] }) }]);
+    await run();
+    expect(store.configs).toEqual([
+      {
+        runId: "manual-ai-infra-1",
+        record: {
+          config_snapshot: '{"a":1,"b":2}',
+          config_hash: await sha256Hex('{"a":1,"b":2}'),
+          // SHA-256 of "abc" (FIPS 180-2 test vector).
+          prompt_hashes: {
+            synthesis: "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+          },
+        },
+      },
+    ]);
   });
 
   it("writes each stage's input and output as a Step artifact, feeding each output to the next stage", async () => {
@@ -159,5 +186,6 @@ describe("runPipeline", () => {
     expect(store.failure).toEqual({ stage: "start", reason: "Topic has an active Run" });
     expect(ran).toBe(false);
     expect(artifacts.items.size).toBe(0);
+    expect(store.configs).toEqual([]);
   });
 });

@@ -47,6 +47,8 @@ export class RunWorkflow extends WorkflowEntrypoint<Env, RunParams> {
       store,
       artifacts,
       step: runner,
+      // No stage uses a prompt file yet; Synthesis adds the first.
+      runConfig: { config: CONFIG, prompts: {} },
       clock,
       log,
     });

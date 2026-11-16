@@ -2,6 +2,8 @@ import { introspectWorkflowInstance } from "cloudflare:test";
 import { env } from "cloudflare:workers";
 import { afterEach, describe, expect, it } from "vitest";
 import { D1RunStore } from "../../src/adapters/d1-run-store";
+import { CONFIG } from "../../src/core/config";
+import { canonicalJson, sha256Hex } from "../../src/core/hashing";
 import type { Run, RunRef } from "../../src/core/ports";
 import { deleteRuns } from "./cleanup";
 
@@ -75,6 +77,23 @@ describe("RunWorkflow", () => {
     expect(((await dedupe?.json()) as { input: unknown } | undefined)?.input).toEqual(
       fetched.output,
     );
+  });
+
+  it("stores the Run's config snapshot, config hash and prompt hashes", async () => {
+    const run = manualRun("wf-config");
+    await using instance = await introspectWorkflowInstance(env.RUN_WORKFLOW, run.id);
+    await start(run);
+    await instance.waitForStatus("complete");
+
+    const row = await env.DB.prepare(
+      "SELECT config_snapshot, config_hash, prompt_hashes FROM runs WHERE id = ?",
+    )
+      .bind(run.id)
+      .first<{ config_snapshot: string; config_hash: string; prompt_hashes: string }>();
+    expect(JSON.parse(row?.config_snapshot ?? "null")).toEqual(CONFIG);
+    expect(row?.config_snapshot).toBe(canonicalJson(CONFIG));
+    expect(row?.config_hash).toBe(await sha256Hex(canonicalJson(CONFIG)));
+    expect(JSON.parse(row?.prompt_hashes ?? "null")).toEqual({});
   });
 
   it("creates the Run as manual when the Workflow starts with no Run row", async () => {
