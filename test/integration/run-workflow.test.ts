@@ -3,6 +3,7 @@ import { env } from "cloudflare:workers";
 import { afterEach, describe, expect, it } from "vitest";
 import { D1RunStore } from "../../src/adapters/d1-run-store";
 import type { Run, RunRef } from "../../src/core/ports";
+import { deleteRuns } from "./cleanup";
 
 const store = new D1RunStore(env.DB);
 
@@ -25,7 +26,7 @@ async function getRun(id: string): Promise<Run> {
 
 describe("RunWorkflow", () => {
   afterEach(async () => {
-    await env.DB.prepare("DELETE FROM runs").run();
+    await deleteRuns();
   });
 
   it("moves a queued Run to running to completed_no_new_findings, with times and duration", async () => {
@@ -54,12 +55,26 @@ describe("RunWorkflow", () => {
     await start(run);
     await instance.waitForStatus("complete");
 
-    const object = await env.ARTIFACTS.get(`runs/${run.id}/steps/fetch.json`);
-    expect(object).not.toBeNull();
-    expect(await object?.json()).toEqual({
-      input: { topic_id: "ai-infra" },
-      output: { items: [] },
-    });
+    const fetch = await env.ARTIFACTS.get(`runs/${run.id}/steps/fetch.json`);
+    const fetched = (await fetch?.json()) as {
+      input: unknown;
+      output: { sources: { source_id: string; items: unknown[] }[] };
+    };
+    expect(fetched.input).toEqual({ topic_id: "ai-infra" });
+    // The seeded Sources (migration 0004), ordered by ID, with their fixture entry counts.
+    expect(fetched.output.sources.map((s) => [s.source_id, s.items.length])).toEqual([
+      ["arxiv-serving", 50],
+      ["hf-daily-papers", 34],
+      ["modal-blog", 157],
+      ["vllm-blog", 50],
+      ["vllm-releases", 10],
+    ]);
+
+    const dedupe = await env.ARTIFACTS.get(`runs/${run.id}/steps/dedupe.json`);
+    expect(dedupe).not.toBeNull();
+    expect(((await dedupe?.json()) as { input: unknown } | undefined)?.input).toEqual(
+      fetched.output,
+    );
   });
 
   it("creates the Run as manual when the Workflow starts with no Run row", async () => {

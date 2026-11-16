@@ -38,7 +38,7 @@ class FakeRunStore implements Pick<RunStore, "markRunning" | "completeRun" | "fa
   }
 }
 
-class FakeArtifacts implements ArtifactStore {
+class FakeArtifacts implements Pick<ArtifactStore, "putStepArtifact" | "getStepArtifact"> {
   items = new Map<string, StepArtifact>();
   async putStepArtifact(runId: string, step: StepName, data: StepArtifact): Promise<string> {
     const key = `runs/${runId}/steps/${step}.json`;

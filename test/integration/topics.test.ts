@@ -1,5 +1,6 @@
 import { env, exports } from "cloudflare:workers";
 import { afterEach, describe, expect, it } from "vitest";
+import { deleteRuns, deleteTestTopics } from "./cleanup";
 
 const BASE = "https://lackey.test";
 
@@ -19,7 +20,7 @@ async function insertRun(id: string, kind: string, status: string, createdAt: st
 
 describe("GET /api/topics", () => {
   afterEach(async () => {
-    await env.DB.prepare("DELETE FROM runs").run();
+    await deleteRuns();
   });
 
   it("lists the seeded Topic as not yet checked", async () => {
@@ -66,7 +67,7 @@ describe("unknown API routes", () => {
 
 describe("runs schema", () => {
   afterEach(async () => {
-    await env.DB.prepare("DELETE FROM runs").run();
+    await deleteRuns();
   });
 
   it("rejects a scheduled Run without a slot", async () => {
@@ -134,7 +135,7 @@ describe("topics schedule constraints", () => {
       .run();
 
   afterEach(async () => {
-    await env.DB.prepare("DELETE FROM topics WHERE id != 'ai-infra'").run();
+    await deleteTestTopics();
   });
 
   it.each([

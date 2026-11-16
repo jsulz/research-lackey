@@ -45,3 +45,27 @@ function cyrb53(text: string): string {
   h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
   return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16);
 }
+
+/** The Markdown stored in R2 for an Item: title, link, time, then summary and content as given. */
+export function itemMarkdown(raw: RawItem): string {
+  const parts = [`# ${raw.title || "(untitled)"}`, "", raw.url];
+  if (raw.publishedAt) parts.push("", `Published: ${raw.publishedAt}`);
+  if (raw.summary) parts.push("", "## Summary", "", raw.summary);
+  if (raw.content) parts.push("", "## Content", "", raw.content);
+  return `${parts.join("\n")}\n`;
+}
+
+/**
+ * Items newest first by `published_at`, for the first-poll cap. Equal dates keep feed order and
+ * undated Items go last. Dates order Items only; they never decide identity. Returns a new array.
+ */
+export function newestFirst<T extends { published_at: string | null }>(items: readonly T[]): T[] {
+  const time = (item: T) =>
+    item.published_at === null ? Number.NEGATIVE_INFINITY : Date.parse(item.published_at);
+  // Array.prototype.sort is stable, so ties keep their feed order.
+  return [...items].sort((a, b) => {
+    const ta = time(a);
+    const tb = time(b);
+    return ta === tb ? 0 : tb > ta ? 1 : -1;
+  });
+}

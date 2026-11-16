@@ -1,10 +1,12 @@
 import type {
   FinalStatus,
+  Item,
   Run,
   RunRef,
   RunStatus,
   RunStore,
   Schedule,
+  Source,
   TopicLastChecked,
   TopicSchedule,
 } from "../core/ports";
@@ -13,6 +15,13 @@ import type {
 const DURATION_MS = (ended: string, started: string) =>
   `CASE WHEN ${started} IS NULL THEN NULL
      ELSE CAST(round((julianday(${ended}) - julianday(${started})) * 86400000) AS INTEGER) END`;
+
+/** Final statuses after which a Run's Items count as seen. */
+const COMPLETED = "('completed_with_report', 'completed_no_new_findings')";
+
+/** A seen Item of the Source bound to the first parameter: recorded by a completed Run. */
+const SEEN_ITEM = `SELECT 1 FROM items i JOIN runs r ON r.id = i.first_seen_run_id
+  WHERE i.source_id = ? AND r.status IN ${COMPLETED}`;
 
 /** SQLite's error text when an insert breaks `runs_one_active_per_topic` (migration 0003). */
 const ONE_ACTIVE_PER_TOPIC = "UNIQUE constraint failed: runs.topic_id";
@@ -147,6 +156,75 @@ export class D1RunStore implements RunStore {
       )
       .bind(runId)
       .first<Run>();
+  }
+
+  async listFeedSources(topicId: string): Promise<Source[]> {
+    const { results } = await this.db
+      .prepare(
+        `SELECT id, topic_id, format, fixture_ref FROM sources
+         WHERE topic_id = ? AND kind = 'feed'
+         ORDER BY id`,
+      )
+      .bind(topicId)
+      .all<Source>();
+    return results;
+  }
+
+  async unseenItemKeys(sourceId: string, keys: string[]): Promise<string[]> {
+    if (keys.length === 0) return [];
+    // Keys travel as one JSON parameter: D1 allows at most 100 bound parameters per statement.
+    const { results } = await this.db
+      .prepare(
+        `SELECT k.value AS item_key FROM json_each(?) k
+         WHERE NOT EXISTS (${SEEN_ITEM} AND i.item_key = k.value)
+         ORDER BY k.key`,
+      )
+      .bind(JSON.stringify(keys), sourceId)
+      .all<{ item_key: string }>();
+    return results.map((r) => r.item_key);
+  }
+
+  async isFirstPoll(sourceId: string): Promise<boolean> {
+    const row = await this.db
+      .prepare(`SELECT NOT EXISTS (${SEEN_ITEM}) AS first_poll`)
+      .bind(sourceId)
+      .first<{ first_poll: number }>();
+    return row?.first_poll === 1;
+  }
+
+  async recordItems(runId: string, items: Item[]): Promise<void> {
+    if (items.length === 0) return;
+    // Takes over a row only when its recording Run did not complete (failed, or this same Run
+    // on a retried step). A row from a completed Run is never changed.
+    const insert = this.db.prepare(
+      `INSERT INTO items
+         (source_id, item_key, url, title, published_at, first_seen_run_id, content_key)
+       VALUES (?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT (source_id, item_key) DO UPDATE SET
+         url = excluded.url,
+         title = excluded.title,
+         published_at = excluded.published_at,
+         first_seen_run_id = excluded.first_seen_run_id,
+         content_key = excluded.content_key,
+         created_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now')
+       WHERE NOT EXISTS (
+         SELECT 1 FROM runs r
+         WHERE r.id = items.first_seen_run_id AND r.status IN ${COMPLETED}
+       )`,
+    );
+    await this.db.batch(
+      items.map((item) =>
+        insert.bind(
+          item.source_id,
+          item.item_key,
+          item.url,
+          item.title,
+          item.published_at,
+          runId,
+          item.content_key,
+        ),
+      ),
+    );
   }
 
   /** Sets a final status on a Run whose status is in `from`. Duration counts from `started_at`. */

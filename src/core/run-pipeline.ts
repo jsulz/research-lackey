@@ -17,10 +17,11 @@ export interface Stage {
 
 export interface PipelineDeps {
   run: RunRef;
-  /** The ordered stage list. Production passes `STAGES`; tests pass trivial stages. */
+  /** The ordered stage list. Production passes `buildStages(...)`; tests pass trivial stages. */
   stages: readonly Stage[];
   store: RunStore;
-  artifacts: ArtifactStore;
+  /** Only Step artifacts: stages write their own data through their own dependencies. */
+  artifacts: Pick<ArtifactStore, "putStepArtifact" | "getStepArtifact">;
   step: StepRunner;
   clock: Clock;
   log: Logger;

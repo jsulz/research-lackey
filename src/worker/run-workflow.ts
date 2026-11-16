@@ -1,12 +1,14 @@
 import { WorkflowEntrypoint, type WorkflowEvent, type WorkflowStep } from "cloudflare:workers";
 import { NonRetryableError } from "cloudflare:workflows";
 import { D1RunStore } from "../adapters/d1-run-store";
+import { FixtureSourceFetcher } from "../adapters/fixture-source-fetcher";
 import { JsonLogger, parseLogLevel } from "../adapters/json-logger";
 import { R2ArtifactStore } from "../adapters/r2-artifact-store";
+import { CONFIG } from "../core/config";
 import type { StepRunner } from "../core/ports";
 import { parseRunParams, type RunParams } from "../core/run-ids";
 import { runPipeline } from "../core/run-pipeline";
-import { STAGES } from "../core/stages";
+import { buildStages } from "../core/stages";
 
 /** Retry policy for every step: 3 retries after the first attempt, 10 s doubling. */
 const STEP_CONFIG = {
@@ -19,6 +21,7 @@ export class RunWorkflow extends WorkflowEntrypoint<Env, RunParams> {
     const log = new JsonLogger(parseLogLevel(this.env.LOG_LEVEL));
     const store = new D1RunStore(this.env.DB);
     const clock = { now: () => new Date() };
+    const artifacts = new R2ArtifactStore(this.env.ARTIFACTS);
 
     const parsed = parseRunParams(event.instanceId, event.payload);
     if (!parsed.ok) {
@@ -35,9 +38,14 @@ export class RunWorkflow extends WorkflowEntrypoint<Env, RunParams> {
     };
     return runPipeline({
       run: parsed.run,
-      stages: STAGES,
+      stages: buildStages({
+        store,
+        artifacts,
+        fetcher: new FixtureSourceFetcher(),
+        config: CONFIG,
+      }),
       store,
-      artifacts: new R2ArtifactStore(this.env.ARTIFACTS),
+      artifacts,
       step: runner,
       clock,
       log,
