@@ -70,6 +70,21 @@ export interface TopicSchedule {
   has_active_run: boolean;
 }
 
+/** The file format of a `feed` Source. Stored in `sources.format`. */
+export type FeedFormat = "rss2" | "atom" | "hf_daily_papers";
+
+/** One feed entry as the feed reports it, before its identity is normalized. */
+export interface RawItem {
+  /** RSS `guid`, Atom `id`, or the Hugging Face `paper.id`. Empty when the feed gives none. */
+  externalId: string;
+  url: string;
+  title: string;
+  summary?: string;
+  content?: string;
+  /** ISO 8601 UTC. The published time, else the updated time. Used for ordering only. */
+  publishedAt?: string;
+}
+
 /** All D1 access goes through this interface. */
 export interface RunStore {
   /** Every Topic, ordered by name, with its last-checked fields. */

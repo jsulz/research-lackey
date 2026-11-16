@@ -1,0 +1,589 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>vLLM Blog</title>
+    <link>https://vllm.ai/blog</link>
+    <description>Technical articles, release announcements, model guides, and community updates from the vLLM project.</description>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 16 Nov 2026 03:12:17 GMT</lastBuildDate>
+    <atom:link href="https://vllm.ai/blog/rss.xml" rel="self" type="application/rss+xml"/>
+    <item>
+            <title><![CDATA[Fixture-only extra entry (not a real vLLM post)]]></title>
+            <link>https://vllm.ai/blog/fixture-extra-entry</link>
+            <guid isPermaLink="true">https://vllm.ai/blog/fixture-extra-entry</guid>
+            <pubDate>Fri, 13 Nov 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[Synthetic entry added to the vLLM blog fixture so a test can prove a second Run records exactly one new Item.]]></description>
+        </item>
+        <item>
+      <title>DeepSeek-V4.1-Flash on Vera Rubin NVL72: 58x Throughput vs. GB300 NVL72 at 387 tokens/s</title>
+      <link>https://vllm.ai/blog/2026-11-12-deepseek-v41-flash-vera-rubin</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-11-12-deepseek-v41-flash-vera-rubin</guid>
+      <pubDate>Thu, 12 Nov 2026 00:00:00 GMT</pubDate>
+      <description>On one NVIDIA Vera Rubin NVL72 rack, vLLM serves DeepSeek-V4.1-Flash on SemiAnalysis AgentX at 1.7M tokens/s per GPU at a P90 of 387 tokens/s per user, 58x GB300 NVL72 at the same interactivity.</description>
+      <category>deepseek</category>
+      <category>performance</category>
+      <category>large-scale-serving</category>
+      <category>disaggregation</category>
+      <dc:creator>Inferact and the vLLM Team</dc:creator>
+    </item>
+    <item>
+      <title>Inkling 2 Small on vLLM: Day-0 Support</title>
+      <link>https://vllm.ai/blog/2026-11-12-inkling2-small</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-11-12-inkling2-small</guid>
+      <pubDate>Thu, 12 Nov 2026 00:00:00 GMT</pubDate>
+      <description>vLLM supports Thinking Machines&apos; Inkling 2 Small from day 0: attention residuals, a new decode kernel for relative-bias attention, all-reduce fused with the ops around it, and DSpark speculative decoding.</description>
+      <category>model-support</category>
+      <category>performance</category>
+      <category>multimodal</category>
+      <category>speculative-decoding</category>
+      <dc:creator>Inferact and Thinking Machines</dc:creator>
+    </item>
+    <item>
+      <title>H3-Image Day-0 Support: 4K in 0.87s with Vera Rubin</title>
+      <link>https://vllm.ai/blog/2026-11-12-minimax-h3-image-rubin</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-11-12-minimax-h3-image-rubin</guid>
+      <pubDate>Thu, 12 Nov 2026 00:00:00 GMT</pubDate>
+      <description>H3-Image on Vera Rubin: 0.87-second 4K generation or 6,115 images/hour on four GPUs, with projected API revenue and support across consumer and data-center hardware.</description>
+      <category>vllm-omni</category>
+      <category>image-generation</category>
+      <category>hardware</category>
+      <category>performance</category>
+      <dc:creator>vLLM-Omni team</dc:creator>
+    </item>
+    <item>
+      <title>Encoder Disaggregation in vLLM: Scaling Multimodal Serving with EPD</title>
+      <link>https://vllm.ai/blog/2026-11-11-encoder-disaggregation-epd</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-11-11-encoder-disaggregation-epd</guid>
+      <pubDate>Wed, 11 Nov 2026 00:00:00 GMT</pubDate>
+      <description>Recent advances in vLLM encoder disaggregation: metadata-only multimodal requests, dedicated encoder execution, remote embedding transfer, cross-encoder caching, and lower-overhead EPD routing.</description>
+      <category>multimodal</category>
+      <category>disaggregation</category>
+      <category>performance</category>
+      <dc:creator>Inferact, InferMatrix, IBM, and Mooncake</dc:creator>
+    </item>
+    <item>
+      <title>Migrating vLLM to the LibTorch Stable ABI</title>
+      <link>https://vllm.ai/blog/2026-11-06-stable-abi-cuda</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-11-06-stable-abi-cuda</guid>
+      <pubDate>Fri, 06 Nov 2026 00:00:00 GMT</pubDate>
+      <description>How vLLM migrated its CUDA build and compiled dependencies to the LibTorch Stable ABI, enabling compatible PyTorch upgrades without rebuilding vLLM.</description>
+      
+      <dc:creator>vLLM Team, Red Hat PyTorch Team, and Meta PyTorch Team</dc:creator>
+    </item>
+    <item>
+      <title>VeRL-Omni v0.3.0: Async Training and Broader Multimodal Post-Training</title>
+      <link>https://vllm.ai/blog/2026-11-06-verl-omni-v0-3-0</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-11-06-verl-omni-v0-3-0</guid>
+      <pubDate>Fri, 06 Nov 2026 00:00:00 GMT</pubDate>
+      <description>VeRL-Omni v0.3.0 expands async RL, makes the V1 trainer the default, and adds reproducible recipes for audio-video generation and multimodal understanding.</description>
+      <category>multimodal</category>
+      <category>rlhf</category>
+      <category>ecosystem</category>
+      <category>performance</category>
+      <dc:creator>VeRL-Omni Team</dc:creator>
+    </item>
+    <item>
+      <title>Zero Mismatch, Simple Async RL: REINFORCE Zero, DeepSeek-V4.1 and Kimi K3.1</title>
+      <link>https://vllm.ai/blog/2026-11-06-zero-mismatch-async-rl</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-11-06-zero-mismatch-async-rl</guid>
+      <pubDate>Fri, 06 Nov 2026 00:00:00 GMT</pubDate>
+      <description>Asynchronous RL trains on stale weights. Align rollout and training kernels bit for bit, and unclipped importance sampling corrects that lag. Plus zero-mismatch RL for DeepSeek-V4.1-Flash, Kimi K3.1 and AMD MI355X.</description>
+      <category>reinforcement-learning</category>
+      <category>deepseek</category>
+      <category>kimi</category>
+      <dc:creator>Ao Shen (Inferact), Jian Hu (NVIDIA Research), Yan Bai (NVIDIA DevTech), Shekhar Pandey (AMD), and the REINFORCE Zero authors</dc:creator>
+    </item>
+    <item>
+      <title>Introducing Kinference: An Open Source Inference Control Plane for vLLM and Kubernetes</title>
+      <link>https://vllm.ai/blog/2026-11-04-introducing-kinference</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-11-04-introducing-kinference</guid>
+      <pubDate>Wed, 04 Nov 2026 00:00:00 GMT</pubDate>
+      <description>Kinference is a new open source inference control plane for building scalable inference platforms with vLLM and Kubernetes, providing token rate limiting, tenant usage and cost tracking, intelligent load balancing, and inference policies.</description>
+      <category>kinference</category>
+      <category>inference-control-plane</category>
+      <category>inference</category>
+      <category>scalable-platforms</category>
+      <dc:creator>the Kinference Team</dc:creator>
+    </item>
+    <item>
+      <title>vLLM Delivers Day-0 Support for Kimi K3.1 Pro</title>
+      <link>https://vllm.ai/blog/2026-11-04-kimi-k31-pro</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-11-04-kimi-k31-pro</guid>
+      <pubDate>Wed, 04 Nov 2026 00:00:00 GMT</pubDate>
+      <description>vLLM supports Kimi K3.1 Pro on day 0: sparse attention on a KDA hybrid, a packed KV cache with FP8 or NVFP4 latents and MXFP4 index keys, token-sharded prefill, decode context parallelism, and fused low-latency decode.</description>
+      <category>models</category>
+      <category>day-0-support</category>
+      <category>sparse-attention</category>
+      <category>performance</category>
+      <dc:creator>Inferact and the vLLM Team</dc:creator>
+    </item>
+    <item>
+      <title>Day 0 support for Mistral Large 4 on vLLM</title>
+      <link>https://vllm.ai/blog/2026-10-29-mistral-large-4</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-10-29-mistral-large-4</guid>
+      <pubDate>Thu, 29 Oct 2026 00:00:00 GMT</pubDate>
+      <description>Day-0 vLLM support for Mistral Large 4 with sparse MLA, cross-layer KV sharing, DSpark speculative decoding, DCP/PCP long context and NIXL P/D on NVIDIA Blackwell.</description>
+      <category>model-support</category>
+      <category>speculative-decoding</category>
+      <category>disaggregated-serving</category>
+      <dc:creator>Mistral and the vLLM Team</dc:creator>
+    </item>
+    <item>
+      <title>Serving DeepSeek-V4.1-Flash at Scale: vLLM Matches DeepInfer and Scales to GB300 NVL72</title>
+      <link>https://vllm.ai/blog/2026-10-23-deepseek-v41-flash-pd-wide-ep</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-10-23-deepseek-v41-flash-pd-wide-ep</guid>
+      <pubDate>Fri, 23 Oct 2026 00:00:00 GMT</pubDate>
+      <description>With P/D disaggregation and Wide-EP on a GB300 NVL72 rack, vLLM serves DeepSeek-V4.1-Flash on SemiAnalysis AgentX at 954K tokens/s per GPU at a P90 of 196 tokens/s per user, 7.9x our aggregated single-node result.</description>
+      <category>deepseek</category>
+      <category>performance</category>
+      <category>large-scale-serving</category>
+      <category>disaggregation</category>
+      <dc:creator>Inferact and the vLLM Team</dc:creator>
+    </item>
+    <item>
+      <title>GLM-5.3 Optimizations, Part 2: PCP, DCP, and Hybrid HiSparse on 16 H200s</title>
+      <link>https://vllm.ai/blog/2026-10-23-glm53-part2-pcp-dcp-hisparse</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-10-23-glm53-part2-pcp-dcp-hisparse</guid>
+      <pubDate>Fri, 23 Oct 2026 00:00:00 GMT</pubDate>
+      <description>vLLM serves GLM-5.3 on 16 H200s with PCP and DCP prefill and Hybrid HiSparse decode, reaching 1M-token contexts and 1.7–3.2× the per-user speed of data-parallel P/D on the AgentX agentic benchmark.</description>
+      <category>glm</category>
+      <category>parallelism</category>
+      <category>kv-cache</category>
+      <category>disaggregation</category>
+      <category>performance</category>
+      <dc:creator>vLLM Team</dc:creator>
+    </item>
+    <item>
+      <title>vLLM Delivers Day-0 Support for MiniMax-M3.1-Flash</title>
+      <link>https://vllm.ai/blog/2026-10-23-minimax-m31-flash</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-10-23-minimax-m31-flash</guid>
+      <pubDate>Fri, 23 Oct 2026 00:00:00 GMT</pubDate>
+      <description>Day-0 vLLM support for MiniMax-M3.1-Flash on NVIDIA Blackwell, NVIDIA Rubin, and AMD MI350-series GPUs, with NVFP4 MSA kernels, NVFP4 MegaMoE, DSpark speculative decoding, AgentX results, and day-0 RL.</description>
+      <category>minimax</category>
+      <category>day-0-support</category>
+      <category>performance</category>
+      <category>kernels</category>
+      <category>hardware</category>
+      <dc:creator>Inferact and the vLLM Team</dc:creator>
+    </item>
+    <item>
+      <title>Day-0 Support for Flint on vLLM</title>
+      <link>https://vllm.ai/blog/2026-10-21-flint</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-10-21-flint</guid>
+      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <description>vLLM supports both Flint checkpoints (40B total, 2.5B active) from day 0, decoding a single request at about 500 tokens/s on one GPU.</description>
+      <category>flint</category>
+      <category>performance</category>
+      <category>kernels</category>
+      <dc:creator>Inferact and Recursive</dc:creator>
+    </item>
+    <item>
+      <title>Announcing Humming: Fast, Flexible Kernels for Quantized Inference</title>
+      <link>https://vllm.ai/blog/2026-10-21-humming</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-10-21-humming</guid>
+      <pubDate>Wed, 21 Oct 2026 00:00:00 GMT</pubDate>
+      <description>Introducing Humming, a quantized inference kernel library from Ant Group and the vLLM community, with broad GPU and quantization support, dense and MoE performance results, and vLLM integration.</description>
+      <category>quantization</category>
+      <category>performance</category>
+      <category>kernels</category>
+      <category>moe</category>
+      <dc:creator>Ant Group and the vLLM Community</dc:creator>
+    </item>
+    <item>
+      <title>Introducing vLLM TorchTPU</title>
+      <link>https://vllm.ai/blog/2026-10-20-vllm-torchtpu</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-10-20-vllm-torchtpu</guid>
+      <pubDate>Tue, 20 Oct 2026 00:00:00 GMT</pubDate>
+      <description>vllm-torchtpu is a new vLLM backend for Google Cloud TPUs built on TorchTPU, with Pallas kernels, multi-host parallelism, KV cache offloading, and disaggregated serving.</description>
+      <category>hardware</category>
+      <dc:creator>Inferact and Google Teams</dc:creator>
+    </item>
+    <item>
+      <title>Achieving near-zero-downtime scaling in Elastic Expert Parallelism</title>
+      <link>https://vllm.ai/blog/2026-10-19-elastic-ep-near-zero-downtime</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-10-19-elastic-ep-near-zero-downtime</guid>
+      <pubDate>Mon, 19 Oct 2026 00:00:00 GMT</pubDate>
+      <description>How asynchronous preparation and NIXL EP enabled near-zero-downtime Elastic EP scaling in vLLM.</description>
+      <category>large-scale-serving</category>
+      <category>elastic-ep</category>
+      <category>expert-parallelism</category>
+      <category>moe</category>
+      <category>nixl</category>
+      <category>cuda-graphs</category>
+      <dc:creator>Itay Alroy (NVIDIA)</dc:creator>
+    </item>
+    <item>
+      <title>Hyper Optimizing Kimi K3 in vLLM: Moving Fast and Responsibly</title>
+      <link>https://vllm.ai/blog/2026-10-16-kimi-k3-megakernel</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-10-16-kimi-k3-megakernel</guid>
+      <pubDate>Fri, 16 Oct 2026 00:00:00 GMT</pubDate>
+      <description>How agent-assisted CuTe DSL optimizations accelerate Kimi K3 decode on NVIDIA GB300, and how scoped changes, correctness tests, and reproducible benchmarks help ship them responsibly.</description>
+      <category>performance</category>
+      <category>hardware</category>
+      <category>NVIDIA</category>
+      <dc:creator>Benjamin Chislett (NVIDIA)</dc:creator>
+    </item>
+    <item>
+      <title>Scaling Kimi K3 on AMD Instinct MI355X: Matching NVIDIA HGX B300 Throughput per GPU on AgentX</title>
+      <link>https://vllm.ai/blog/2026-10-16-kimi-k3-mi355x</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-10-16-kimi-k3-mi355x</guid>
+      <pubDate>Fri, 16 Oct 2026 00:00:00 GMT</pubDate>
+      <description>Inside the Kimi K3 optimization effort: understanding the bottlenecks and the decisions that made inference faster</description>
+      <category>models</category>
+      <category>performance</category>
+      <category>rocm</category>
+      <category>amd</category>
+      <category>speculative-decoding</category>
+      <dc:creator>AMD and Embedded LLM</dc:creator>
+    </item>
+    <item>
+      <title>Serving Reflection Beam on vLLM from Day 0</title>
+      <link>https://vllm.ai/blog/2026-10-16-reflection-beam</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-10-16-reflection-beam</guid>
+      <pubDate>Fri, 16 Oct 2026 00:00:00 GMT</pubDate>
+      <description>vLLM supports Reflection&apos;s Beam-1.0 (501B total, 23B active) from day 0, with agent-driven optimization that cut decode latency 2.71× and DFlash2 speculative decoding with adaptive verification.</description>
+      <category>reflection</category>
+      <category>performance</category>
+      <category>kernels</category>
+      <category>speculative-decoding</category>
+      <dc:creator>Inferact, Reflection, and Nvidia</dc:creator>
+    </item>
+    <item>
+      <title>Day 0 support for Muse Spark Open on vLLM</title>
+      <link>https://vllm.ai/blog/2026-10-15-muse-spark-open</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-10-15-muse-spark-open</guid>
+      <pubDate>Thu, 15 Oct 2026 00:00:00 GMT</pubDate>
+      <description>Day-0 vLLM support for Muse Spark Open: 816B MoE, 1M context, multimodal inputs, DSpark speculative decoding, NVIDIA and AMD serving, initial TPU support, and LoRA RL.</description>
+      <category>model-support</category>
+      <category>speculative-decoding</category>
+      <category>reinforcement-learning</category>
+      <dc:creator>vLLM Team</dc:creator>
+    </item>
+    <item>
+      <title>Announcing Day 0 Support for NVIDIA Nemotron 3.5 Super VL on vLLM</title>
+      <link>https://vllm.ai/blog/2026-10-15-nemotron-3-5-super-vl-vllm</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-10-15-nemotron-3-5-super-vl-vllm</guid>
+      <pubDate>Thu, 15 Oct 2026 00:00:00 GMT</pubDate>
+      <description>Run NVIDIA Nemotron 3.5 Super VL on vLLM for multimodal agent workflows with image, document, and video understanding, OpenAI-compatible serving, and multi-token prediction.</description>
+      <category>model-support</category>
+      <dc:creator>NVIDIA Nemotron Team</dc:creator>
+    </item>
+    <item>
+      <title>Adaptive Verification Without a Confidence Head</title>
+      <link>https://vllm.ai/blog/2026-10-14-adaptive-verification-online-estimator</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-10-14-adaptive-verification-online-estimator</guid>
+      <pubDate>Wed, 14 Oct 2026 00:00:00 GMT</pubDate>
+      <description>An online-fitted acceptance estimator that lets every draft-model speculator use Adaptive Verification, by predicting the target&apos;s acceptance probability from the drafter&apos;s own logits and refitting continuously during serving.</description>
+      <category>speculative-decoding</category>
+      <category>performance</category>
+      <dc:creator>Giancarlo Delfin (Inferact)</dc:creator>
+    </item>
+    <item>
+      <title>Push-Based KV Transfer to Improve TTFT and TPOT for Disaggregated Inference in vLLM</title>
+      <link>https://vllm.ai/blog/2026-10-14-nixl-push-connector</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-10-14-nixl-push-connector</guid>
+      <pubDate>Wed, 14 Oct 2026 00:00:00 GMT</pubDate>
+      <description>A push-based NIXL connector for vLLM disaggregated serving: the prefill instance writes KV directly into decode memory over RDMA, taking the router relay, decode-side allocation, and transfer setup off the TTFT critical path.</description>
+      <category>disaggregation</category>
+      <category>kv_cache</category>
+      <category>nixl</category>
+      <category>performance</category>
+      <dc:creator>Sunita Nadampalli (AWS), Nicolò Lucchesi (Mistral)</dc:creator>
+    </item>
+    <item>
+      <title>Finish RL Training Faster: Bitwise-Consistent, High-Performance, Agent-Driven</title>
+      <link>https://vllm.ai/blog/2026-10-14-train-inference-consistency</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-10-14-train-inference-consistency</guid>
+      <pubDate>Wed, 14 Oct 2026 00:00:00 GMT</pubDate>
+      <description>We make vLLM rollout and the training forward give bitwise identical logprobs on DeepSeek-V4-Flash and Nemotron-3.5-Lightning-30B-A3B (NVFP4), keep 91% of rollout throughput on DeepSeek-V4-Flash, and open-source the agent skill.</description>
+      <category>reinforcement-learning</category>
+      <category>deepseek</category>
+      <dc:creator>Yan Bai (NVIDIA DevTech), Ao Shen (Inferact)</dc:creator>
+    </item>
+    <item>
+      <title>Improve TTFT for Multi-Turn Agentic Workloads with Bi-Directional KV Transfer in vLLM</title>
+      <link>https://vllm.ai/blog/2026-10-12-bidirectional-kvxfer-multiturn-agentic-workload</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-10-12-bidirectional-kvxfer-multiturn-agentic-workload</guid>
+      <pubDate>Mon, 12 Oct 2026 00:00:00 GMT</pubDate>
+      <description>Bi-directional KV transfer lets vLLM prefill nodes reuse previously computed KV from decode nodes on later conversation turns, cutting redundant prefill recompute and reducing TTFT by up to 3.3x on long multi-turn prompts.</description>
+      <category>disaggregation</category>
+      <category>kv_cache</category>
+      <category>nixl</category>
+      <category>performance</category>
+      <dc:creator>Sunita Nadampalli (AWS)</dc:creator>
+    </item>
+    <item>
+      <title>MAGI-2 Preview on vLLM-Omni: Bringing a 114B Audio-Video MoE DiT to Moore Threads MUSA with torchada</title>
+      <link>https://vllm.ai/blog/2026-10-12-magi2-preview-musa</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-10-12-magi2-preview-musa</guid>
+      <pubDate>Mon, 12 Oct 2026 00:00:00 GMT</pubDate>
+      <description>vLLM-Omni runs Sand AI&apos;s MAGI-2 Preview audio-video generation model on eight Moore Threads MTT S5000 GPUs through torchada&apos;s CUDA compatibility layer, then optimizes MoE, mHC, attention, parallelism, and compilation.</description>
+      <category>performance</category>
+      <category>hardware</category>
+      <category>multimodal</category>
+      <category>vllm-omni</category>
+      <category>moe</category>
+      <dc:creator>Moore Threads Team and vLLM-Omni Team</dc:creator>
+    </item>
+    <item>
+      <title>vLLM Support for NVIDIA Vera Rubin NVL72: 7.8x Throughput over GB200 NVL72</title>
+      <link>https://vllm.ai/blog/2026-10-09-vera-rubin-preview</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-10-09-vera-rubin-preview</guid>
+      <pubDate>Fri, 09 Oct 2026 00:00:00 GMT</pubDate>
+      <description>vLLM now runs on NVIDIA Vera Rubin NVL72 with day-0 model support, Rubin-tuned FlashInfer kernels, and locality-aware MoE, delivering 7.8x the per-GPU throughput of GB200 NVL72 on AgentX.</description>
+      <category>hardware</category>
+      <category>performance</category>
+      <dc:creator>vLLM Team, Inferact, Red Hat, and NVIDIA</dc:creator>
+    </item>
+    <item>
+      <title>DeepSeek-V4.1-Flash on vLLM: 5x Agentic Throughput Since Day 0</title>
+      <link>https://vllm.ai/blog/2026-10-07-deepseek-v41-flash</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-10-07-deepseek-v41-flash</guid>
+      <pubDate>Wed, 07 Oct 2026 00:00:00 GMT</pubDate>
+      <description>Within three weeks of release, vLLM made DeepSeek-V4.1-Flash 1.9x faster at low concurrency and lifted its throughput 5x on SemiAnalysis AgentX, with SWA bounded replay, CUDA graphs, DeepSeek&apos;s new kernels, and vLLM kernel fusions.</description>
+      <category>deepseek</category>
+      <category>performance</category>
+      <category>kernels</category>
+      <dc:creator>Inferact and the vLLM Team</dc:creator>
+    </item>
+    <item>
+      <title>Taking vLLM Apart: A Practical Guide to Disaggregated Serving</title>
+      <link>https://vllm.ai/blog/2026-09-29-disaggregated-serving-guide</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-09-29-disaggregated-serving-guide</guid>
+      <pubDate>Tue, 29 Sep 2026 00:00:00 GMT</pubDate>
+      <description>What disaggregated serving actually buys you, how to run it end to end in vLLM today with prefill/decode plus the new GPU-less frontend and the things we&apos;re still working on.</description>
+      <category>disaggregation</category>
+      <dc:creator>Martin Hickey (IBM Research)</dc:creator>
+    </item>
+    <item>
+      <title>Watermarking in vLLM</title>
+      <link>https://vllm.ai/blog/2026-09-24-watermarking-in-vllm</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-09-24-watermarking-in-vllm</guid>
+      <pubDate>Thu, 24 Sep 2026 00:00:00 GMT</pubDate>
+      <description>How vLLM implements distribution-preserving Gumbel-max text watermarking with efficient GPU kernels, statistical detection, speculative decoding, and repeated-context safeguards.</description>
+      <category>watermarking</category>
+      <category>sampling</category>
+      <category>speculative-decoding</category>
+      <category>performance</category>
+      <dc:creator>Raphaël Rialland (Mistral), Simon Veitner (Red Hat), and Tomas Ruiz (Red Hat)</dc:creator>
+    </item>
+    <item>
+      <title>Reducing vLLM startup time with one uv flag</title>
+      <link>https://vllm.ai/blog/2026-09-22-python-bytecode-startup</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-09-22-python-bytecode-startup</guid>
+      <pubDate>Tue, 22 Sep 2026 00:00:00 GMT</pubDate>
+      <description>Shipping Python bytecode saved about 18 seconds per startup in H100 server benchmarks, with images and models already local.</description>
+      <category>performance</category>
+      <category>deployment</category>
+      <dc:creator>Nils Matteson</dc:creator>
+    </item>
+    <item>
+      <title>Announcing vllm-metal: Concurrent Serving on Apple Silicon</title>
+      <link>https://vllm.ai/blog/2026-09-22-vllm-metal-v0-28-0</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-09-22-vllm-metal-v0-28-0</guid>
+      <pubDate>Tue, 22 Sep 2026 00:00:00 GMT</pubDate>
+      <description>vllm-metal brings vLLM&apos;s paged, continuously batched serving stack to Apple Silicon, with flatter TTFT under concurrent agent load, batched MTP, and automatic M5 prefill acceleration.</description>
+      <category>apple-silicon</category>
+      <category>hardware</category>
+      <category>performance</category>
+      <category>ecosystem</category>
+      <dc:creator>Ranran Haoran Zhang, Lik Xun Yuan, Chao Ju Chen, Eric Curtin, Michael Goin</dc:creator>
+    </item>
+    <item>
+      <title>PD Serving of Qwen3.8-2.4T</title>
+      <link>https://vllm.ai/blog/2026-09-21-qwen38-pd-serving</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-09-21-qwen38-pd-serving</guid>
+      <pubDate>Mon, 21 Sep 2026 00:00:00 GMT</pubDate>
+      <description>How vLLM reaches 5K throughput and 180 interactivity on Qwen3.8-2.4T with GB300 NVL72 PD serving and how to reproduce results yourself.</description>
+      <category>performance</category>
+      <category>qwen3.8</category>
+      <category>disaggregation</category>
+      <dc:creator>vLLM Team</dc:creator>
+    </item>
+    <item>
+      <title>Scaling Multi-GPU Video Captioning with PyNvVideoCodec and vLLM</title>
+      <link>https://vllm.ai/blog/2026-09-18-pynvvideocodec</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-09-18-pynvvideocodec</guid>
+      <pubDate>Fri, 18 Sep 2026 00:00:00 GMT</pubDate>
+      <description>How to leverage NVIDIA Hardware Video Decoders to Achieve Multi-GPU Scaling in Video Captioning and Description tasks.</description>
+      <category>performance</category>
+      <category>multimodal</category>
+      <category>hardware</category>
+      <dc:creator>NVIDIA Computer Vision Team (NVCV)</dc:creator>
+    </item>
+    <item>
+      <title>How we trained the fastest DSpark for Kimi-K3 using GB300 NVL72</title>
+      <link>https://vllm.ai/blog/2026-09-15-kimi-k3-dspark</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-09-15-kimi-k3-dspark</guid>
+      <pubDate>Tue, 15 Sep 2026 00:00:00 GMT</pubDate>
+      <description>How Speculators and Mooncake enabled multi-node DSpark training for Kimi K3.</description>
+      <category>speculators</category>
+      <category>speculative-decoding</category>
+      <category>performance</category>
+      <category>distributed</category>
+      <dc:creator>Helen Zhao, Fynn Schmitt-Ulms, Yuchen Fama, Antonio J. Dominguez, and Kevin Li</dc:creator>
+    </item>
+    <item>
+      <title>vLLM x Novita AI: Chord, Faster INT4 MoE for Kimi K2.x. Up to 1.3x on H200, 2.15x on Untuned B300</title>
+      <link>https://vllm.ai/blog/2026-09-15-novita-chord-w4a16-moe</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-09-15-novita-chord-w4a16-moe</guid>
+      <pubDate>Tue, 15 Sep 2026 00:00:00 GMT</pubDate>
+      <description>Novita AI has open-sourced Chord, a high-performance W4A16 MoE CUDA kernel for Kimi K2.x serving shapes, with a Humming-compatible indexed path and grouped SM90 operators.</description>
+      <category>performance</category>
+      <category>quantization</category>
+      <category>moe</category>
+      <category>hardware</category>
+      <dc:creator>Novita AI and the vLLM Team</dc:creator>
+    </item>
+    <item>
+      <title>vime × RL-Kernel × AMD: Bitwise Train–Rollout Consistency on ROCm</title>
+      <link>https://vllm.ai/blog/2026-09-14-rl-kernel-v0-1-0-train-rollout-bitwise-consistency</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-09-14-rl-kernel-v0-1-0-train-rollout-bitwise-consistency</guid>
+      <pubDate>Mon, 14 Sep 2026 00:00:00 GMT</pubDate>
+      <description>vime and RL-Kernel align selected-token logprobs bit for bit across Megatron training and vLLM rollout on AMD Instinct MI300X, with zero mismatches across 200 GRPO steps.</description>
+      <category>reinforcement-learning</category>
+      <category>post-training</category>
+      <category>performance</category>
+      <category>hardware</category>
+      <category>ecosystem</category>
+      <dc:creator>RL-Kernel Team, vime Team, and AMD Team</dc:creator>
+    </item>
+    <item>
+      <title>Kimi K3 Performance Optimizations in vLLM: The Road to 2.8× Throughput</title>
+      <link>https://vllm.ai/blog/2026-09-13-kimi-k3-performance-optimization</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-09-13-kimi-k3-performance-optimization</guid>
+      <pubDate>Sun, 13 Sep 2026 00:00:00 GMT</pubDate>
+      <description>Kimi K3 serving optimizations across scheduling, KDA prefix caching, ReplaySSM state recovery, PD disaggregation and state offload, parallelism, MoE, and GPU kernels.</description>
+      <category>models</category>
+      <category>performance</category>
+      <category>kernels</category>
+      <category>speculative-decoding</category>
+      <dc:creator>Wentao Ye (Red Hat), Canlin Guo (Huawei), Yongye Zhu (Inferact), Jiangyun Zhu (Inferact), Ziming Huang (Inferact), Wei Zhao (NVIDIA), Michael Goin (Red Hat), Jie Li (Inferact)</dc:creator>
+    </item>
+    <item>
+      <title>Following the Bottleneck: Optimizing MiniMax M3 on AMD Instinct MI355X</title>
+      <link>https://vllm.ai/blog/2026-09-10-minimax-m3-mi355x</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-09-10-minimax-m3-mi355x</guid>
+      <pubDate>Thu, 10 Sep 2026 00:00:00 GMT</pubDate>
+      <description>A performance model for LLM serving: inspect local shapes, remove repeated work, verify data movement and dispatch, then follow the queue.</description>
+      <category>hardware</category>
+      <category>performance</category>
+      <category>moe</category>
+      <category>speculative-decoding</category>
+      <category>disaggregation</category>
+      <dc:creator>AMD and Embedded LLM Teams</dc:creator>
+    </item>
+    <item>
+      <title>Tiered KV Cache Offloading in vLLM</title>
+      <link>https://vllm.ai/blog/2026-09-10-tiered-kv-offloading</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-09-10-tiered-kv-offloading</guid>
+      <pubDate>Thu, 10 Sep 2026 00:00:00 GMT</pubDate>
+      <description>A host-centric framework for scaling KV cache across host memory, filesystems, object stores, and remote peers — reducing recomputation and increasing serving capacity.</description>
+      
+      <dc:creator>Or Ozeri, Danny Harnik, Ronen Schaffer, Itay Etelis, Varun Sundar Rabindranath</dc:creator>
+    </item>
+    <item>
+      <title>GLM 5.3 Optimizations, Part 1: Hybrid HiSparse Offloading in vLLM</title>
+      <link>https://vllm.ai/blog/2026-09-08-glm53-part1-hybrid-sparse-offloading</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-09-08-glm53-part1-hybrid-sparse-offloading</guid>
+      <pubDate>Tue, 08 Sep 2026 00:00:00 GMT</pubDate>
+      <description>vLLM integrates HiSparse as a pressure-driven memory tier that composes with the Hybrid Memory Allocator and KV offloading, letting GLM 5.3 requests keep decoding when their KV no longer fits in GPU memory, so concurrency stays high.</description>
+      <category>glm</category>
+      <category>kv-cache</category>
+      <category>performance</category>
+      <dc:creator>vLLM Team</dc:creator>
+    </item>
+    <item>
+      <title>vLLM x AgentX: Optimizing for Real-World Agentic Serving</title>
+      <link>https://vllm.ai/blog/2026-09-08-vllm-agentx</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-09-08-vllm-agentx</guid>
+      <pubDate>Tue, 08 Sep 2026 00:00:00 GMT</pubDate>
+      <description>How vLLM optimizes KV cache management, parallelism, scheduling, and P/D disaggregation for agentic workloads, validated on SemiAnalysis AgentX with up to 130K tokens per GPU-second and a 14.6x-106x serving-cost advantage over Opus 5.</description>
+      <category>agentic</category>
+      <category>kv_cache</category>
+      <category>parallelism</category>
+      <category>large-scale-serving</category>
+      <category>disaggregation</category>
+      <category>performance</category>
+      <dc:creator>vLLM Team and Inferact</dc:creator>
+    </item>
+    <item>
+      <title>Serving LLMs on Tenstorrent Hardware: Inside the vLLM TT Plugin</title>
+      <link>https://vllm.ai/blog/2026-09-07-vllm-tt-plugin</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-09-07-vllm-tt-plugin</guid>
+      <pubDate>Mon, 07 Sep 2026 00:00:00 GMT</pubDate>
+      <description>Tenstorrent accelerators join vLLM as an out-of-tree platform plugin, driven by mesh-architecture choices: phase-based scheduling, single-process data parallelism on Galaxy, on-device sampling with host fallback, and async decode overlap.</description>
+      <category>hardware</category>
+      <category>ecosystem</category>
+      <dc:creator>Tenstorrent Team</dc:creator>
+    </item>
+    <item>
+      <title>MiniMax H3 on vLLM-Omni: From System-Wide Optimization to Real-Time Serving with FastVideo’s FastH3</title>
+      <link>https://vllm.ai/blog/2026-09-01-minimax-h3-production-serving</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-09-01-minimax-h3-production-serving</guid>
+      <pubDate>Tue, 01 Sep 2026 00:00:00 GMT</pubDate>
+      <description>How vLLM-Omni optimizes and scales the complete MiniMax H3 stack, then integrates FastVideo’s four-step FastH3 for generation faster than playback.</description>
+      <category>performance</category>
+      <category>large-scale-serving</category>
+      <category>multimodal</category>
+      <category>vllm-omni</category>
+      <category>fastvideo</category>
+      <category>fasth3</category>
+      <dc:creator>vLLM-Omni Team</dc:creator>
+    </item>
+    <item>
+      <title>Exploring Speculative Decoding in vLLM on AMD GPUs</title>
+      <link>https://vllm.ai/blog/2026-08-23-speculative-decoding-amd-gpus</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-08-23-speculative-decoding-amd-gpus</guid>
+      <pubDate>Sun, 23 Aug 2026 00:00:00 GMT</pubDate>
+      <description>A practical guide to speculative decoding in vLLM on AMD GPUs, covering draft-and-verify mechanics, MTP, EAGLE-3, DFlash, DSpark, configuration, tuning, and benchmark results.</description>
+      <category>speculative-decoding</category>
+      <category>amd</category>
+      <dc:creator>AMD and Embedded LLM</dc:creator>
+    </item>
+    <item>
+      <title>Large-Scale Sharded Weight Transfer with Ray Direct Transport (RDT) in vLLM</title>
+      <link>https://vllm.ai/blog/2026-08-22-rdt-weight-transfer</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-08-22-rdt-weight-transfer</guid>
+      <pubDate>Sat, 22 Aug 2026 00:00:00 GMT</pubDate>
+      <description>We implement a native sharded weight transfer engine in vLLM utilizing Ray Direct Transport (RDT), achieving weight transfer for the Kimi K2 model in BF16 on 48 8xH100 nodes in 7.53s</description>
+      <category>reinforcement-learning</category>
+      <category>performance</category>
+      <dc:creator>Aaron Hao, Sumanth Hegde, Gal Meirom, Istvan Haller, Kourosh Hakhamaneshi, Gavin Parnaby, Moein Khazraee, Omri Kahalon</dc:creator>
+    </item>
+    <item>
+      <title>IsoExec: Unified Execution to Eliminate Trainer-Inference Mismatch in SkyRL</title>
+      <link>https://vllm.ai/blog/2026-08-21-isoexec</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-08-21-isoexec</guid>
+      <pubDate>Fri, 21 Aug 2026 00:00:00 GMT</pubDate>
+      <description>IsoExec unifies numerical execution across SkyRL&apos;s vLLM and Megatron runtimes, reducing the average rollout-versus-training logprob difference below 1e-6 on Qwen3.5-35B-A3B with 25% overhead.</description>
+      <category>reinforcement-learning</category>
+      <category>performance</category>
+      <dc:creator>Alexander Jiang and the SkyRL Team</dc:creator>
+    </item>
+    <item>
+      <title>VeRL-Omni v0.2.0: Faster Diffusion RL and Stable Omni Training</title>
+      <link>https://vllm.ai/blog/2026-08-20-verl-omni-v0-2-0</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-08-20-verl-omni-v0-2-0</guid>
+      <pubDate>Thu, 20 Aug 2026 00:00:00 GMT</pubDate>
+      <description>A release focused on higher-throughput diffusion rollout, reusable omni adapters, and broader recipe coverage.</description>
+      <category>multimodal</category>
+      <category>rlhf</category>
+      <category>ecosystem</category>
+      <category>performance</category>
+      <dc:creator>VeRL-Omni Team</dc:creator>
+    </item>
+    <item>
+      <title>Distributed Layerwise Offload: Scaling Toward 200B+ DiT Models Efficiently in vLLM-Omni</title>
+      <link>https://vllm.ai/blog/2026-08-17-distributed-layerwise-offload</link>
+      <guid isPermaLink="true">https://vllm.ai/blog/2026-08-17-distributed-layerwise-offload</guid>
+      <pubDate>Mon, 17 Aug 2026 00:00:00 GMT</pubDate>
+      <description>Distributed Layerwise Offload shards and streams DiT weights across devices, serving a measured 124 GB Cosmos3 model on 64 GB HBM and estimating a path toward 200B+ models.</description>
+      <category>performance</category>
+      <category>distributed</category>
+      <category>vllm-omni</category>
+      <category>cosmos3</category>
+      <dc:creator>vLLM-Omni Diffusion Team</dc:creator>
+    </item>
+  </channel>
+</rss>
