@@ -44,6 +44,12 @@ export interface RunRef {
   scheduled_slot: string | null;
 }
 
+/** A Topic's schedule preset. Times are `HH:MM` UTC; `weekday` is 0-6, Sunday to Saturday. */
+export type Schedule =
+  | { kind: "every_n_hours"; interval_hours: number }
+  | { kind: "daily"; time_utc: string }
+  | { kind: "weekly"; weekday: number; time_utc: string };
+
 /** A Run as stored. Times are ISO 8601 UTC. */
 export interface Run extends RunRef {
   status: RunStatus;

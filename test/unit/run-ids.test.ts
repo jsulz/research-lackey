@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isValidTopicId, manualRunId, parseRunParams } from "../../src/core/run-ids";
+import { isValidTopicId, manualRunId, parseRunParams, scheduledRun } from "../../src/core/run-ids";
 
 // Workflow instance IDs allow only letters, digits, `-` and `_`, up to 100 characters.
 const INSTANCE_ID = /^[a-zA-Z0-9_][a-zA-Z0-9-_]{0,99}$/;
@@ -14,6 +14,21 @@ describe("manualRunId", () => {
   it("is a valid Workflow instance ID for the longest allowed Topic ID", () => {
     const id = manualRunId("a".repeat(76), new Date("2026-12-31T23:59:59Z"));
     expect(id).toMatch(INSTANCE_ID);
+  });
+});
+
+describe("scheduledRun", () => {
+  it("is topic-<topic>-<slot in ISO 8601 basic format, to the minute>, with the slot stored extended", () => {
+    expect(scheduledRun("ai-infra", new Date("2026-11-16T12:00:00Z"))).toEqual({
+      id: "topic-ai-infra-20261116T1200Z",
+      topic_id: "ai-infra",
+      kind: "scheduled",
+      scheduled_slot: "2026-11-16T12:00:00Z",
+    });
+  });
+
+  it("is a valid Workflow instance ID for the longest allowed Topic ID", () => {
+    expect(scheduledRun("a".repeat(76), new Date("2026-12-31T23:59:00Z")).id).toMatch(INSTANCE_ID);
   });
 });
 
