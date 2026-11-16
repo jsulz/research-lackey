@@ -1,8 +1,15 @@
 import { env } from "cloudflare:workers";
 
-/** Deletes every Run and the Items they recorded. Items reference Runs, so they go first. */
+/** Deletes every Run and what references it: Reports and Findings, Step rows, Items. */
 export async function deleteRuns(): Promise<void> {
-  await env.DB.batch([env.DB.prepare("DELETE FROM items"), env.DB.prepare("DELETE FROM runs")]);
+  await env.DB.batch([
+    env.DB.prepare("DELETE FROM finding_items"),
+    env.DB.prepare("DELETE FROM findings"),
+    env.DB.prepare("DELETE FROM reports"),
+    env.DB.prepare("DELETE FROM run_steps"),
+    env.DB.prepare("DELETE FROM items"),
+    env.DB.prepare("DELETE FROM runs"),
+  ]);
 }
 
 /** Deletes test Topics and their Sources, keeping the seed Topic `ai-infra` and its Sources. */

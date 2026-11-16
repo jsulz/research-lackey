@@ -32,6 +32,10 @@ export interface TaskConfig {
 export interface RunConfig {
   /** On a Source's first poll, every Item is recorded but only the newest this many pass onward. */
   first_poll_cap: number;
+  /** How many new Items, newest first, Synthesis reads. Until Triage (JSU-31), all it sees. */
+  synthesis_k: number;
+  /** Longest text, in characters, sent to a model per Item. Keeps prompts small and cheap. */
+  item_text_cap: number;
   /** Which model runs each task. T2 moves Synthesis to Sonnet by editing this table. */
   tasks: Record<TaskName, TaskConfig>;
   /** Price table per model ID. Update it when Anthropic changes prices (ADR-0004). */
@@ -40,6 +44,8 @@ export interface RunConfig {
 
 export const CONFIG: RunConfig = {
   first_poll_cap: 10,
+  synthesis_k: 5,
+  item_text_cap: 4_000,
   tasks: {
     synthesis: { model: "claude-haiku-5-5", effort: "medium", max_tokens: 16_000 },
   },

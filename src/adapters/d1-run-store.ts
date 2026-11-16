@@ -1,6 +1,8 @@
 import type {
   FinalStatus,
   Item,
+  ReportFinding,
+  ReportRecord,
   Run,
   RunConfigRecord,
   RunRef,
@@ -8,6 +10,9 @@ import type {
   RunStore,
   Schedule,
   Source,
+  StepName,
+  StepUsage,
+  Topic,
   TopicLastChecked,
   TopicSchedule,
 } from "../core/ports";
@@ -168,6 +173,13 @@ export class D1RunStore implements RunStore {
       .first<Run>();
   }
 
+  async getTopic(topicId: string): Promise<Topic | null> {
+    return this.db
+      .prepare("SELECT id, name, research_goal FROM topics WHERE id = ?")
+      .bind(topicId)
+      .first<Topic>();
+  }
+
   async listFeedSources(topicId: string): Promise<Source[]> {
     const { results } = await this.db
       .prepare(
@@ -235,6 +247,96 @@ export class D1RunStore implements RunStore {
         ),
       ),
     );
+  }
+
+  async recordStepArtifact(runId: string, step: StepName, artifactKey: string): Promise<void> {
+    await this.db
+      .prepare(
+        `INSERT INTO run_steps (run_id, step, artifact_key) VALUES (?, ?, ?)
+         ON CONFLICT (run_id, step) DO UPDATE SET artifact_key = excluded.artifact_key`,
+      )
+      .bind(runId, step, artifactKey)
+      .run();
+  }
+
+  async recordStepUsage(runId: string, step: StepName, record: StepUsage): Promise<void> {
+    const u = record.usage;
+    await this.db
+      .prepare(
+        `INSERT INTO run_steps
+           (run_id, step, model, input_tokens, output_tokens, cache_read_tokens,
+            cache_write_tokens, cost_usd)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+         ON CONFLICT (run_id, step) DO UPDATE SET
+           model = excluded.model,
+           input_tokens = excluded.input_tokens,
+           output_tokens = excluded.output_tokens,
+           cache_read_tokens = excluded.cache_read_tokens,
+           cache_write_tokens = excluded.cache_write_tokens,
+           cost_usd = excluded.cost_usd`,
+      )
+      .bind(
+        runId,
+        step,
+        record.model,
+        u.input_tokens,
+        u.output_tokens,
+        u.cache_read_input_tokens,
+        u.cache_write_5m_input_tokens + u.cache_write_1h_input_tokens,
+        record.cost_usd,
+      )
+      .run();
+  }
+
+  async saveReport(report: ReportRecord, findings: ReportFinding[]): Promise<void> {
+    const db = this.db;
+    const statements = [
+      db
+        .prepare(
+          `INSERT INTO reports
+             (id, run_id, topic_id, published_at, public, r2_key, summary, finding_count)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+           ON CONFLICT (id) DO UPDATE SET
+             published_at = excluded.published_at,
+             public = excluded.public,
+             r2_key = excluded.r2_key,
+             summary = excluded.summary,
+             finding_count = excluded.finding_count`,
+        )
+        .bind(
+          report.id,
+          report.run_id,
+          report.topic_id,
+          report.published_at,
+          report.public ? 1 : 0,
+          report.r2_key,
+          report.summary,
+          report.finding_count,
+        ),
+      // A retried publish replaces the Findings saved by an earlier attempt.
+      db
+        .prepare(
+          "DELETE FROM finding_items WHERE finding_id IN (SELECT id FROM findings WHERE report_id = ?)",
+        )
+        .bind(report.id),
+      db.prepare("DELETE FROM findings WHERE report_id = ?").bind(report.id),
+    ];
+    const insertFinding = db.prepare(
+      `INSERT INTO findings (id, report_id, title, what_is_new, why_it_matters, position)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+    );
+    const insertLink = db.prepare(
+      "INSERT INTO finding_items (finding_id, source_id, item_key) VALUES (?, ?, ?)",
+    );
+    for (const f of findings) {
+      statements.push(
+        insertFinding.bind(f.id, report.id, f.title, f.what_is_new, f.why_it_matters, f.position),
+      );
+      for (const item of f.items) {
+        statements.push(insertLink.bind(f.id, item.source_id, item.item_key));
+      }
+    }
+    await db.batch(statements);
   }
 
   /** Sets a final status on a Run whose status is in `from`. Duration counts from `started_at`. */
