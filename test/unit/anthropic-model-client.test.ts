@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { AnthropicModelClient } from "../../src/adapters/anthropic-model-client";
 import type { ModelRequest } from "../../src/core/ports";
 
@@ -190,5 +190,28 @@ describe("AnthropicModelClient logging", () => {
     const prompt = debug.find((l) => typeof l.prompt === "string");
     expect(prompt?.prompt.length).toBeLessThan(10_000);
     expect(debug.some((l) => typeof l.response === "string")).toBe(true);
+  });
+});
+
+describe("AnthropicModelClient and the SDK's own logger", () => {
+  const saved = process.env.ANTHROPIC_LOG;
+  afterEach(() => {
+    vi.restoreAllMocks();
+    if (saved === undefined) delete process.env.ANTHROPIC_LOG;
+    else process.env.ANTHROPIC_LOG = saved;
+  });
+
+  it("writes nothing to the console, so the gateway token can't leak, even with ANTHROPIC_LOG=debug", async () => {
+    process.env.ANTHROPIC_LOG = "debug";
+    const printed: string[] = [];
+    for (const method of ["log", "debug", "info", "warn", "error"] as const) {
+      vi.spyOn(console, method).mockImplementation((...args: unknown[]) => {
+        printed.push(args.map((a) => (typeof a === "string" ? a : JSON.stringify(a))).join(" "));
+      });
+    }
+    const { client } = clientAnswering(recorded("structured-with-thinking"));
+    await client.call(REQUEST);
+    expect(printed.join("\n")).not.toContain(TOKEN);
+    expect(printed).toEqual([]);
   });
 });

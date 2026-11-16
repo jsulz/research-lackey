@@ -34,6 +34,9 @@ export class AnthropicModelClient implements ModelClient {
         authorization: null,
         "cf-aig-authorization": `Bearer ${token}`,
       },
+      // The SDK's own logger prints request headers at debug (ANTHROPIC_LOG) and doesn't redact
+      // `cf-aig-authorization`. Turn it off; this class logs through the injected Logger.
+      logLevel: "off",
       // Workflow steps own retries (with backoff), so the SDK doesn't retry on its own.
       maxRetries: 0,
       timeout: 120_000,
