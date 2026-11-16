@@ -1,0 +1,31 @@
+{
+  "id": "msg_01XFDUDYJgAACzvnptvVoYEL",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-haiku-5-5",
+  "content": [
+    {
+      "type": "thinking",
+      "thinking": "",
+      "signature": "EqQBCgIYAhIM1gbcDa9GJwZA2b3hGgxBdjrkzLoky3dl1pkiMOYds"
+    },
+    {
+      "type": "text",
+      "text": "{\"summary\":\"Two serving papers.\",\"findings\":[{\"title\":\"Faster decoding\",\"refs\":[\"I1\"]}]}"
+    }
+  ],
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "stop_details": null,
+  "usage": {
+    "input_tokens": 2481,
+    "output_tokens": 2967,
+    "cache_creation_input_tokens": 1500,
+    "cache_read_input_tokens": 320,
+    "cache_creation": { "ephemeral_5m_input_tokens": 1200, "ephemeral_1h_input_tokens": 300 },
+    "output_tokens_details": { "thinking_tokens": 1804 },
+    "server_tool_use": null,
+    "service_tier": "standard",
+    "inference_geo": "global"
+  }
+}

@@ -111,6 +111,16 @@ export interface Item {
   content_key: string;
 }
 
+/** What each Run stores about the settings that produced it. */
+export interface RunConfigRecord {
+  /** The effective config as canonical JSON (object keys sorted). */
+  config_snapshot: string;
+  /** SHA-256 of `config_snapshot`. */
+  config_hash: string;
+  /** SHA-256 of each prompt file's text, by prompt name. */
+  prompt_hashes: Record<string, string>;
+}
+
 /** All D1 access goes through this interface. */
 export interface RunStore {
   /** Every Topic, ordered by name, with its last-checked fields. */
@@ -129,6 +139,8 @@ export interface RunStore {
    * give the Topic a second active scheduled or manual Run.
    */
   markRunning(run: RunRef, at: Date): Promise<"running" | "topic_busy">;
+  /** Stores the Run's config snapshot, config hash and prompt hashes. */
+  recordRunConfig(runId: string, record: RunConfigRecord): Promise<void>;
   /** Ends a `running` Run with a final status, its end time and duration. */
   completeRun(runId: string, status: FinalStatus, at: Date): Promise<void>;
   /**
@@ -202,6 +214,59 @@ export interface Logger {
   info(msg: string, fields?: Record<string, unknown>): void;
   warn(msg: string, fields?: Record<string, unknown>): void;
   error(msg: string, fields?: Record<string, unknown>): void;
+}
+
+/** A pipeline stage that calls a model. Each maps to a model in the config's task table. */
+export type TaskName = "synthesis";
+
+/** Effort levels accepted by current Claude models. */
+export type Effort = "low" | "medium" | "high" | "xhigh" | "max";
+
+/** Token counts reported by Anthropic for one call. Cache writes are split by cache duration. */
+export interface ModelUsage {
+  input_tokens: number;
+  output_tokens: number;
+  cache_read_input_tokens: number;
+  cache_write_5m_input_tokens: number;
+  cache_write_1h_input_tokens: number;
+}
+
+/** Attribution sent with every model call. Searchable in the AI Gateway logs. */
+export interface ModelCallMetadata {
+  run_id: string;
+  topic_id: string;
+  step: StepName;
+  env: "dev" | "prod";
+}
+
+export interface ModelRequest {
+  task: TaskName;
+  model: string;
+  system: string;
+  prompt: string;
+  effort: Effort;
+  max_tokens: number;
+  /** When present, the response is constrained to this JSON schema (structured output). */
+  json_schema?: Record<string, unknown>;
+  metadata: ModelCallMetadata;
+}
+
+export interface ModelResponse {
+  /** The response text. With a JSON schema, this is the JSON document. */
+  text: string;
+  /** The parsed JSON when a schema was requested and the text parses; otherwise undefined. */
+  json?: unknown;
+  /** The model that served the call, as Anthropic reports it. */
+  model: string;
+  usage: ModelUsage;
+}
+
+/**
+ * Calls a Claude model. Throws when the call fails or yields no usable answer (a refusal, or
+ * output cut off at `max_tokens`). Cost is computed by the core from `usage`, not here.
+ */
+export interface ModelClient {
+  call(req: ModelRequest): Promise<ModelResponse>;
 }
 
 /** The current time, injected so tests can control it. */
