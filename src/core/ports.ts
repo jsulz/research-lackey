@@ -38,4 +38,5 @@ export interface Logger {
 /** The current time, injected so tests can control it. */
 export interface Clock {
   now(): Date;
+  today(): string;
 }
