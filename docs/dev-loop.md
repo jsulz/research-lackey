@@ -1,6 +1,6 @@
 # Dev loop config
 
-Read by the `ship-ticket` skill. Committed and public: no secrets, no private paths. Commands marked _(planned)_ do not exist yet; update this file in the same PR that adds them.
+How to work in this repo: commands, environments, receipts, conventions, ship steps and gotchas. Committed and public: no secrets, no private paths. Commands marked _(planned)_ do not exist yet; update this file in the same PR that adds them.
 
 ## Commands
 
@@ -32,7 +32,7 @@ There are no preview deployments. Cloudflare preview versions share production D
 | --------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | unit test, integration test | `npm run check > <run folder>/preflight/<ts>.log 2>&1`; quote the summary lines                                             |
 | captured API response       | `curl -s <base>/api/<path> \| jq` against local or production                                                               |
-| screenshot | `npm run screenshot -- <url> <file>.png --wait <selector>` (Playwright; first run on a machine: `npx playwright install chromium`). Add `--map lackey.jsulz.com=<ip>` when this machine cannot resolve a freshly deployed domain. Claude in Chrome also works when connected (`/chrome`) |
+| screenshot | `npm run screenshot -- <url> <file>.png --wait <selector>` (Playwright; first run on a machine: `npx playwright install chromium`). Add `--map lackey.jsulz.com=<ip>` when this machine cannot resolve a freshly deployed domain |
 | log excerpt                 | `wrangler dev` terminal output locally; `npx wrangler tail --format json` in production                                     |
 | D1 or R2 state              | `npx wrangler d1 execute ...` and `npx wrangler r2 object get research-lackey/<key> --pipe` (add `--remote` for production) |
 | CI run | `gh run list --commit <sha>`, then `gh run view <id>` (add `--log-failed` for failures). Cite the run URL |
@@ -64,3 +64,4 @@ After merge to `main`, in order. Each step runs only after Jared approves it.
 - `curl` or the browser cannot resolve `lackey.jsulz.com` right after a deploy: a lookup before the domain existed cached a negative answer on this machine. Check with `dig @1.1.1.1 lackey.jsulz.com`, then use `curl --resolve lackey.jsulz.com:443:<ip>` and `npm run screenshot -- ... --map lackey.jsulz.com=<ip>`. Don't look up the domain locally before a first deploy.
 - A git worktree has no `.dev.vars` (gitignored). Copy it in before `npm run types`, or the generated `Env` drops its secrets and narrows `LOG_LEVEL` to `"info"`.
 - Integration tests read `.dev.vars` ("Using secrets defined in .dev.vars"). Tests must never log `env` values.
+- `npx wrangler r2 object get research-lackey/<content_key> --remote` fails with "The specified key does not exist" for Item content keys. The keys contain `%` (the Item identity is URI-encoded, for example `items/arxiv-serving/arxiv%3A2611.17097/<run_id>.md`), and Wrangler does not escape the key in the remote API URL, so `%3A` arrives as `:`. Escape each `%` as `%25`: `.../arxiv%253A2611.17097/<run_id>.md`. `--local` reads take the key as stored.
