@@ -1,4 +1,4 @@
-import { XMLParser } from "fast-xml-parser";
+import { XMLParser, XMLValidator } from "fast-xml-parser";
 import type { FeedFormat, RawItem } from "./ports";
 
 /** Parses a feed document into its entries, in feed order. Throws when the text is not a feed. */
@@ -27,8 +27,18 @@ const xml = new XMLParser({
 
 type Node = Record<string, unknown>;
 
+/** Parses well-formed XML. The parser alone accepts some malformed text, so validate first. */
+function parseXml(text: string): Node {
+  const valid = XMLValidator.validate(text);
+  if (valid !== true) {
+    const { msg, line } = valid.err;
+    throw new Error(`Feed is not well-formed XML: ${msg} (line ${line})`);
+  }
+  return xml.parse(text) as Node;
+}
+
 function parseRss(text: string): RawItem[] {
-  const doc = xml.parse(text) as Node;
+  const doc = parseXml(text);
   const channel = (doc.rss as Node | undefined)?.channel as Node | undefined;
   if (!channel) throw new Error("Not an RSS 2.0 document: no rss/channel element");
   const items = (channel.item as unknown[] | undefined) ?? [];
@@ -45,7 +55,7 @@ function parseRss(text: string): RawItem[] {
 }
 
 function parseAtom(text: string): RawItem[] {
-  const feed = (xml.parse(text) as Node).feed as Node | undefined;
+  const feed = parseXml(text).feed as Node | undefined;
   if (!feed) throw new Error("Not an Atom document: no feed element");
   const entries = (feed.entry as unknown[] | undefined) ?? [];
   return entries.map((node, i) => {

@@ -131,3 +131,12 @@ describe("parseFeed, identifiers and malformed entries", () => {
     expect(() => parseFeed(format, text)).toThrow(/entry 1/);
   });
 });
+
+describe("parseFeed, malformed XML", () => {
+  it.each([
+    ["rss2", "<rss><channel><item><guid>x</guid></item></wrong></rss>"],
+    ["atom", '<feed xmlns="http://www.w3.org/2005/Atom"><entry><id>x</id></feed>'],
+  ] as const)("%s rejects text that is not well-formed: %s", (format, text) => {
+    expect(() => parseFeed(format, text)).toThrow(/not well-formed XML.*line 1/);
+  });
+});

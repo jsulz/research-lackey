@@ -27,6 +27,38 @@ describe("itemKey, arXiv", () => {
   });
 });
 
+describe("itemKey, arXiv in any position", () => {
+  it.each([
+    ["hep-th/9901001", "arxiv:hep-th/9901001"],
+    ["hep-th/9901001v2", "arxiv:hep-th/9901001"],
+    ["2611.17097v4", "arxiv:2611.17097"],
+  ])("Daily Papers ID %s -> %s", (externalId, key) => {
+    expect(itemKey("hf_daily_papers", raw({ externalId }))).toBe(key);
+  });
+
+  it("gives an old-style paper one identity from arXiv and from Daily Papers", () => {
+    expect(itemKey("hf_daily_papers", raw({ externalId: "hep-th/9901001" }))).toBe(
+      itemKey("atom", raw({ externalId: "http://arxiv.org/abs/hep-th/9901001v2" })),
+    );
+  });
+
+  it("normalizes an arXiv link used as the identity when there is no GUID", () => {
+    const v1 = itemKey("rss2", raw({ url: "https://arxiv.org/abs/2611.17097v1" }));
+    const v2 = itemKey("rss2", raw({ url: "https://arxiv.org/abs/2611.17097v2" }));
+    expect(v1).toBe("arxiv:2611.17097");
+    expect(v2).toBe(v1);
+  });
+
+  it("keeps a non-arXiv GUID even when the link is an arXiv URL", () => {
+    expect(
+      itemKey(
+        "rss2",
+        raw({ externalId: "urn:blog:42", url: "https://arxiv.org/abs/2611.17097v1" }),
+      ),
+    ).toBe("urn:blog:42");
+  });
+});
+
 describe("itemKey, other feeds", () => {
   it("uses the GUID or Atom id as given, trimmed", () => {
     expect(itemKey("rss2", raw({ externalId: " https://vllm.ai/blog/a ", url: "x" }))).toBe(
