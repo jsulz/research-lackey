@@ -37,7 +37,7 @@ There are no preview deployments. Cloudflare preview versions share production D
 | D1 or R2 state              | `npx wrangler d1 execute ...` and `npx wrangler r2 object get research-lackey/<key> --pipe` (add `--remote` for production) |
 | CI run | `gh run list --commit <sha>`, then `gh run view <id>` (add `--log-failed` for failures). Cite the run URL |
 | deployed smoke              | The ticket's production Verify step against `https://lackey.jsulz.com`                                                      |
-| AI Gateway log              | Screenshot of the gateway's Logs view, filtered by metadata                                                                 |
+| AI Gateway log              | Screenshot of the gateway's Logs view, filtered by metadata; or the entry from the Cloudflare API, `GET /accounts/<account>/ai-gateway/gateways/<gateway>/logs/<log id>` (append `/response` for the body). The log ID is in the `model call` log line. Needs a token with AI Gateway Read, kept in `.dev.vars` as `CF_API_TOKEN` and never deployed |
 
 ## Conventions
 
