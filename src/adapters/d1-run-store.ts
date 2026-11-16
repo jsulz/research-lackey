@@ -4,7 +4,9 @@ import type {
   RunRef,
   RunStatus,
   RunStore,
+  Schedule,
   TopicLastChecked,
+  TopicSchedule,
 } from "../core/ports";
 
 /** SQL for the milliseconds between two ISO 8601 times, or NULL when the Run never started. */
@@ -38,14 +40,46 @@ export class D1RunStore implements RunStore {
     return results;
   }
 
-  async createQueuedRun(run: RunRef): Promise<void> {
-    await this.db
+  async dueTopicsInput(): Promise<TopicSchedule[]> {
+    const { results } = await this.db
+      .prepare(
+        `SELECT t.id, t.schedule_kind, t.schedule_interval_hours, t.schedule_weekday,
+                t.schedule_time_utc,
+                EXISTS (
+                  SELECT 1 FROM runs r
+                  WHERE r.topic_id = t.id AND r.kind IN ('scheduled', 'manual')
+                    AND r.status IN ('queued', 'running')
+                ) AS has_active_run
+         FROM topics t
+         ORDER BY t.id`,
+      )
+      .all<{
+        id: string;
+        schedule_kind: Schedule["kind"];
+        schedule_interval_hours: number | null;
+        schedule_weekday: number | null;
+        schedule_time_utc: string | null;
+        has_active_run: number;
+      }>();
+    // The topics CHECK constraint guarantees each kind's parameters are present.
+    return results.map((t) => ({
+      topic_id: t.id,
+      schedule: toSchedule(t),
+      has_active_run: t.has_active_run === 1,
+    }));
+  }
+
+  async createQueuedRun(run: RunRef): Promise<boolean> {
+    // DO NOTHING covers both the primary key and the one-Run-per-slot index.
+    const { meta } = await this.db
       .prepare(
         `INSERT INTO runs (id, topic_id, kind, scheduled_slot, status)
-         VALUES (?, ?, ?, ?, 'queued')`,
+         VALUES (?, ?, ?, ?, 'queued')
+         ON CONFLICT DO NOTHING`,
       )
       .bind(run.id, run.topic_id, run.kind, run.scheduled_slot)
       .run();
+    return meta.changes === 1;
   }
 
   async markRunning(run: RunRef, at: Date): Promise<void> {
@@ -120,5 +154,25 @@ export class D1RunStore implements RunStore {
       )
       .bind(status, stage, reason, ended, ended, runId)
       .run();
+  }
+}
+
+function toSchedule(t: {
+  schedule_kind: Schedule["kind"];
+  schedule_interval_hours: number | null;
+  schedule_weekday: number | null;
+  schedule_time_utc: string | null;
+}): Schedule {
+  switch (t.schedule_kind) {
+    case "every_n_hours":
+      return { kind: "every_n_hours", interval_hours: Number(t.schedule_interval_hours) };
+    case "daily":
+      return { kind: "daily", time_utc: String(t.schedule_time_utc) };
+    case "weekly":
+      return {
+        kind: "weekly",
+        weekday: Number(t.schedule_weekday),
+        time_utc: String(t.schedule_time_utc),
+      };
   }
 }

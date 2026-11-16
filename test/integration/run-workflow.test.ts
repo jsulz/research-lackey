@@ -13,7 +13,7 @@ function manualRun(id: string): RunRef {
 async function start(run: RunRef) {
   await env.RUN_WORKFLOW.create({
     id: run.id,
-    params: { topic_id: run.topic_id, kind: run.kind, scheduled_slot: run.scheduled_slot },
+    params: { topic_id: run.topic_id, kind: "manual", scheduled_slot: null },
   });
 }
 

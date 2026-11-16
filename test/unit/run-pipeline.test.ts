@@ -4,7 +4,6 @@ import type {
   Clock,
   FinalStatus,
   Logger,
-  Run,
   RunRef,
   RunStore,
   StepArtifact,

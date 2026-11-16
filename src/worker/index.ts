@@ -1,6 +1,8 @@
 import { D1RunStore } from "../adapters/d1-run-store";
 import { JsonLogger, parseLogLevel } from "../adapters/json-logger";
+import { WorkflowRunStarter } from "../adapters/workflow-run-starter";
 import type { Logger, RunStore } from "../core/ports";
+import { runScheduler } from "../core/scheduler";
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -41,6 +43,17 @@ export default {
       ms: Date.now() - started,
     });
     return response;
+  },
+
+  /** The 15-minute cron. Starts a Run for each due Topic. */
+  async scheduled(controller, env): Promise<void> {
+    await runScheduler({
+      tick: new Date(controller.scheduledTime),
+      store: new D1RunStore(env.DB),
+      starter: new WorkflowRunStarter(env.RUN_WORKFLOW),
+      clock: { now: () => new Date() },
+      log: new JsonLogger(parseLogLevel(env.LOG_LEVEL)),
+    });
   },
 } satisfies ExportedHandler<Env>;
 

@@ -55,12 +55,25 @@ export interface Run extends RunRef {
   duration_ms: number | null;
 }
 
+/** What the scheduler needs to decide whether a Topic is due. */
+export interface TopicSchedule {
+  topic_id: string;
+  schedule: Schedule;
+  /** True when a `scheduled` or `manual` Run of the Topic is `queued` or `running`. Replay Runs don't count. */
+  has_active_run: boolean;
+}
+
 /** All D1 access goes through this interface. */
 export interface RunStore {
   /** Every Topic, ordered by name, with its last-checked fields. */
   listTopicsLastChecked(): Promise<TopicLastChecked[]>;
-  /** Inserts the Run as `queued`. Throws `UNIQUE constraint failed` for a scheduled slot that already has a Run. */
-  createQueuedRun(run: RunRef): Promise<void>;
+  /** Every Topic with its schedule and whether it has an active Run, ordered by ID. */
+  dueTopicsInput(): Promise<TopicSchedule[]>;
+  /**
+   * Inserts the Run as `queued`. Returns false, inserting nothing, when a Run with that ID
+   * already exists or the Run's scheduled slot already has a Run.
+   */
+  createQueuedRun(run: RunRef): Promise<boolean>;
   /** Sets the Run `running`, inserting it first when it does not exist (manual Runs). Never changes a final status. */
   markRunning(run: RunRef, at: Date): Promise<void>;
   /** Ends a `running` Run with a final status, its end time and duration. */
@@ -94,6 +107,14 @@ export interface ArtifactStore {
  */
 export interface StepRunner {
   do<T>(name: string, fn: () => Promise<T>): Promise<T>;
+}
+
+/**
+ * Starts the Workflow instance for a Run, using the Run ID as the instance ID. Resolves
+ * `already_started` when an instance with that ID exists; throws on any other failure.
+ */
+export interface WorkflowStarter {
+  start(run: RunRef): Promise<"started" | "already_started">;
 }
 
 export type LogLevel = "debug" | "info" | "warn" | "error";
