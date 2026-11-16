@@ -4,7 +4,7 @@ import { fetchTopics, formatLastChecked, formatUtc } from "../../src/web/topics"
 describe("formatLastChecked", () => {
   it('reads "Not yet checked" when the Topic has no Run', () => {
     expect(formatLastChecked({ last_checked_at: null, last_run_status: null })).toBe(
-      "Not yet checked",
+      "Not yet checked (broken)",
     );
   });
 
