@@ -139,7 +139,10 @@ export interface RunStore {
    * give the Topic a second active scheduled or manual Run.
    */
   markRunning(run: RunRef, at: Date): Promise<"running" | "topic_busy">;
-  /** Stores the Run's config snapshot, config hash and prompt hashes. */
+  /**
+   * Stores the Run's config snapshot, config hash and prompt hashes. Called when the Run starts
+   * running, so a Run that ran no stage (rejected at `start`, failed at `schedule`) has none.
+   */
   recordRunConfig(runId: string, record: RunConfigRecord): Promise<void>;
   /** Ends a `running` Run with a final status, its end time and duration. */
   completeRun(runId: string, status: FinalStatus, at: Date): Promise<void>;
