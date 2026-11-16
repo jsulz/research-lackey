@@ -25,6 +25,7 @@ Scheduled research Runs on Cloudflare Workers. A Worker serves a React homepage 
 | `npm run check` | Both suites |
 | `npm run docs:interfaces` | Regenerate `docs/interfaces.md` from `src/core/ports.ts`. A unit test fails when it is stale |
 | `npm run types` | Regenerate `worker-configuration.d.ts` after changing `wrangler.jsonc` |
+| `npm run run:local -- --topic <id>` | Start a manual Run against `npm run dev` and print its Run ID (`--port` if not 8787) |
 | `npm run screenshot -- <url> <out.png>` | Screenshot a page with Playwright (`--wait <selector>`, `--map <host>=<ip>`) |
 | `npm run deploy` | Build and deploy to production |
 
