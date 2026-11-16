@@ -27,7 +27,8 @@ export class AnthropicModelClient implements ModelClient {
     this.client = new Anthropic({
       apiKey: "gateway-stored-key",
       baseURL: `https://gateway.ai.cloudflare.com/v1/${encodeURIComponent(accountId)}/${encodeURIComponent(gatewayId)}/anthropic`,
-      // The SDK sends its key as `x-api-key` and `Authorization`; the gateway must see neither.
+      // The SDK sends its key as `Authorization: Bearer`. Remove it, and `x-api-key` too in case
+      // an SDK release sends that: a key in `x-api-key` would bypass the gateway's stored key.
       defaultHeaders: {
         "x-api-key": null,
         authorization: null,
