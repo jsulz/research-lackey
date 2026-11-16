@@ -1,0 +1,37 @@
+# Runs the full check on every PR to main and every push to main.
+# No secrets: integration tests run the Worker locally in workerd/Miniflare.
+# The ruleset on main requires the job named `check`. Renaming it breaks merges until the ruleset is updated.
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+    # `edited` covers a PR whose base is changed to main. Title or body edits also re-run the
+    # check. Never skip the job on those: a skipped required check counts as passing.
+    types: [opened, synchronize, reopened, edited]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: node --version && npm --version
+      - run: npm ci
+      - run: npm run check

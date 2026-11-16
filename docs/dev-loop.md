@@ -34,6 +34,7 @@ There are no preview deployments. Cloudflare preview versions share production D
 | screenshot | `npm run screenshot -- <url> <file>.png --wait <selector>` (Playwright; first run on a machine: `npx playwright install chromium`). Add `--map lackey.jsulz.com=<ip>` when this machine cannot resolve a freshly deployed domain. Claude in Chrome also works when connected (`/chrome`) |
 | log excerpt                 | `wrangler dev` terminal output locally; `npx wrangler tail --format json` in production                                     |
 | D1 or R2 state              | `npx wrangler d1 execute ...` and `npx wrangler r2 object get research-lackey/<key> --pipe` (add `--remote` for production) |
+| CI run | `gh run list --commit <sha>`, then `gh run view <id>` (add `--log-failed` for failures). Cite the run URL |
 | deployed smoke              | The ticket's production Verify step against `https://lackey.jsulz.com`                                                      |
 | AI Gateway log              | Screenshot of the gateway's Logs view, filtered by metadata                                                                 |
 
@@ -43,7 +44,7 @@ There are no preview deployments. Cloudflare preview versions share production D
 - Commits and PR titles: `type(JSU-N): summary`, with type one of feat, fix, chore, docs, test, refactor.
 - PR ticket reference: `Part of JSU-N`. Never `Closes`. Tickets close only after production receipts.
 - Tracker: Linear, project "Autonomous Research Agent".
-- CI: GitHub Actions runs the full check on every PR _(planned)_.
+- CI: `.github/workflows/ci.yml`, job `check`, runs `npm ci && npm run check` on every PR to `main` and every push to `main`. The `main` ruleset requires `check` to pass. Renaming the job blocks every merge until the ruleset is updated.
 - TypeScript end to end. D1 access only through `RunStore` with hand-written SQL.
 
 ## Ship
