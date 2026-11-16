@@ -109,3 +109,25 @@ describe("parseFeed, unreadable text", () => {
     expect(() => parseFeed(format, text)).toThrow();
   });
 });
+
+describe("parseFeed, identifiers and malformed entries", () => {
+  it("keeps internal whitespace in GUIDs and links, trimming only the ends", () => {
+    const text = `<rss><channel>
+      <item><guid> a  b </guid><link>https://example.com/x  y</link><title>One</title></item>
+      <item><guid>a b</guid><title>Two</title></item></channel></rss>`;
+    const items = parseFeed("rss2", text);
+    expect(items.map((i) => i.externalId)).toEqual(["a  b", "a b"]);
+    expect(items[0]?.url).toBe("https://example.com/x  y");
+  });
+
+  it.each([
+    ["rss2", "<rss><channel><item/></channel></rss>"],
+    ["rss2", "<rss><channel><item><description>no id</description></item></channel></rss>"],
+    ["atom", '<feed xmlns="http://www.w3.org/2005/Atom"><entry></entry></feed>'],
+    ["hf_daily_papers", "[{},{}]"],
+    ["hf_daily_papers", '[{"title": "no paper id", "paper": {}}]'],
+    ["hf_daily_papers", "[1]"],
+  ] as const)("%s rejects an entry with no id, link or paper ID: %s", (format, text) => {
+    expect(() => parseFeed(format, text)).toThrow(/entry 1/);
+  });
+});
