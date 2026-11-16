@@ -1,6 +1,9 @@
 {
   "extends": "./tsconfig.base.json",
-  "compilerOptions": { "types": ["@cloudflare/vitest-plugin/types"] },
+  "compilerOptions": {
+    "lib": ["es2024", "esnext.disposable"],
+    "types": ["@cloudflare/vitest-plugin/types"]
+  },
   "include": [
     "worker-configuration.d.ts",
     "src/core",

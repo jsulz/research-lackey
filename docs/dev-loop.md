@@ -10,7 +10,7 @@ Read by the `ship-ticket` skill. Committed and public: no secrets, no private pa
 | Fast check | `npm test` | Biome lint and format, `tsc` type checks, unit tests in Node. No Workers runtime |
 | Full check | `npm run check` | Fast check, then `npm run test:integration` (Vite build, then the Worker in the Workers runtime with local D1). Includes the `docs/interfaces.md` freshness test |
 | Run locally | `npm run dev` | Builds the SPA, applies local D1 migrations, starts `wrangler dev` on `http://localhost:8787`. Set `LOG_LEVEL=debug` in `.dev.vars` |
-| Start a Run locally | `npm run run:local -- --topic <id>` | Needs `npm run dev` running _(planned)_ |
+| Start a Run locally | `npm run run:local -- --topic <id>` | Needs `npm run dev` running. Starts a `manual` Run with `wrangler workflows trigger --local` and prints its ID. Inspect it with `npx wrangler workflows instances describe research-run <id> --local` |
 | Replay a Run | `npm run replay -- --run <id> --from <stage> --config <file>` | Local only _(planned)_ |
 | Regenerate interface docs | `npm run docs:interfaces` | Writes `docs/interfaces.md` from `src/core/ports.ts` |
 | Regenerate binding types | `npm run types` | Rerun after changing `wrangler.jsonc` |
@@ -61,4 +61,5 @@ After merge to `main`, in order. Each step runs only after Jared approves it.
 - `biome migrate` can rewrite `"recommended": true` to `"preset": "none"`, which turns off every lint rule. Keep `"preset": "recommended"`.
 - npm blocks dependency install scripts by default (`npm install-scripts ls`). The `esbuild` and `workerd` binaries work without them. Approve one only if a tool fails to start.
 - `curl` or the browser cannot resolve `lackey.jsulz.com` right after a deploy: a lookup before the domain existed cached a negative answer on this machine. Check with `dig @1.1.1.1 lackey.jsulz.com`, then use `curl --resolve lackey.jsulz.com:443:<ip>` and `npm run screenshot -- ... --map lackey.jsulz.com=<ip>`. Don't look up the domain locally before a first deploy.
+- A git worktree has no `.dev.vars` (gitignored). Copy it in before `npm run types`, or the generated `Env` drops its secrets and narrows `LOG_LEVEL` to `"info"`.
 - Integration tests read `.dev.vars` ("Using secrets defined in .dev.vars"). Tests must never log `env` values.

@@ -13,7 +13,8 @@
     "test:integration": "vite build && vitest run --config vitest.integration.config.ts",
     "check": "npm test && npm run test:integration",
     "docs:interfaces": "node scripts/docs-interfaces.ts",
-    "screenshot": "node scripts/screenshot.ts"
+    "screenshot": "node scripts/screenshot.ts",
+    "run:local": "node scripts/run-local.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.8",
