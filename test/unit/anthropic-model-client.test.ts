@@ -132,6 +132,25 @@ describe("AnthropicModelClient request", () => {
 });
 
 describe("AnthropicModelClient response", () => {
+  it("parses a live Synthesis response body (exported from the gateway log) into its Report JSON and usage", async () => {
+    const { client } = clientAnswering(recorded("live-synthesis-haiku"));
+    const res = await client.call(REQUEST);
+    expect(res.model).toBe("claude-haiku-5-5");
+    expect(res.json).toMatchObject({
+      summary: expect.any(String),
+      key_developments: expect.any(Array),
+      implications: expect.any(String),
+      worth_watching: expect.any(Array),
+    });
+    expect(res.usage).toEqual({
+      input_tokens: 2649,
+      output_tokens: 1120,
+      cache_read_input_tokens: 0,
+      cache_write_5m_input_tokens: 0,
+      cache_write_1h_input_tokens: 0,
+    });
+  });
+
   it("returns the text after any thinking block, the parsed JSON, the model and the usage", async () => {
     const { client } = clientAnswering(recorded("structured-with-thinking"));
     const res = await client.call(REQUEST);
