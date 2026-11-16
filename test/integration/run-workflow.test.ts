@@ -104,6 +104,26 @@ describe("RunWorkflow", () => {
     expect(row.failure_reason).toContain("D1 unavailable");
   });
 
+  it("ends a manual Run failed at start, running no stage, when its Topic has an active scheduled Run", async () => {
+    const scheduled: RunRef = {
+      id: "topic-ai-infra-20261116T1200Z",
+      topic_id: "ai-infra",
+      kind: "scheduled",
+      scheduled_slot: "2026-11-16T12:00:00Z",
+    };
+    await store.createQueuedRun(scheduled);
+    const run = manualRun("wf-busy");
+    await using instance = await introspectWorkflowInstance(env.RUN_WORKFLOW, run.id);
+    await start(run);
+    await instance.waitForStatus("complete");
+
+    const row = await getRun(run.id);
+    expect(row).toMatchObject({ kind: "manual", status: "failed", failed_stage: "start" });
+    expect(row.failure_reason).toContain("active Run");
+    expect(await env.ARTIFACTS.get(`runs/${run.id}/steps/fetch.json`)).toBeNull();
+    expect((await getRun(scheduled.id)).status).toBe("queued");
+  });
+
   it("ends the Run failed, with the stage and reason, when a stage exhausts its retries", async () => {
     const run = manualRun("wf-fail");
     await store.createQueuedRun(run);

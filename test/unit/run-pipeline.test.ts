@@ -23,8 +23,11 @@ const RUN: RunRef = {
 class FakeRunStore implements Pick<RunStore, "markRunning" | "completeRun" | "failRun"> {
   statuses: string[] = ["queued"];
   failure: { stage: string; reason: string } | null = null;
-  async markRunning(_run: RunRef): Promise<void> {
+  topicBusy = false;
+  async markRunning(_run: RunRef): Promise<"running" | "topic_busy"> {
+    if (this.topicBusy) return "topic_busy";
     this.statuses.push("running");
+    return "running";
   }
   async completeRun(_id: string, status: FinalStatus): Promise<void> {
     this.statuses.push(status);
@@ -137,5 +140,24 @@ describe("runPipeline", () => {
     expect(store.statuses).toEqual(["queued", "running", "failed"]);
     expect(store.failure).toEqual({ stage: "dedupe", reason: "source unreachable" });
     expect(artifacts.items.has("runs/manual-ai-infra-1/steps/dedupe.json")).toBe(false);
+  });
+
+  it("ends the Run failed at start, running no stage, when its Topic has another active Run", async () => {
+    let ran = false;
+    const { store, artifacts, run } = setup([
+      {
+        name: "fetch",
+        run: async () => {
+          ran = true;
+          return { items: [] };
+        },
+      },
+    ]);
+    store.topicBusy = true;
+    await expect(run()).resolves.toBe("failed");
+    expect(store.statuses).toEqual(["queued", "failed"]);
+    expect(store.failure).toEqual({ stage: "start", reason: "Topic has an active Run" });
+    expect(ran).toBe(false);
+    expect(artifacts.items.size).toBe(0);
   });
 });

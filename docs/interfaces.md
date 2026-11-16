@@ -78,12 +78,16 @@ export interface RunStore {
   dueTopicsInput(): Promise<TopicSchedule[]>;
   /**
    * Inserts the Run as `queued`. Returns false, inserting nothing, when a Run with that ID
-   * already exists, the Run's scheduled slot already has a Run, or (except for a `replay`
-   * Run) the Topic has an active Run. The check and the insert are one atomic statement.
+   * already exists, the Run's scheduled slot already has a Run, or (for a scheduled or manual
+   * Run) the Topic already has an active scheduled or manual Run. D1 indexes enforce all three.
    */
   createQueuedRun(run: RunRef): Promise<boolean>;
-  /** Sets the Run `running`, inserting it first when it does not exist (manual Runs). Never changes a final status. */
-  markRunning(run: RunRef, at: Date): Promise<void>;
+  /**
+   * Sets the Run `running`, inserting it first when it does not exist (manual Runs). Never
+   * changes a final status. Returns `topic_busy`, changing nothing, when inserting it would
+   * give the Topic a second active scheduled or manual Run.
+   */
+  markRunning(run: RunRef, at: Date): Promise<"running" | "topic_busy">;
   /** Ends a `running` Run with a final status, its end time and duration. */
   completeRun(runId: string, status: FinalStatus, at: Date): Promise<void>;
   /**

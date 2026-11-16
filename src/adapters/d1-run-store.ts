@@ -14,6 +14,9 @@ const DURATION_MS = (ended: string, started: string) =>
   `CASE WHEN ${started} IS NULL THEN NULL
      ELSE CAST(round((julianday(${ended}) - julianday(${started})) * 86400000) AS INTEGER) END`;
 
+/** SQLite's error text when an insert breaks `runs_one_active_per_topic` (migration 0003). */
+const ONE_ACTIVE_PER_TOPIC = "UNIQUE constraint failed: runs.topic_id";
+
 /** RunStore backed by D1 with hand-written SQL (ADR-0005). */
 export class D1RunStore implements RunStore {
   constructor(private readonly db: D1Database) {}
@@ -70,17 +73,12 @@ export class D1RunStore implements RunStore {
   }
 
   async createQueuedRun(run: RunRef): Promise<boolean> {
-    // One statement, so the active-Run check and the insert are atomic. DO NOTHING covers
-    // both the primary key and the one-Run-per-slot index.
+    // DO NOTHING covers the primary key, the one-Run-per-slot index and the
+    // one-active-Run-per-Topic index.
     const { meta } = await this.db
       .prepare(
         `INSERT INTO runs (id, topic_id, kind, scheduled_slot, status)
-         SELECT ?1, ?2, ?3, ?4, 'queued'
-         WHERE ?3 = 'replay' OR NOT EXISTS (
-           SELECT 1 FROM runs
-           WHERE topic_id = ?2 AND kind IN ('scheduled', 'manual')
-             AND status IN ('queued', 'running')
-         )
+         VALUES (?, ?, ?, ?, 'queued')
          ON CONFLICT DO NOTHING`,
       )
       .bind(run.id, run.topic_id, run.kind, run.scheduled_slot)
@@ -88,8 +86,18 @@ export class D1RunStore implements RunStore {
     return meta.changes === 1;
   }
 
-  async markRunning(run: RunRef, at: Date): Promise<void> {
+  async markRunning(run: RunRef, at: Date): Promise<"running" | "topic_busy"> {
     // Manual Runs have no row until here. A retried step keeps the first start time.
+    try {
+      await this.markRunningRow(run, at);
+      return "running";
+    } catch (err) {
+      if (err instanceof Error && err.message.includes(ONE_ACTIVE_PER_TOPIC)) return "topic_busy";
+      throw err;
+    }
+  }
+
+  private async markRunningRow(run: RunRef, at: Date): Promise<void> {
     await this.db
       .prepare(
         `INSERT INTO runs (id, topic_id, kind, scheduled_slot, status, started_at)
