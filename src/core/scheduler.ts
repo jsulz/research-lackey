@@ -43,7 +43,12 @@ export async function runScheduler(deps: SchedulerDeps): Promise<void> {
       // Without this the queued Run would block its Topic forever.
       const reason = message(err);
       log.error("run not started", { run_id: run.id, error: reason });
-      await store.failRun(run.id, "schedule", reason, clock.now());
+      try {
+        await store.failRun(run.id, "schedule", reason, clock.now());
+      } catch (failErr) {
+        // The Run stays queued (JSU-34), but the remaining Topics still get scheduled.
+        log.error("run failure not recorded", { run_id: run.id, error: message(failErr) });
+      }
     }
   }
 }
