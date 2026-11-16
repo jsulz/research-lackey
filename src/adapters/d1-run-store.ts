@@ -7,6 +7,11 @@ import type {
   TopicLastChecked,
 } from "../core/ports";
 
+/** SQL for the milliseconds between two ISO 8601 times, or NULL when the Run never started. */
+const DURATION_MS = (ended: string, started: string) =>
+  `CASE WHEN ${started} IS NULL THEN NULL
+     ELSE CAST(round((julianday(${ended}) - julianday(${started})) * 86400000) AS INTEGER) END`;
+
 /** RunStore backed by D1 with hand-written SQL (ADR-0005). */
 export class D1RunStore implements RunStore {
   constructor(private readonly db: D1Database) {}
@@ -62,8 +67,27 @@ export class D1RunStore implements RunStore {
     await this.end(runId, status, null, null, at, "('running')");
   }
 
-  async failRun(runId: string, stage: string, reason: string, at: Date): Promise<void> {
-    await this.end(runId, "failed", stage, reason, at, "('queued', 'running')");
+  async failRun(run: RunRef | string, stage: string, reason: string, at: Date): Promise<void> {
+    if (typeof run === "string") {
+      await this.end(run, "failed", stage, reason, at, "('queued', 'running')");
+      return;
+    }
+    const ended = at.toISOString();
+    await this.db
+      .prepare(
+        `INSERT INTO runs
+           (id, topic_id, kind, scheduled_slot, status, failed_stage, failure_reason, ended_at)
+         VALUES (?, ?, ?, ?, 'failed', ?, ?, ?)
+         ON CONFLICT (id) DO UPDATE SET
+           status = 'failed',
+           failed_stage = excluded.failed_stage,
+           failure_reason = excluded.failure_reason,
+           ended_at = excluded.ended_at,
+           duration_ms = ${DURATION_MS("excluded.ended_at", "runs.started_at")}
+         WHERE runs.status IN ('queued', 'running')`,
+      )
+      .bind(run.id, run.topic_id, run.kind, run.scheduled_slot, stage, reason, ended)
+      .run();
   }
 
   async getRun(runId: string): Promise<Run | null> {
@@ -91,8 +115,7 @@ export class D1RunStore implements RunStore {
       .prepare(
         `UPDATE runs SET
            status = ?, failed_stage = ?, failure_reason = ?, ended_at = ?,
-           duration_ms = CASE WHEN started_at IS NULL THEN NULL
-             ELSE CAST(round((julianday(?) - julianday(started_at)) * 86400000) AS INTEGER) END
+           duration_ms = ${DURATION_MS("?", "started_at")}
          WHERE id = ? AND status IN ${from}`,
       )
       .bind(status, stage, reason, ended, ended, runId)

@@ -64,7 +64,7 @@ export async function runPipeline(deps: PipelineDeps): Promise<FinalStatus> {
   } catch (err) {
     const reason = errorMessage(err).slice(0, MAX_REASON);
     log.error("run failed", { run_id: run.id, step: current, reason });
-    await step.do("fail", () => store.failRun(run.id, current, reason, clock.now()));
+    await step.do("fail", () => store.failRun(run, current, reason, clock.now()));
     throw err;
   }
 

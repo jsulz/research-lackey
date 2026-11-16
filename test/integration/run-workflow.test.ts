@@ -89,6 +89,21 @@ describe("RunWorkflow", () => {
     expect((await getRun(run.id)).status).toBe("completed_no_new_findings");
   });
 
+  it("records a manual Run as failed when its start step exhausts its retries", async () => {
+    const run = manualRun("wf-start-fail");
+    await using instance = await introspectWorkflowInstance(env.RUN_WORKFLOW, run.id);
+    await instance.modify(async (m) => {
+      await m.disableRetryDelays();
+      await m.mockStepError({ name: "start" }, new Error("D1 unavailable"));
+    });
+    await start(run);
+    await instance.waitForStatus("errored");
+
+    const row = await getRun(run.id);
+    expect(row).toMatchObject({ kind: "manual", status: "failed", failed_stage: "start" });
+    expect(row.failure_reason).toContain("D1 unavailable");
+  });
+
   it("ends the Run failed, with the stage and reason, when a stage exhausts its retries", async () => {
     const run = manualRun("wf-fail");
     await store.createQueuedRun(run);

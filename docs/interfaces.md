@@ -66,8 +66,12 @@ export interface RunStore {
   markRunning(run: RunRef, at: Date): Promise<void>;
   /** Ends a `running` Run with a final status, its end time and duration. */
   completeRun(runId: string, status: FinalStatus, at: Date): Promise<void>;
-  /** Ends a `queued` or `running` Run as `failed`, recording the failing stage and reason. */
-  failRun(runId: string, stage: string, reason: string, at: Date): Promise<void>;
+  /**
+   * Ends a `queued` or `running` Run as `failed`, recording the failing stage and reason. Given a
+   * RunRef, it inserts the Run as `failed` when it has no row yet (a manual Run whose start failed).
+   * Given only an ID, it updates an existing Run. Never changes a final status.
+   */
+  failRun(run: RunRef | string, stage: string, reason: string, at: Date): Promise<void>;
   getRun(runId: string): Promise<Run | null>;
 }
 

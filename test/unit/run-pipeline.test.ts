@@ -30,7 +30,7 @@ class FakeRunStore implements Pick<RunStore, "markRunning" | "completeRun" | "fa
   async completeRun(_id: string, status: FinalStatus): Promise<void> {
     this.statuses.push(status);
   }
-  async failRun(_id: string, stage: string, reason: string): Promise<void> {
+  async failRun(_run: RunRef | string, stage: string, reason: string): Promise<void> {
     this.statuses.push("failed");
     this.failure = { stage, reason };
   }
