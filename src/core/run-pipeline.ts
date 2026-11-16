@@ -36,12 +36,21 @@ const MAX_REASON = 1000;
  * writes its Step artifact), `complete`. Each stage step returns only its artifact key, so
  * step results stay small. When a step exhausts its retries, a `fail` step records the
  * failing stage and reason, and the error is rethrown so the Workflow instance errors too.
+ * When the Topic already has an active Run, the Run is recorded `failed` at `start` and no
+ * stage runs.
  */
 export async function runPipeline(deps: PipelineDeps): Promise<FinalStatus> {
   const { run, stages, store, artifacts, step, clock, log } = deps;
   let current = "start";
   try {
-    await step.do("start", () => store.markRunning(run, clock.now()));
+    const started = await step.do("start", () => store.markRunning(run, clock.now()));
+    if (started === "topic_busy") {
+      // Another scheduled or manual Run of this Topic is active. Record this one, run nothing.
+      const reason = "Topic has an active Run";
+      log.warn("run rejected", { run_id: run.id, reason });
+      await step.do("reject", () => store.failRun(run, "start", reason, clock.now()));
+      return "failed";
+    }
 
     let previous: StepName | null = null;
     for (const stage of stages) {

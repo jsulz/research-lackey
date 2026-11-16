@@ -98,10 +98,24 @@ describe("runs schema", () => {
 
   it("allows manual Runs without a slot", async () => {
     await env.DB.prepare(
-      "INSERT INTO runs (id, topic_id, kind, status) VALUES ('m1', 'ai-infra', 'manual', 'queued'), ('m2', 'ai-infra', 'manual', 'queued')",
+      "INSERT INTO runs (id, topic_id, kind, status) VALUES ('m1', 'ai-infra', 'manual', 'completed_no_new_findings'), ('m2', 'ai-infra', 'manual', 'queued')",
     ).run();
     const row = await env.DB.prepare("SELECT count(*) AS n FROM runs").first<{ n: number }>();
     expect(row?.n).toBe(2);
+  });
+
+  it("rejects a second active scheduled or manual Run for a Topic, but not a replay Run", async () => {
+    await env.DB.prepare(
+      "INSERT INTO runs (id, topic_id, kind, scheduled_slot, status) VALUES ('s1', 'ai-infra', 'scheduled', '2026-11-16T12:00:00Z', 'queued')",
+    ).run();
+    await expect(
+      env.DB.prepare(
+        "INSERT INTO runs (id, topic_id, kind, status) VALUES ('m1', 'ai-infra', 'manual', 'running')",
+      ).run(),
+    ).rejects.toThrow("UNIQUE constraint failed: runs.topic_id");
+    await env.DB.prepare(
+      "INSERT INTO runs (id, topic_id, kind, status) VALUES ('r1', 'ai-infra', 'replay', 'running')",
+    ).run();
   });
 });
 

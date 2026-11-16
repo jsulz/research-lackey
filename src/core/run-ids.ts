@@ -20,6 +20,22 @@ function basicSeconds(at: Date): string {
     .replace(/\.\d{3}/, "");
 }
 
+/**
+ * The Run the cron creates for a Topic's slot. Its ID is `topic-<topic>-<slot>`, with the slot
+ * in ISO 8601 basic format to the minute (`20261116T1200Z`). The stored `scheduled_slot` keeps
+ * the extended form (`2026-11-16T12:00:00Z`), like every other time in D1.
+ */
+export function scheduledRun(topicId: string, slot: Date): RunRef {
+  const extended = slot.toISOString().replace(/\.\d{3}Z$/, "Z");
+  const basicMinutes = extended.replace(/[-:]/g, "").replace(/\d{2}Z$/, "Z");
+  return {
+    id: `topic-${topicId}-${basicMinutes}`,
+    topic_id: topicId,
+    kind: "scheduled",
+    scheduled_slot: extended,
+  };
+}
+
 /** ID of a Run started on demand by `npm run run:local`. */
 export function manualRunId(topicId: string, now: Date): string {
   return `manual-${topicId}-${basicSeconds(now)}`;
