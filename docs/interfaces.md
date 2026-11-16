@@ -26,10 +26,71 @@ export interface TopicLastChecked {
   last_run_status: RunStatus | null;
 }
 
+/** A final status: the Run has ended. */
+export type FinalStatus = Exclude<RunStatus, "queued" | "running">;
+
+/** How a Run was started. `replay` arrives with Replays. */
+export type RunKind = "scheduled" | "manual" | "replay";
+
+/** Pipeline stages, in order. Stored in `run_steps.step` and used in Step artifact keys. */
+export type StepName = "fetch" | "dedupe" | "triage" | "synthesis" | "publish";
+
+/** Identity of a Run. `id` is also its Workflow instance ID. */
+export interface RunRef {
+  id: string;
+  topic_id: string;
+  kind: RunKind;
+  /** Extended ISO 8601 UTC, for example `2026-11-16T12:00:00Z`. Required for `scheduled`. */
+  scheduled_slot: string | null;
+}
+
+/** A Run as stored. Times are ISO 8601 UTC. */
+export interface Run extends RunRef {
+  status: RunStatus;
+  /** The stage, or lifecycle step, that failed. Null unless `status` is `failed`. */
+  failed_stage: string | null;
+  failure_reason: string | null;
+  created_at: string;
+  started_at: string | null;
+  ended_at: string | null;
+  duration_ms: number | null;
+}
+
 /** All D1 access goes through this interface. */
 export interface RunStore {
   /** Every Topic, ordered by name, with its last-checked fields. */
   listTopicsLastChecked(): Promise<TopicLastChecked[]>;
+  /** Inserts the Run as `queued`. Throws `UNIQUE constraint failed` for a scheduled slot that already has a Run. */
+  createQueuedRun(run: RunRef): Promise<void>;
+  /** Sets the Run `running`, inserting it first when it does not exist (manual Runs). Never changes a final status. */
+  markRunning(run: RunRef, at: Date): Promise<void>;
+  /** Ends a `running` Run with a final status, its end time and duration. */
+  completeRun(runId: string, status: FinalStatus, at: Date): Promise<void>;
+  /** Ends a `queued` or `running` Run as `failed`, recording the failing stage and reason. */
+  failRun(runId: string, stage: string, reason: string, at: Date): Promise<void>;
+  getRun(runId: string): Promise<Run | null>;
+}
+
+/** The recorded input and output of one stage within a Run. */
+export interface StepArtifact {
+  input: unknown;
+  output: unknown;
+}
+
+/** All R2 access goes through this interface. */
+export interface ArtifactStore {
+  /** Writes the Step artifact and returns its key, `runs/<run_id>/steps/<stage>.json`. */
+  putStepArtifact(runId: string, step: StepName, data: StepArtifact): Promise<string>;
+  getStepArtifact(runId: string, step: StepName): Promise<StepArtifact | null>;
+}
+
+/**
+ * Runs one named unit of work durably. In a Workflow this is `step.do()`, which retries a
+ * failing step and caches its result, so a step's result must be small and serializable.
+ * Throws once the step's retries are exhausted.
+ */
+export interface StepRunner {
+  do<T>(name: string, fn: () => Promise<T>): Promise<T>;
 }
 
 export type LogLevel = "debug" | "info" | "warn" | "error";
