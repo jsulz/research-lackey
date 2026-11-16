@@ -1,0 +1,1531 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/Bn4DVbIqIrcss6oD3YRO9pXKLYI</id>
+  <title>arXiv Query: search_query=(cat:cs.DC OR cat:cs.PF OR cat:cs.OS) AND (abs:"LLM serving" OR abs:"LLM inference" OR abs:"KV cache" OR abs:"speculative decoding" OR abs:"inference serving")&amp;id_list=&amp;start=0&amp;max_results=50</title>
+  <updated>2026-11-16T03:44:14Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=(cat:cs.DC+OR+(cat:cs.PF+OR+cat:cs.OS))+AND+(abs:%22LLM+serving%22+OR+(abs:%22LLM+inference%22+OR+(abs:%22KV+cache%22+OR+(abs:%22speculative+decoding%22+OR+abs:%22inference+serving%22))))&amp;start=0&amp;max_results=50&amp;id_list=" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>50</opensearch:itemsPerPage>
+  <opensearch:totalResults>1084</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2611.17097v1</id>
+    <title>Broadcast, Don't Replicate: Eliminating Weight HBM in Datacenter LLM Serving</title>
+    <updated>2026-11-12T16:58:07Z</updated>
+    <link href="https://arxiv.org/abs/2611.17097v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.17097v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language model (LLM) inference at datacenter scale is fundamentally bottlenecked by memory capacity and bandwidth limits. Because model weights are read-only and identical across instances, conventional architectures that replicate these parameters across the local DRAM of tens of thousands of accelerators incur massive capital expenditures, significant static power dissipation, and redundant memory-fetch energy. A recent proposal to use optical fiber loops as delay-line memory alleviates these issues, but its recirculating loop must hold the whole model: loop length grows with model size, slack is fixed when the ring is built, and the layouts that serve modern Mixture of Experts (MoE) models efficiently do not fit in it.
+  We propose Optical Broadcast Memory (OBM), an open-ended hierarchical Tap-and-Amplify fiber architecture that generalizes and replaces the optical ring paradigm. A centralized memory server continuously broadcasts weights to distributed inference nodes that passively tap the data stream using receive-only co-packaged optics, delivering parameters directly to compute units without intermediate buffering. To overcome the limitations of continuous weight streaming, we use dynamically-sized slack to accommodate large and variable context lengths. We show how removing the restrictions of the optical ring allows OBM to efficiently serve MoE models. Evaluated at a datacenter scale of 80,000 accelerators, OBM eliminates petabytes of HBM while being competitive or better in throughput and energy per token than an HBM-based system.</summary>
+    <category term="cs.AR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.ET" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.NI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-12T16:58:07Z</published>
+    <arxiv:primary_category term="cs.AR"/>
+    <author>
+      <name>Hannah Atmer</name>
+    </author>
+    <author>
+      <name>Yuan Yao</name>
+    </author>
+    <author>
+      <name>Thiemo Voigt</name>
+    </author>
+    <author>
+      <name>Stefanos Kaxiras</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.16661v1</id>
+    <title>Reducing Batch Makespan for LLM Agent Workloads through Inference-Environment Coordination</title>
+    <updated>2026-11-12T11:38:21Z</updated>
+    <link href="https://arxiv.org/abs/2611.16661v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.16661v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Efficient batch execution of agent tasks is critical to LLM training and development workflows, including benchmark evaluation, synthetic-data generation, and RL rollouts. Since these tasks alternate between LLM inference and environment interaction, we present coordinated optimizations to reduce batch makespan, the time required to complete all tasks in a batch. For hybrid LLMs, a workload-based resource model guides GPU-memory allocation between key-value (KV) cache and recurrent state and provides a reference sample concurrency to exploit parallelism while limiting recomputation. Trajectory-aware routing and scheduling promote cache reuse while balancing worker load. Under constrained environment capacity, we decouple sample admission from environment execution and introduce Chain-Advancing Action Scheduling (CAAS), which prioritizes long chains using observed progress to shorten the batch tail. Controlled replay combines actual inference with recorded environment responses and durations for ablations of individual optimizations. Live evaluations with Ling-3.0-Flash and Ling-3.1-Flash on the BFCL, SWE-bench Multilingual, WideSearch, and MCP-Atlas benchmarks demonstrate makespan reductions of 10.4% to 65.0%, while evaluation scores remain aligned. Furthermore, these methods have been successfully applied to training and evaluation workflows for the Ling-3.x model series, accelerating the model-development cycle.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-12T11:38:21Z</published>
+    <arxiv:comment>26 pages, 12 figures. Technical report</arxiv:comment>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Wei Feng</name>
+    </author>
+    <author>
+      <name>Meiling Chen</name>
+    </author>
+    <author>
+      <name>Boxiao Chen</name>
+    </author>
+    <author>
+      <name>Lu Liu</name>
+    </author>
+    <author>
+      <name>Bin Zi</name>
+    </author>
+    <author>
+      <name>Libin Ye</name>
+    </author>
+    <author>
+      <name>Xingyu Lu</name>
+    </author>
+    <author>
+      <name>Lei Xu</name>
+    </author>
+    <author>
+      <name>Jun Zhou</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.15372v1</id>
+    <title>LLMRunner: Closed Workload Model Performance Testing Framework for LLM Servings</title>
+    <updated>2026-11-11T11:52:20Z</updated>
+    <link href="https://arxiv.org/abs/2611.15372v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.15372v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Performance testing large language model (LLM) serving engines is a crucial requirement considering the criticality of the infrastructure for deploying conversational AI at scale. Most of the benchmarking tools used to carryout performance evaluation of LLM serving do not capture realistic workload orchestration unlike closed workload performance testing infrastructure used in other domains such as web and database engines. For example, state-of-the-art LLM benchmarks for performance testing model traffic as streams of independent single-turn and stand-alone requests omitting the end-user behavior such as think-time between conversational turns. We present LLMRunner, a performance tester for LLM serving that addresses this gap by providing a framework to generate realistic load consisting of multi-turn conversations with configurable end-user parameters such as number of users in the workload loop, think-time distributions etc. Moreover, LLMRunner provides declarative matrix-sweep experiment plans, integrated GPU and KV-cache monitoring, and an automated artifact collection and plotting subsystem.
+  We use LLMRunner to comparatively analyze the performance of LLM serving when NVIDIA CUDA Unified Virtual Memory (UVM) is used as a drop-in replacement memory allocator for the Key-Value cache (KV-Cache). Our test demonstrates that UVM incurs no measurable throughput or latency penalty compared to the baseline memory allocation technique for non-oversubscription scenarios.</summary>
+    <category term="cs.PF" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-11T11:52:20Z</published>
+    <arxiv:comment>Closed-loop performance benchmarking of LLM systems</arxiv:comment>
+    <arxiv:primary_category term="cs.PF"/>
+    <author>
+      <name>Arush Upadhyaya</name>
+    </author>
+    <author>
+      <name>Debadatta Mishra</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.15130v1</id>
+    <title>Read Once, Answer Many: Parallel Prompting for Shared-Context LLM Inference</title>
+    <updated>2026-11-11T07:15:18Z</updated>
+    <link href="https://arxiv.org/abs/2611.15130v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.15130v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>LLM workloads sometimes ask many independent questions about the same long document, as in document QA, data labeling and LLM-based evaluation. Prefix caching removes the redundant prefill shared by these queries, but each decode step still reads the document's key-value (KV) cache once per question, so decoding is bound by memory bandwidth and scales with the number of questions. We present Parallel Prompting, which decodes P questions as P independent streams of a single request all at once, fixing this issue. In our method, every step reads the shared document once for all P streams, and a stream-id attention mask, evaluated inside the attention kernel, keeps each answer conditioned only on the document and its own question. We implement Parallel Prompting in SGLang by adding about 80 lines to three existing files and a small engine package; the mask needs no dense tensor, and every decode step has a fixed shape that is captured as a CUDA graph. With CodeLlama-7B, 8k-16k-token documents and 64-256 questions per document, Parallel Prompting is 3.7x faster than stock SGLang with its FlashInfer backend on an A100 and 5.9-6.0x faster on an RTX A6000, on two SGLang releases, including the most recent release. Timed on identical inputs, it is faster than stock SGLang in all 144 runs (2 GPUs x 2 releases x 6 workloads x 6 input sets). Code: https://github.com/jlab-nlp/parallel-prompting</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-11T07:15:18Z</published>
+    <arxiv:comment>17 pages, 6 figures. Code: https://github.com/jlab-nlp/parallel-prompting. Project page: https://jlab-nlp.github.io/parallel-prompting/</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Zekun Zhao</name>
+    </author>
+    <author>
+      <name>Jeffrey Flanigan</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.15126v1</id>
+    <title>Recompute or Restore? Host-Tier KV for Multi-Model Agent Workflows on a Static-Graph NPU Serving Stack</title>
+    <updated>2026-11-11T07:12:45Z</updated>
+    <link href="https://arxiv.org/abs/2611.15126v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.15126v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Agent workflows issue dependent model calls that share long context prefixes, so serving them efficiently depends on reusing the key-value (KV) cache of those prefixes. On accelerators that compile model graphs ahead of time, however, the device KV budget is fixed, and prefixes evicted under load must be recomputed. Restoring them from host memory avoids this recomputation, but the transfer occupies the same engine thread as prefill and decode, so its benefit is not guaranteed. In this paper, we study when restoring beats recomputing on a commercial static-graph neural processing unit (NPU) stack (Rebellions ATOM+, vllm-rbln 0.10.2) that serves a Qwen3-8B planner on two cards and a Qwen3-0.6B executor on one. We first show that repeated prefill dominates planner work when default serving collapses: 89.5% of the executed planner prompt tokens had been materialized before. We then build a synchronous host-DRAM tier on the runtime's public KV copy calls, together with a scheduler-aware event model whose predictions are frozen before each test cohort. Experimental results show that the host tier raises workflow service-level objective (SLO) attainment from 22.8% to 100% and from 9.4% to 99.8% in the two tested overload conditions, and endpoint confirmation on two new seeds supports conservative load gains of 11.8% (chain) and 18.2% (fork), while mixed and bursty workloads remain seed-sensitive. The frozen model predicts median and 99th-percentile (P99) latency within its 15% tolerance in all 24 common-load conditions, including the 16-18% P99 increase that the tier causes for fork workflows, but it misorders three policy contrasts and overestimates the benefit of a cheaper store path (11% predicted against 3.1% measured). The trade-off therefore depends on runtime scheduling and transfer cost as well as cache capacity.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.PF" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-11T07:12:45Z</published>
+    <arxiv:comment>14 pages, 6 figures, 5 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Sungwon Woo</name>
+    </author>
+    <author>
+      <name>Seyeon Kim</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.14776v1</id>
+    <title>SlipStream: Enabling HBF for GPU Systems by Mitigating the Latency and SRAM Overheads</title>
+    <updated>2026-11-10T22:08:10Z</updated>
+    <link href="https://arxiv.org/abs/2611.14776v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.14776v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language model (LLM) inference demands ever more memory capacity for larger models and batch sizes. High-Bandwidth Flash (HBF) replaces the DRAM dies of HBM with NAND flash and provides up to 16x the capacity at comparable read bandwidth. However, HBF can incur a read latency of nearly 20$μ$s, 20x that of HBM, so on-demand HBF accesses slow inference by up to 12.8x. Conventional cache-line prefetchers require 20x more in-flight tracking state to cover this latency. Tensor-streaming designs, such as H3, follow virtual-address order as opposed to kernel-demand order, and therefore need hundreds of megabytes of buffering.
+  We propose SlipStream, a software-hardware co-designed prefetcher that turns prefetching into a demand-paced producer-consumer pipeline. In software, SlipStream profiles the repeatable weight-page demand order of data-independent LLM kernels and inserts a staging warp that replays this order with non-blocking STAGE instructions. In hardware, the staging warp acts as the producer and the work warps as consumers. Our key insight is to retire each STAGE tracking entry only when demand first accesses the page, as opposed to when the page returns from HBF. Demand thus paces staging and bounds how far staging leads consumption. SlipStream tracks 4 KB pages instead of cache lines and allocates buffer slots only when pages return, which decouples the buffer size from outstanding traffic. Across seven dense models spanning 16-800 GB, SlipStream with a 40 MB staging buffer achieves 92.4% of the performance of an ideal HBF with HBM-like latency. H3 achieves only 43.1%, even with a 320 MB buffer. The buffer sizing of SlipStream is independent of HBF latency and workload. SlipStream with 16 MB buffer, 20x smaller than that of H3, performs within 4% of SlipStream-40MB. SlipStream also supports Mixture-of-Experts models and reaches 91.2% of ideal performance (40 MB buffer).</summary>
+    <category term="cs.AR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-10T22:08:10Z</published>
+    <arxiv:comment>To appear in 2027 IEEE International Symposium on High-Performance Computer Architecture (HPCA)</arxiv:comment>
+    <arxiv:primary_category term="cs.AR"/>
+    <author>
+      <name>Anish Saxena</name>
+    </author>
+    <author>
+      <name>Hritvik Taneja</name>
+    </author>
+    <author>
+      <name>Christos Kozyrakis</name>
+    </author>
+    <author>
+      <name>Aamer Jaleel</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.14748v1</id>
+    <title>UniPipe: Unified Inference Serving and Fine-Tuning for Deadline-Constrained DNN Surrogate Workflows</title>
+    <updated>2026-11-10T21:19:17Z</updated>
+    <link href="https://arxiv.org/abs/2611.14748v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.14748v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>DNN surrogates are increasingly used to accelerate scientific workflows that must process high-rate sensor streams in near real time, exemplified by Ptychographic imaging at next-generation X-ray light sources. Such surrogates deliver 100-1000x higher throughput than iterative solvers, enabling faster steering of experiments. To preserve surrogate accuracy during an experiment, as the input distribution evolves, state-of-the-art deployments freeze the pretrained surrogate or run a separate CUDA context that fine-tunes concurrently with serving. However, multi-context concurrency causes significant contention on the GPU, inflating both the mean and the variance of inference latency, triggering deadline misses in workflows where sensor data has to be processed within a hard per-unit deadline. To address this challenge, we propose UniPipe, a single-context system that unifies inference serving and fine-tuning of a DNN surrogate on a single edge GPU. UniPipe is driven by three key insights: both serving and fine-tuning require a forward pass and can be fused into one; the per-sample latency of modern GPUs is non-linear in batch size; and the workload is repetitive across intervals, enabling offline scheduling. Specifically, UniPipe fuses training and inference data in a single forward pass with a selective backward pass on the training subset, and uses a polynomial-time scheduler that exploits the latency curve to compute the batch composition. We evaluate UniPipe on a real-world Ptychographic reconstruction workflow with sensor rates up to 5000 patterns/sec.; UniPipe lowers reconstruction MSE by up to 30% and inference MSE by up to 50% over a pretrained baseline, and reduces the deadline-miss rate by 13%-22% over a multi-context baseline. UniPipe's unified deployment reduces the latency spread from 106% to 57% of the mean, and increases total throughput compared to multi-context baseline.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.PF" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="eess.SY" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-10T21:19:17Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Jaiaid Mobin</name>
+    </author>
+    <author>
+      <name>Avinash Maurya</name>
+    </author>
+    <author>
+      <name>M. Mustafa Rafique</name>
+    </author>
+    <author>
+      <name>Bogdan Nicolae</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.14051v1</id>
+    <title>Can KV Cache Be Reused Across Model Updates? A DeepSeek-V4-Flash Case Study</title>
+    <updated>2026-11-10T13:17:04Z</updated>
+    <link href="https://arxiv.org/abs/2611.14051v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.14051v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Reusing key--value (KV) caches across language model updates could avoid repeated computation of shared context, but changes in model weights raise a fundamental question about what these caches preserve. We investigate direct cache reuse across four model updates, with a detailed study of DeepSeek-V4-Flash to Flash-0731. Our central finding is that caches can retain useful task information without faithfully reproducing the updated model's behavior. Retrieval accuracy varies substantially across updates, ranging from near-native performance to large losses. With source caches already available, reuse achieves median time-to-first-token speedups of $2.10$--$5.08\times$ on three longer-prefix QA benchmarks. To characterize the behavioral differences behind these outcomes, we introduce Functional Cache Divergence, which compares next-token distributions under reused and native caches. Direct KV cache reuse better preserves native model behavior in natural-text continuation, whereas compatibility degrades with increasing prefix length in single-token retrieval tasks. Answer-margin analyses help explain how correct retrieval decisions survive substantial internal state changes. Yet even agreement on the first generated token does not ensure agreement in answer content or stopping behavior. These findings establish task utility and fidelity to native inference as distinct criteria for evaluating cross-version KV cache reuse.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-10T13:17:04Z</published>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Zhikun Tao</name>
+    </author>
+    <author>
+      <name>Fangyong Jin</name>
+    </author>
+    <author>
+      <name>Junping Zhao</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.13762v1</id>
+    <title>Exploiting What NVIDIA Profilers Hide: Fast and Accurate Analytical GPU Performance Modeling</title>
+    <updated>2026-11-10T09:02:38Z</updated>
+    <link href="https://arxiv.org/abs/2611.13762v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.13762v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>GPUs have become essential to many fields, including AI and scientific computing. As GPUs grow more complex, the design space of their hardware configurations becomes increasingly large, yet cycle-level simulators remain too slow to explore it. Analytical models make this exploration much faster. However, existing GPU analytical models fall short of accurately predicting performance across hardware configurations, because they re-estimate or scale every stall of a warp on the target configuration. We observe that fixed-latency stalls stay the same across configurations, whereas queueing stalls vary with the pressure on each hardware unit. Based on this observation, we propose ForeSight, a queueing analytical model that reuses the fixed-latency stalls measured on GPU hardware and recomputes the queueing stalls of each hardware unit from its pressure. To provide ForeSight with the counter values of each hardware unit, we build UnitSight, a profiler that recovers these values, which NVIDIA's official profilers hide by aggregating across units. Our evaluation on hardware configurations of nine NVIDIA GPUs shows that ForeSight predicts kernel execution time with a mean absolute percentage error (MAPE) of 8.3%, compared with 14.1% for the best baseline. ForeSight also predicts the end-to-end execution time of LLM inference on vLLM with a MAPE of 2.0%. It runs 49x faster than the cycle-level simulator Accel-Sim and faster than interval-based models such as GCoM. With the aid of ForeSight, we explore configurations derived from the H20 GPU for LLM inference and find one with 1.78x its performance/cost.</summary>
+    <category term="cs.AR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.PF" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-10T09:02:38Z</published>
+    <arxiv:comment>13 pages, 7 figures, 2 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.AR"/>
+    <author>
+      <name>Ziwen Wang</name>
+    </author>
+    <author>
+      <name>Qi Luo</name>
+    </author>
+    <author>
+      <name>Kunlin Li</name>
+    </author>
+    <author>
+      <name>Changxi Liu</name>
+    </author>
+    <author>
+      <name>Dongsheng Wang</name>
+    </author>
+    <author>
+      <name>Yun Chen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.13442v2</id>
+    <title>ForeSpark: Joint Draft and Verification Budget Scheduling for Parallel Speculative Decoding</title>
+    <updated>2026-11-13T01:33:53Z</updated>
+    <link href="https://arxiv.org/abs/2611.13442v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.13442v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Parallel drafters accelerate LLM decoding by proposing a whole block of draft tokens in a single forward pass, making them attractive for LLM serving. Recent systems optimize goodput (i.e., accepted tokens per second) because rejected drafts steal compute from other requests. However, these systems control only how many tokens are verified, so every request still drafts a full block. At high serving load, we find that drafting consumes up to 40% of step time, of which a majority is discarded because it is never verified. Yet, draft-length control from autoregressive drafters does not carry over, because a parallel drafter commits to its length before its single pass. Moreover, draft and verification lengths are coupled across the batch, so they must be selected jointly for every request while keeping the decision computationally cheap at every step. In this paper, we propose work-conserving speculation (WCS), a design that jointly allocates draft and verification budgets per request in LLM serving, and present ForeSpark as its prototype. ForeSpark realizes WCS with (i) a context-aware pre-draft estimator that predicts acceptance for every candidate length from the target model's context features, (ii) a lightweight joint draft-verify scheduler that selects both lengths through a global sort, and (iii) a post-draft budget distribution that spends verification on the most promising tokens. Implemented on vLLM, ForeSpark improves throughput by up to 1.77x over the state-of-the-art DSpark and by 2.49x over autoregressive decoding at a matched per-request generation rate, without changing the output distribution. It also tolerates higher load, sustaining up to 1.51x the request rate of DSpark under latency service level objectives (SLOs).</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-10T01:37:38Z</published>
+    <arxiv:comment>23 pages, Code available at https://github.com/facebookresearch/ForeSpark</arxiv:comment>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Jaeyong Song</name>
+    </author>
+    <author>
+      <name>Daniel Wang</name>
+    </author>
+    <author>
+      <name>Pratyush Patel</name>
+    </author>
+    <author>
+      <name>Jonny Kong</name>
+    </author>
+    <author>
+      <name>Preyas Shah</name>
+    </author>
+    <author>
+      <name>Shobhit Kanaujia</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.13413v1</id>
+    <title>Placing LLM Lookup Tables by Per-Layer Prefetch Deadlines</title>
+    <updated>2026-11-10T00:47:42Z</updated>
+    <link href="https://arxiv.org/abs/2611.13413v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.13413v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>DeepSeek-V4.1's 203 GB of Engram n-gram tables sit in host DRAM today, taking 190 of the 223 GiB a 4-GPU serving process uses. Row indices depend only on input tokens, so reads can start with each step and overlap earlier layers. V4.1's two Engram layers have windows that differ by 30x (0.3 vs. 9.3 ms). We show that this deadline, together with session reuse and contention on a shared device, decides which tier each table can use and which layers need cache, and we give a model that predicts the resulting slowdown from measured read times. Agent and chat traffic reuse rows within sessions, and static hot sets transfer poorly. We build SlackTier, a table tier for SGLang that issues all lookups at step start. It reads the short-window layer first and splits a small GPU row cache across layers. The path runs inside the decode CUDA graph and is bit-exact with the original gather. Layer 14's table can go to NVMe uncached with no measurable decode cost. With both tables on four NVMe disks, mean time per output token on agent and chat replays rises at most 1.4% over unmodified SGLang, and host memory falls from 212 to 34 GiB. Both tables need no cache when read over RDMA (remote direct memory access) from another node's memory; one copy serves two instances. On a KV-constrained agent workload, using the freed memory as host KV cache at the same memory budget raises median throughput by 36% and cuts median p90 time to first token from 38 to 24 s.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-10T00:47:42Z</published>
+    <arxiv:comment>15 pages, 5 figures, 10 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Wen Huang</name>
+    </author>
+    <author>
+      <name>Jack Liu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.13293v1</id>
+    <title>Decode Token Parallelism: Memory-Efficient Distributed Attention Parallelism for Scalable LLM Decoding</title>
+    <updated>2026-11-09T22:01:46Z</updated>
+    <link href="https://arxiv.org/abs/2611.13293v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.13293v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Serving large language models at high concurrency with long contexts requires KV-cache capacity and attention bandwidth that grow with the decode pool. Existing parallelization strategies trade one against the other: data parallelism replicates model weights, limiting KV capacity; tensor parallelism stops scaling attention at the model's KV-head count and pushes dense collectives across nodes; and decode context parallelism (DCP) recovers capacity by sharding the sequence but adds cross-node aggregation of partial attention results. We observe that during decode, dense layers and attention scale differently: dense layers amortize weight reads across the batch and run efficiently within a single NVLink domain, whereas attention cost grows with every active request's KV cache. We present Decode Token Parallelism (TKNP), a decode-pool architecture that decouples weight placement from attention ownership. TKNP distributes a single model copy across nodes in balanced layer blocks. The active node holding a block executes its projections and MLP for the full batch using intra-node tensor parallelism, while every node computes attention for its own requests against locally resident KV cache. This extends request-local attention across nodes without replicating weights: only current-token activations cross the network, dense all-reduces remain within NVLink, and attention requires no cross-node merging of partial results. Implemented in vLLM and evaluated on Llama 3.1 405B and Nemotron-4 340B on up to 64 H100 GPUs, TKNP improves completion throughput for long-context, high-concurrency workloads by up to 1.7$\times$ over DCP and by up to 2.06$\times$ over data parallelism at matched GPU count.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-09T22:01:46Z</published>
+    <arxiv:comment>14 pages, 12 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Susav Shrestha</name>
+    </author>
+    <author>
+      <name>Brad Settlemyer</name>
+    </author>
+    <author>
+      <name>Narasimha Reddy</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.13176v1</id>
+    <title>SHADOWPREFILL: Keeping Your Next Model Warm for Per-Step Model Routing in Agentic LLM Serving</title>
+    <updated>2026-11-09T19:59:25Z</updated>
+    <link href="https://arxiv.org/abs/2611.13176v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.13176v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Per-step model routers send each LLM call of an agent to the cost-optimal model dynamically within each session. However, every model switch discards prefix-cache reuse: KV caches are per model, so the new model must prefill the relevant context before it emits a token. Across representative agentic workloads, including a production coding-agent trace with a mean context of 63K tokens, the prefix hit rate falls from 80-89% on same model calls to 44-65% after a switch, and a switch call takes 1.5-3.2x as long. We present SHADOWPREFILL, which prefills the session's context on the model the router has not chosen, in capacity that instances serving normal traffic leave idle, so the next switch finds its prefix cached. SHADOWPREFILL harvests the per-iteration SLO slack of requests in flight, protects routed calls, spills shadow KV to host memory, and falls back to a cold switch whenever the shadow is incomplete. With LLMRouter routing 24 model pairs over five agentic benchmark suites, SHADOWPREFILL cuts switch-call latency by 8.5-21.4%, LLM-call latency by 3.7-17.7%, and routed token cost by 22.5-46.1%, while normal traffic keeps its SLO and energy per request rises by 0.4%.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-09T19:59:25Z</published>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Haoran Qiu</name>
+    </author>
+    <author>
+      <name>Rohan Mahapatra</name>
+    </author>
+    <author>
+      <name>Rodrigo Fonseca</name>
+    </author>
+    <author>
+      <name>Mark Russinovich</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.12737v2</id>
+    <title>Inference Validation for Regulated AI: A Governed Decision Pipeline for LLM Serving</title>
+    <updated>2026-11-11T16:36:55Z</updated>
+    <link href="https://arxiv.org/abs/2611.12737v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.12737v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Deploying large language models in regulated industries requires more than picking the fastest inference engine: it requires evidence that a configuration meets contractual and legal obligations before it serves a single customer request. We describe Runway, an internal validation harness built at MasterControl that builds a governed decision pipeline around NVIDIA AIPerf. The key insight is separating concerns: AIPerf provides the trusted measurement, while Runway provides the experiment design that comes before it and the compliance, cost, and audit decisions that come after. We describe the architecture and the storage model that makes caching and audit one mechanism. We report three findings from Runway sweeps: TensorRT-LLM and vLLM rankings invert with concurrency; a newer, pricier GPU instance can be the cheaper one per request; and speculative decoding behaves differently across engines under load, so engine configuration can outweigh engine choice.</summary>
+    <category term="cs.SE" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.PF" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-09T17:21:17Z</published>
+    <arxiv:comment>10 pages, 3 figures, 3 tables Updated paper title to better reflect content</arxiv:comment>
+    <arxiv:primary_category term="cs.SE"/>
+    <author>
+      <name>Dev Akre</name>
+    </author>
+    <author>
+      <name>Roman Bobalo</name>
+    </author>
+    <author>
+      <name>Manoj Dobbali</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.12304v2</id>
+    <title>Evolving Infra: Agent-Adaptive LLM Serving at Scale</title>
+    <updated>2026-11-12T08:20:30Z</updated>
+    <link href="https://arxiv.org/abs/2611.12304v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.12304v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Agentic workloads are a major source of LLM inference demand. Existing prefill--decode (PD) disaggregated serving systems offer limited flexibility for runtime adaptation of compute allocation and KV cache management, and rely on coarse signals that only partly capture the diverse and dynamic agent workload. These limitations lead to load imbalance between prefill and decode nodes and eviction of KV caches that agents will reuse. We present Evolving Infra, an agent-adaptive serving framework that adapts compute allocation to agent workloads and KV cache management to agent context management at runtime. We decouple compute allocation from key--value (KV) cache management, allowing nodes to switch efficiently between prefill and decode. Building on this design, an online planner matches the PD split to workload composition, while an agent-aware distributed KV manager guides cache eviction and transfer with signals from agent context management. Across coding, math, and computer-use tasks with GLM-5.2 and Kimi K2.6 on up to 256 GB300 GPUs, Evolving Infra reduces mean end-to-end request latency and P95 TTFT by up to 4.1x and 14x over Dynamo, NVIDIA's production framework. We open-source the system implementation of Evolving Infra at https://github.com/mit-han-lab/EvolvingInfra.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-09T12:26:02Z</published>
+    <arxiv:comment>We just modify some intro and add link to the previou paper</arxiv:comment>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Hao Kang</name>
+    </author>
+    <author>
+      <name>Weili Xu</name>
+    </author>
+    <author>
+      <name>Ziyang Li</name>
+    </author>
+    <author>
+      <name>Zheng Du</name>
+    </author>
+    <author>
+      <name>Hanchen Li</name>
+    </author>
+    <author>
+      <name>Tian Xia</name>
+    </author>
+    <author>
+      <name>Song Bian</name>
+    </author>
+    <author>
+      <name>Tushar Krishna</name>
+    </author>
+    <author>
+      <name>Huizi Mao</name>
+    </author>
+    <author>
+      <name>Ion Stoica</name>
+    </author>
+    <author>
+      <name>Song Han</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.12296v1</id>
+    <title>RecoGEM: A Serving System for Production-Scale Generative Recommendation</title>
+    <updated>2026-11-09T12:20:07Z</updated>
+    <link href="https://arxiv.org/abs/2611.12296v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.12296v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Generative recommendation (GR) is moving industrial recommender systems (RecSys) from scoring candidate items to autoregressively generating item identifiers. This shift promises higher recommendation quality, but makes serving substantially harder: each request executes a short sequence of dependent decoding steps that explore a large item space and select promising candidates on the latency-critical path. GR not only creates structural mismatches with conventional RecSys pipelines, but also challenges the architectural and optimization assumptions of LLM serving stacks, making direct adoption of existing systems difficult. We present RecoGEM, our production GR serving system. RecoGEM uses a runtime--engine decoupling architecture to move GR-specific serving responsibilities, such as candidate-state transitions and live artifact updates, to a dedicated runtime. Its execution engine exploits GR's short token sequences, large candidate populations, and predictable step shapes to optimize self-attention, candidate selection, and execution planning. RecoGEM has been deployed for over nine months across our production lines, serving applications with hundreds of millions of users and supporting more than ten GR model families. On our OneModel production workloads, RecoGEM reaches over 1,000 QPS per serving instance with P99 latency below 35 ms and a 2.88$\times$ throughput improvement over representative baselines.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.IR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-09T12:20:07Z</published>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Xiangrui Yang</name>
+    </author>
+    <author>
+      <name>Yunfeng Zhao</name>
+    </author>
+    <author>
+      <name>Jiawei Yang</name>
+    </author>
+    <author>
+      <name>Fangyu Zhang</name>
+    </author>
+    <author>
+      <name>Enrui Zhao</name>
+    </author>
+    <author>
+      <name>Liang Zeng</name>
+    </author>
+    <author>
+      <name>Cheng Peng</name>
+    </author>
+    <author>
+      <name>Minhui Xie</name>
+    </author>
+    <author>
+      <name>Jiaqiang Liu</name>
+    </author>
+    <author>
+      <name>Xiao Liang</name>
+    </author>
+    <author>
+      <name>Yiming Qiu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.10334v1</id>
+    <title>Reproducible LoRA Inference Through Deterministic Split-K Reduction</title>
+    <updated>2026-11-07T00:03:56Z</updated>
+    <link href="https://arxiv.org/abs/2611.10334v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.10334v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Reproducibility is important for LoRA-adapted language models used in repeated evaluation, auditing, and decision-making. However, Split-K kernels used to introduce parallelism in low-rank LoRA multiplications can have the unintended consequence of numerical nondeterminism when partial results are combined using floating-point atomic additions. We investigate this non-determinism in vLLM across GSM8K mathematical reasoning, MBPP code generation, and Jev-style structured toxicity decisions on Civil Comments and introduce a deterministic Triton Split-K implementation. Under identical-input replay, Atomic Split-K=8 produces different FP32 shrink outputs in 97.61% of comparisons, while our Deterministic Split-K=8 shows no observed variation. Repeated atomic inference changes generated outputs in 17.30% of GSM8K and 14.96% of MBPP comparisons, sometimes altering task correctness. Structured-decision probabilities vary in 81.47% of atomic comparisons, with decision flips. Controlled tracing demonstrates how shrink-output differences propagate into the KV cache and how accumulated cache differences can change token decisions and final answers. Our deterministic Triton Split-K=8 implementation preserves parallelism, achieving 16.8-21.1% latency-based speedup over unsplit reduction with only 1.02-2.62% additional latency relative to Atomic Split-K=8.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.PF" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-07T00:03:56Z</published>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Dhayaneshwar Balusamy</name>
+    </author>
+    <author>
+      <name>Ankur Mohan</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.10240v1</id>
+    <title>PACE: Keeping the Right Tokens in the KV Cache Is Not Enough for Long-Horizon LLM Agents</title>
+    <updated>2026-11-06T21:25:45Z</updated>
+    <link href="https://arxiv.org/abs/2611.10240v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.10240v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Long-horizon LLM agents accumulate sessions of up to millions of tokens, far more key-value (KV) cache than one GPU holds, so serving systems keep a small budget of tokens and evict the rest. Eviction methods differ in which tokens they keep but share one goal: that the tokens a later step needs are still cached. We show this is not enough. In 100K-token coding sessions on Qwen3-8B with a 2,048-token budget, a planner-guided policy that keeps over 99% of the needed tokens resident still fails late steps increasingly often: its accuracy falls from 93% to 64% as the gap between a definition and its use grows from 2K to 90K tokens, at residency 0.996. The needed tokens are resident but unretrievable: what grows is their rotary-position distance to the query. We present PACE (Planner-Aware Context Engine), a KV-cache engine that couples plan-aware retention, in which the agent's planner tells the cache which context future steps will read, with bounded positions, which renumber kept tokens so their rotary distance to the query stays below 8K at any session length. In a pre-registered evaluation on fresh tasks, PACE passes 97% of hidden unit tests at 100K tokens, against 42% for H2O and 3% for SnapKV under the same budget, and needs both components: either alone reaches 63% (the combination beats each, p &lt; 10^-4). The result holds with length: in 1M- and 2M-token sessions on one 24 GB GPU, with definitions written 0.9M and 1.8M tokens before use, PACE passes 99% and 100% of checks and recalls every session fact, while bounded positions without foresight falls from 33% to 13%; PACE holds under 0.7 GB of KV state where the full cache would need 147-295 GB. Renumbering is exact, costs no measurable perplexity, and adds 9% wall time. On Mistral-7B, whose coding ability caps it at 40% even with nothing evicted, PACE stays at that ceiling while retention alone falls below it.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-06T21:25:45Z</published>
+    <arxiv:comment>21 pages, 3 figures, 8 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Suman Chatterjee</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.10178v1</id>
+    <title>The Storage View Of KV Cache: Characterizing Cache Behavior Across LLM Workloads</title>
+    <updated>2026-11-06T19:58:58Z</updated>
+    <link href="https://arxiv.org/abs/2611.10178v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.10178v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Modern LLM serving increasingly extends KV caches beyond GPU memory into host DRAM, SSDs, and remote storage, yet these stores remain largely governed by workload-agnostic policies such as LRU and fixed TTLs. We ask what execution context is needed by storage to make retention, reclamation, and placement decisions across heterogeneous workloads.
+  We characterize KV-cache reuse, lifetime, and footprint at block granularity across 11 production and public traces spanning chat, API serving, RAG, coding agents, tool-using agents, and multi-lineage workflows. We examine reuse sources, recurrence timing and frequency, useful lifetimes, and storage consumption. Across workloads, KV state takes two recurring forms. Single-session state is reused within one execution: its footprint grows as sessions deepen and accumulates across concurrent sessions; it can remain useful through long idle periods but loses value at session completion. Multi-session state recurs across sessions of the same workload, outlives individual sessions, and spans hot prefixes and a large infrequent tail.
+  While prior systems often exploit application-, agent-, or workflow-specific knowledge, our results suggest that three generic signals (a workload identifier, a session identifier, and session completion) expose much of the structure needed for KV-storage management. Trace-driven comparisons show that workload-specific recurrence estimates retain up to 22% more within-session hits and reduce dead state by up to 40%; a session completion signal eliminates the fundamental idle-time reclamation tradeoff for single-session state; and session-aware reuse classification identifies shared state 4-700x more selectively than request-level access counts. These results motivate a small cross-layer interface for workload-aware KV storage without application-specific semantics.</summary>
+    <category term="cs.OS" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-06T19:58:58Z</published>
+    <arxiv:primary_category term="cs.OS"/>
+    <author>
+      <name>Talia Q. Chen</name>
+    </author>
+    <author>
+      <name>Daniel Waddington</name>
+    </author>
+    <author>
+      <name>Narangerelt Batsoyol</name>
+    </author>
+    <author>
+      <name>Vijay Chidambaram</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.09825v1</id>
+    <title>BitDecoding-FP4: Native FP4 KV Cache Decoding via Algorithm-System Co-Design</title>
+    <updated>2026-11-06T18:13:54Z</updated>
+    <link href="https://arxiv.org/abs/2611.09825v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.09825v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The key-value (KV) cache dominates memory capacity and bandwidth in long-context LLM serving. While 4-bit microscaling formats (NVFP4, MXFP4) shrink the cache and run attention on FP4 Tensor Cores, a fundamental gap remains between algorithmic quantization and system-aware acceleration: existing FP4 KV systems use vanilla quantization that causes severe accuracy drops, whereas accuracy-oriented 4-bit algorithms rely on vector codebooks whose lookup overhead degrades decoding throughput. We present BitDecoding-FP4, an algorithm--system co-design for accurate and efficient native FP4 KV decoding. We mitigate three error sources: Dual-Residual Query Quantization splits queries into two FP4 tensors, cutting query logit error from 60% to 1%; Underflow-Aware Probability Scaling prevents E4M3 scales from rounding long-context probabilities to zero; and Outlier-Aware Key Quantization combines static smoothing, Hadamard rotation, and scale search to suppress key outliers under token-wise scaling. At the system level, we remove the softmax bottleneck via transposed softmax with fused probability quantization and stacked query MMA on paged KV caches. Across dense and MoE models with GQA and MLA, BitDecoding-FP4 stays within 0.5 points of BF16 KV accuracy with NVFP4 (1 point with MXFP4), and tracks BF16 KV in RL training rollouts. In end-to-end serving on NVIDIA B300 with Qwen3-4B and Qwen3-30B-A3B, it delivers 2.4-3.0$\times$ higher peak serving throughput than BF16 KV. The implementation is available at https://github.com/OpenBitSys/BitDecoding-FP4.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.PF" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-06T18:13:54Z</published>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Dayou Du</name>
+    </author>
+    <author>
+      <name>Woon Yee Ng</name>
+    </author>
+    <author>
+      <name>Guangming Sheng</name>
+    </author>
+    <author>
+      <name>Nick Lau</name>
+    </author>
+    <author>
+      <name>Jianyi Cheng</name>
+    </author>
+    <author>
+      <name>Luo Mai</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.09474v1</id>
+    <title>Nebula: Distributed Position-Independent Caching for LLM Serving</title>
+    <updated>2026-11-06T13:54:49Z</updated>
+    <link href="https://arxiv.org/abs/2611.09474v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.09474v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Modern LLM workflows, such as retrieval-augmented generation (RAG) and LLM agents, build long prompts from multiple independent text segments, making prefill a major source of computation. Reusing KV caches is therefore important for reducing serving costs and latency: distributed caching systems spread KV cache across a cluster to increase aggregate capacity, while position-independent caching (PIC) enables reuse of recurring segments under different prefixes. However, existing systems distribute KV caches but still rely on prefix caching (PC), while existing PIC methods enable position-independent reuse without cluster-wide resource management.
+  We present Nebula, the first distributed LLM serving framework to treat PIC segments as first-class citizens, enabling remote PIC reuse and parallel prefill. To track PIC's fine-grained, asynchronous state changes, Nebula combines optimistic accounting with event-driven updates to provide a timely and truthful cluster view for cache management and prefill scheduling. To accommodate diverse reuse patterns across workloads, Nebula leverages cluster-wide ghost-hit feedback to automatically tune the allocation of shared cache capacity between PC and PIC. Finally, Nebula incorporates queueing, computation, and KV transfer costs into a unified prefill completion time model to guide elastic parallelism adjustment and locality-aware compute placement. Across four models and four real-world RAG and agentic workloads, Nebula reduces median TTFT by an average of 61.4% compared with the strongest existing baseline and recovers an average of 76.1% of the tokens missed by prefix caching.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-06T13:54:49Z</published>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Yifei Liu</name>
+    </author>
+    <author>
+      <name>Junbin Pan</name>
+    </author>
+    <author>
+      <name>Junhao Hu</name>
+    </author>
+    <author>
+      <name>Yang Liu</name>
+    </author>
+    <author>
+      <name>Junyi Chen</name>
+    </author>
+    <author>
+      <name>Juntong Wu</name>
+    </author>
+    <author>
+      <name>Chen Chen</name>
+    </author>
+    <author>
+      <name>Haiyuan Zhao</name>
+    </author>
+    <author>
+      <name>Xiaoxu Chen</name>
+    </author>
+    <author>
+      <name>Weihang Chen</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.09424v2</id>
+    <title>MINE: Entropy-coded Memory-efficient Inference for Large Language Models</title>
+    <updated>2026-11-09T10:02:01Z</updated>
+    <link href="https://arxiv.org/abs/2611.09424v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.09424v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We present MINE (Memory-efficient INference Engine), a lossless entropy coding approach that accelerates single-stream inference of Large Language Models (LLMs), where existing lossless compression methods yield speedups only for specific data types such as BF16 and under additional assumptions. Single-stream decoding is strongly memory-bound, since every weight must be streamed from memory once per generated token and requests cannot be batched in local or low-latency deployments. At the core of MINE is dtANS-LLM, a GPU entropy coding scheme adapted from the prior dtANS to the needs of LLM inference. It exploits the non-uniform distribution of weights, which persists even after quantization, and exposes hyper-parameters that trade compression ratio against decoding cost. We auto-tune these parameters for each tensor and GPU to obtain the Pareto front between model size and decoding latency. MINE integrates into vLLM as a plugin and selects the best kernel configuration for a given memory budget. On Llama 3.1 8B Instruct with a 2.1-bit EntQuant checkpoint, MINE achieves speedups of 2.52x and 1.48x over the fastest baseline on an RTX 4060 Ti and an RTX 5090, at effective bitrates of 2.24 and 3.43 bits per weight. MINE is available as open source.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.PF" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-06T12:51:31Z</published>
+    <arxiv:comment>Submitted to the 15th International Conference on Learning Representations (ICLR), 2027. Artifact: https://doi.org/10.5281/zenodo.23885927</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Emil Schätzle</name>
+    </author>
+    <author>
+      <name>Markus Püschel</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.09109v1</id>
+    <title>DARIC: A Position-Independent KV Cache Reuse System with Distribution-Aware Recomputation</title>
+    <updated>2026-11-06T07:41:55Z</updated>
+    <link href="https://arxiv.org/abs/2611.09109v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.09109v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The context lengths of large language models (LLMs) are rapidly increasing in real-world applications such as agentic systems and retrieval-augmented generation (RAG). To accelerate LLM inference in these scenarios, reusing position-independent key-value (KV) caches across requests has emerged as a promising approach. This technique typically relies on recomputing a selected subset of tokens to restore cross-chunk interactions. However, existing solutions suffer from critical limitations in both algorithmic efficiency and system deployment. Algorithmically, they overlook the distribution of KV cache deviations, leading to either high token-selection overhead or degraded generation quality. At the system level, the reliance on custom LLM execution flows for recomputation complicates deployment and prevents seamless integration with highly optimized inference engines. In this paper, we propose DARIC (\textbf{D}istribution-\textbf{A}ware \textbf{R}ecomputation for \textbf{I}ndependent KV \textbf{C}ache Reuse), a novel KV cache reuse method based on system-algorithm co-design. At its core, DARIC introduces a distribution-aware token selection strategy that adaptively schedules token recomputation based on empirical KV deviation patterns, striking an optimal balance between generation quality and computational efficiency. Moreover, DARIC is built on a lightweight system architecture that enables independent KV cache generation and recomputation with minimal integration overhead, fully preserving existing system-level optimizations of standard inference engines. Comprehensive experiments across various datasets and LLMs demonstrate that DARIC consistently outperforms state-of-the-art methods, achieving a 1.1$\times$--4.5$\times$ speedup in time-to-first-token (TTFT) with negligible loss in generation quality. Code is available at https://github.com/Lenovo-ICI/DARIC.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-06T07:41:55Z</published>
+    <arxiv:comment>Accepted at SIGMOD 2027</arxiv:comment>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Weikang Wang</name>
+    </author>
+    <author>
+      <name>Haiyang Liu</name>
+    </author>
+    <author>
+      <name>Xin Zhou</name>
+    </author>
+    <author>
+      <name>Jun Liu</name>
+    </author>
+    <author>
+      <name>Weifeng Zhang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.08770v1</id>
+    <title>ReKV: Overlapping Quantized KV Transfer and Suffix Recomputation</title>
+    <updated>2026-11-05T22:34:13Z</updated>
+    <link href="https://arxiv.org/abs/2611.08770v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.08770v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Prefill--decode disaggregation moves a prompt's key--value (KV) cache between workers before the first token can be generated. Reducing this handoff to either cache compression or recomputation misses a useful choice: which layers to transmit, at what precision, and which layers to execute again on the decode worker. ReKV transfers a quantized prefix KV cache and one BF16 boundary state, then reconstructs a contiguous suffix while the prefix is in flight. In a model-shaped synthetic benchmark on cross-node H100s, the Q8 configuration meeting separately evaluated quality criteria reduces 8K handoff latency by $2.36\times$, $2.84\times$, and $3.65\times$ over BF16 transfer for Qwen2.5-7B, Qwen2.5-3B, and Qwen3-8B. It is also faster than the best measured transfer-only or recompute-only action at those points. A separate real-weight BF16 recomputation experiment reduces prefill-to-token-return time by $1.16$--$1.63\times$. The preferred action changes with prompt length and link bandwidth.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-05T22:34:13Z</published>
+    <arxiv:comment>5 pages, 3 figures, 3 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Guangjian Dong</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.08638v1</id>
+    <title>MORTIS: Compiler-Guided KV-Cache Management for LLM Agent Programs</title>
+    <updated>2026-11-05T19:35:20Z</updated>
+    <link href="https://arxiv.org/abs/2611.08638v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.08638v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Existing agent serving systems divide each prompt into a reusable prefix and an opaque suffix, managing the KV-cache at this coarse granularity without distinguishing the components within each part. We observe that prompt components differ in which LLM calls share their values and how long those values remain reusable, a property we term intra-prompt heterogeneity. Our key insight is that, in frameworks that generate prompts from typed LLM function calls, these components correspond to program variables, allowing compiler analysis to recover their sharing patterns and lifetimes. We present MORTIS, a compiler-serving co-design that combines this analysis with runtime observations to improve KV-cache management. MORTIS reorders prompt components to expose additional prefix reuse and uses their predicted reuse and lifetimes to guide cache retention, eviction, and prefetching. Our evaluation shows that MORTIS achieves up to 1.99x job completion time (JCT) speedup and 1.97x throughput improvement over SGLang, with geometric-mean speedups of 1.45x and 1.49x, respectively.</summary>
+    <category term="cs.OS" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-05T19:35:20Z</published>
+    <arxiv:comment>10 pages</arxiv:comment>
+    <arxiv:primary_category term="cs.OS"/>
+    <author>
+      <name>Xiaoyu Ma</name>
+    </author>
+    <author>
+      <name>Jayanaka L. Dantanarayana</name>
+    </author>
+    <author>
+      <name>Savini Kashmira</name>
+    </author>
+    <author>
+      <name>Baichuan Li</name>
+    </author>
+    <author>
+      <name>Lingjia Tang</name>
+    </author>
+    <author>
+      <name>Jason Mars</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.08363v1</id>
+    <title>StrataFlux: Memory-Hierarchy-Native Low-Bit LLM Inference</title>
+    <updated>2026-11-05T17:42:06Z</updated>
+    <link href="https://arxiv.org/abs/2611.08363v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.08363v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Quantization reduces the memory and bandwidth demands of large language model (LLM) inference but can degrade accuracy; offloading higher-precision data can instead stall generation. We introduce StrataFlux, a framework that challenges this tradeoff by recovering accuracy lost to low-bit weight and key-value (KV) cache quantization while retaining quantization's memory and speed advantages. StrataFlux co-designs refinement representation, selection, and delivery to make host RAM and solid-state drives useful sources of additional precision. Its selective precision streaming reduces transfer volume, overlaps delivery with computation, and reuses fetched precision across decoding steps so generation need not wait for every transfer. We evaluate 2-4-bit weights and 2-3-bit KV-cache on dedicated GPUs and unified-memory platforms. For 2-bit Llama-3.1-8B-Instruct weights, StrataFlux reduces WikiText-2 perplexity from 9.46 to 8.40 while maintaining 95.4% of the quantized base's throughput on RTX 5090. With 2-bit weights and KV, StrataFlux raises Qwen3-8B's AIME 2024/2025 accuracy from 11.0% to 47.1% at unchanged GPU memory use. At 128K context, Llama-3.1-8B-Instruct with 3-bit weights and 2-bit KV achieves comparable perplexity and speed to vLLM's 4-bit AWQ weights and 8-bit KV on RTX 5090, using approximately half the GPU memory. These results show that GPU-resident precision need not set the accuracy ceiling, nor offloading-tier latency dictate decoding speed.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-05T17:42:06Z</published>
+    <arxiv:comment>34 pages, 18 figures, 44 tables. Includes appendix</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Jake Hyun</name>
+    </author>
+    <author>
+      <name>Ziyu Zhao</name>
+    </author>
+    <author>
+      <name>Jae-sun Seo</name>
+    </author>
+    <author>
+      <name>Mohamed S. Abdelfattah</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.07198v1</id>
+    <title>Capability Gain from ISA to Shared Execution on AMD MI300A and MI250X</title>
+    <updated>2026-11-04T22:41:10Z</updated>
+    <link href="https://arxiv.org/abs/2611.07198v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.07198v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Each new GPU generation is showcased by its peak instruction rates, yet users hardly ever run instructions directly: they reach the hardware's performance through vendor libraries, applications and devices shared with other jobs. How much of a theoretical speedup survives these layers is rarely measured, so a team deciding whether to move to a new generation, or to adopt FP8 or 2:4 sparsity, lacks adequate guidance. AMD's MI300A (CDNA3) adds new FP8 matrix instructions and 2:4 structured-sparse instructions that the predecessor, the MI250X (CDNA2), does not have. We analyze this theoretical speedup gap on AMD's MI300A (CDNA3) against the MI250X (CDNA2) by defining a new metric, capability gain.
+  Capability gain is the fraction of a feature's instruction-level speedup that it keeps at a higher level, such as a library, an application or a shared device. We trace it from ISA microbenchmarks through hipBLASLt and hipSPARSELt to LLM inference and mixed-precision HPL, and onto a device shared by up to eight concurrent streams. FP8 keeps most of its speedup through the library, completing an $8192^3$ GEMM \genCapPkgEndToEndGainEightK{} faster than the MI250X with FP16, but unfused quantization turns it into a per-layer slowdown in an LLM, and 2:4 sparsity keeps at most about half of its speedup in hipSPARSELt. Under queue sharing, FP8's GEMM capability gain rises above 1. How fairly streams share the device depends on the number of hardware queues, not on the numeric precision, yet shared LLM serving gains nothing from FP8.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-04T22:41:10Z</published>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Aaron Jarmusch</name>
+    </author>
+    <author>
+      <name>Sunita Chandrasekaran</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.07149v1</id>
+    <title>FastAFD: When Does Attention-FFN Disaggregation Pay on Rack-Scale NVLink?</title>
+    <updated>2026-11-04T21:21:57Z</updated>
+    <link href="https://arxiv.org/abs/2611.07149v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.07149v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Attention-FFN disaggregation (AFD) separates attention from the experts of a mixture-of-experts (MoE) model and has been reported to raise decode throughput over colocated serving. Whether this advantage holds on rack-scale NVLink systems such as GB200 NVL72 remains unclear: prior results were obtained on other hardware, against narrower colocated baselines, or with analytical models, whereas production engines serve large MoE models on these systems with wide expert parallelism (wide EP). We build and tune FastAFD, an AFD engine for GB200 NVL72 that overlaps the MoE of one microbatch with the attention of the other, and compare it against the best vLLM wide EP setting. Experiments show that AFD has a throughput advantage of up to 1.17x over wide EP on Qwen3 and 1.16x on Qwen3.5, and matches it on MiniMax-M2.5. We derive an analytical model that predicts AFD throughput within 3% using only profiles of colocated vLLM, telling whether switching to AFD would pay off before deploying it. The model yields a concise insight: AFD's speedup factors into a batch gain (larger batches, since attention GPUs hold no expert weights), an overlap gain (shorter steps, since the MoE runs on the expert GPUs behind attention), and a disaggregation cost (the GPUs given to experts). AFD has the advantage when the two gains outweigh the cost. This view explains which models benefit from AFD, and shows that speculative decoding helps light-expert models most, where the enlarged overlap gain outweighs the larger disaggregation cost and adds a further 8% to AFD's advantage over wide EP. Looking ahead, serving the experts on accelerators that keep their weights in on-chip SRAM, such as the Groq LPX accelerators paired with Vera Rubin NVL72, would remove most of the disaggregation cost, raising the ideal speedup to 2.48x with speculative decoding. FastAFD is open source at https://github.com/hao-ai-lab/FastAFD.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-04T21:21:57Z</published>
+    <arxiv:comment>24 pages</arxiv:comment>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Yichao Fu</name>
+    </author>
+    <author>
+      <name>Yuxuan Zhang</name>
+    </author>
+    <author>
+      <name>Minshen Zhang</name>
+    </author>
+    <author>
+      <name>Ruitian Wang</name>
+    </author>
+    <author>
+      <name>Junda Chen</name>
+    </author>
+    <author>
+      <name>Hao Zhang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.05642v1</id>
+    <title>Runway Characters: Serving a 57B Video Diffusion Transformer for Real-Time Conversation</title>
+    <updated>2026-11-03T21:26:23Z</updated>
+    <link href="https://arxiv.org/abs/2611.05642v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.05642v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Conversational video characters must generate video as fast as it plays, for one user at a time: at 24 fps, a sustained 166.7 ms per four-frame chunk at batch size one, with only a few chunks of buffering. We describe the system behind Runway Characters, which serves a $\approx$57B-parameter autoregressive video diffusion transformer (four denoising passes per chunk) at 704$\times$1088 and 24 fps on four H100 GPUs with a voice agent in the loop. Each chunk takes 240 attention calls, each reading a 5,788-slot KV cache in which only 757 tokens are new, and 29% of the original step was whole-cache work repeated in every call. We move that work to write time (a ring cache, RoPE and FP8 quantization applied once per write, and a delta rotation when positions reset), fuse the tensor-parallel all-reduce into the FP8 GEMM with in-switch reduction, and give the decoder that turns latents into video frames its own GPU. Without the fused kernel, our optimizations cut the diffusion step from 240.9 to 159.3 ms (1.51$\times$, 24.5 fps sustained) with no detected degradation in lip-sync scores; the fused kernel, rolled back once in production and since re-enabled, reaches 147.4 ms (1.63$\times$, 43% of FP8 peak). In seven weeks of production the worker averaged above 23.5 fps in 99.5% of sessions that streamed for at least a second, and our pipeline takes 0.49 s of a 2.1 s median conversational turn. On the same GPUs, the two open-source real-time video systems we benchmarked, at four denoising passes, miss real time or add over a second of latency (one by estimate), at a third to half of our resolution.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-03T21:26:23Z</published>
+    <arxiv:comment>18 pages, 7 figures, 9 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Rohan Agarwal</name>
+    </author>
+    <author>
+      <name>Robin Andeer</name>
+    </author>
+    <author>
+      <name>Alex Armbruster</name>
+    </author>
+    <author>
+      <name>Bennett Arthur</name>
+    </author>
+    <author>
+      <name>Michail Christos Doukas</name>
+    </author>
+    <author>
+      <name>Piero Esposito</name>
+    </author>
+    <author>
+      <name>Qiming Fang</name>
+    </author>
+    <author>
+      <name>Aron Filkey</name>
+    </author>
+    <author>
+      <name>Bryan Fox</name>
+    </author>
+    <author>
+      <name>Anastasis Germanidis</name>
+    </author>
+    <author>
+      <name>Jonathan Granskog</name>
+    </author>
+    <author>
+      <name>Corina Gurau</name>
+    </author>
+    <author>
+      <name>Robin Kahlow</name>
+    </author>
+    <author>
+      <name>Taras Khakhulin</name>
+    </author>
+    <author>
+      <name>Nasir Mohammad Khalid</name>
+    </author>
+    <author>
+      <name>Tomasz Łakomy</name>
+    </author>
+    <author>
+      <name>Mike Leisz</name>
+    </author>
+    <author>
+      <name>Kathleen M. Lewis</name>
+    </author>
+    <author>
+      <name>Daniil Merkulov</name>
+    </author>
+    <author>
+      <name>Nicolas Neubert</name>
+    </author>
+    <author>
+      <name>Ryan Phillips</name>
+    </author>
+    <author>
+      <name>Yining Shi</name>
+    </author>
+    <author>
+      <name>Axel Örn Sigurðsson</name>
+    </author>
+    <author>
+      <name>Erica Simmons</name>
+    </author>
+    <author>
+      <name>Mark Sturley</name>
+    </author>
+    <author>
+      <name>Ziyi Tang</name>
+    </author>
+    <author>
+      <name>Michail Tarasiou</name>
+    </author>
+    <author>
+      <name>Jamie Umpherson</name>
+    </author>
+    <author>
+      <name>Cindy Wang</name>
+    </author>
+    <author>
+      <name>Jimei Yang</name>
+    </author>
+    <author>
+      <name>Hudson Yeo</name>
+    </author>
+    <author>
+      <name>Wei Zhang</name>
+    </author>
+    <author>
+      <name>Zejia Zheng</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.05104v1</id>
+    <title>Workload-Static Optical Circuit Switching For Scalable LLM Inference Decode</title>
+    <updated>2026-11-03T16:00:07Z</updated>
+    <link href="https://arxiv.org/abs/2611.05104v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.05104v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>LLM inference decode executes fine-grained collectives whose latency directly limits per-user interactivity, yet scale-up fabrics are still built from electronic packet switches designed for training. We observe that, for a given model deployment and parallelization, the communication structure of decode is fixed, and propose workload-static optical circuit switching (OCS): circuits are configured once per deployment, co-designed with model parallelism and with topology-aware collective schedules that turn spare accelerator ports into fewer communication phases or higher bandwidth. We evaluate this design with GXNET, a graph-based workload emulator coupled to analytical and flit-level network models grounded in hardware measurements. In a 576-accelerator scale-up domain serving 5T-parameter MoE models with up to 5M tokens of context, all-OCS fabrics improve interactivity by up to 65% and energy efficiency by up to 119% over 4:1 oversubscribed packet-switched fabrics.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.NI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-03T16:00:07Z</published>
+    <arxiv:comment>39 pages, 10 main text, 29 appendix, 28 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Maximilian Thürmer</name>
+    </author>
+    <author>
+      <name>Nicolas Scotto di Perto</name>
+    </author>
+    <author>
+      <name>Eloise Stein</name>
+    </author>
+    <author>
+      <name>Natanijel Vasic</name>
+    </author>
+    <author>
+      <name>Mikaeil Bagherli</name>
+    </author>
+    <author>
+      <name>Zhenguo Wu</name>
+    </author>
+    <author>
+      <name>Benjamin Klenk</name>
+    </author>
+    <author>
+      <name>Holger Fröning</name>
+    </author>
+    <author>
+      <name>Johannes Feldmann</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.04671v1</id>
+    <title>LeanSparse: Memory-Efficient Serving for Native Sparse-Attention LLMs</title>
+    <updated>2026-11-03T10:55:47Z</updated>
+    <link href="https://arxiv.org/abs/2611.04671v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.04671v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Sparse attention limits the history read by each query, but serving long contexts still requires substantial GPU memory. Existing KV offloading systems retain the full history of indexer keys on GPU, limiting decode concurrency. Prefill's temporary memory demand can further delay admission even when enough memory remains for the same request's subsequent decode. We present LeanSparse, a serving system that reduces both decode's persistent memory use and prefill's temporary memory demand. Our design exploits two observations: prefill consumes historical data one layer at a time, and decode can identify promising candidates before comparing their original indexer scores. During prefill, LeanSparse streams layer histories through two reusable GPU buffers, overlapping next-layer loading with ongoing model computation. During decode, coarse-to-fine indexing searches compact representations and retrieves original indexer keys only for candidate refinement. Separate indexer key and KV caches reuse data across generation steps. We implement LeanSparse in SGLang and evaluate it on DeepSeek-V4-Flash. At 950K context length, LeanSparse supports 2.95$\times$ as many concurrent requests and achieves 2.14$\times$ decode throughput over HiSparse. On multi-turn Open-SWE traces, it reduces median time to first token from 21.6 to 0.6s and median session completion time by 17.7% relative to ECHO.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-03T10:55:47Z</published>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Zaifeng Pan</name>
+    </author>
+    <author>
+      <name>Chris Wu</name>
+    </author>
+    <author>
+      <name>Xinwei Qiang</name>
+    </author>
+    <author>
+      <name>Zhengding Hu</name>
+    </author>
+    <author>
+      <name>Zhongkai Yu</name>
+    </author>
+    <author>
+      <name>Yufei Ding</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.04382v2</id>
+    <title>Beyond Compression Ratio: High-Throughput KV Compression for Disaggregated LLM Serving</title>
+    <updated>2026-11-04T05:29:11Z</updated>
+    <link href="https://arxiv.org/abs/2611.04382v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.04382v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>KV cache compression reduces the communication volume of disaggregated large language model serving, but its practical benefit depends not only on compression ratio and model quality, but also on how efficiently the compression pipeline executes. This requirement becomes increasingly important as modern serving systems adopt high-bandwidth interconnects, where inefficient compression can offset a substantial portion of the saved communication time. This paper presents FastKVComp, a high-throughput KV cache compression data path built on top of KVServe. FastKVComp improves compression execution in two complementary ways. First, it fuses the distribution transformation and low-bit quantization stages into a KVaware TileLang kernel, eliminating intermediate tensor materialization and redundant memory accesses. Second, it replaces the original lossless compression backend with an open, extensible, and searchable backend based on LC, enabling high-performance compression operator pipelines. The fused kernel achieves up to 5.9x speedup, while the new lossless backend increases compression throughput from below 90 GB/s to over 500 GB/s. Across the evaluated workloads, FastKVComp reduces job completion time by up to 2.04x. End-to-end evaluation shows that these optimizations allow KV compression to retain meaningful communication benefits under modern high-bandwidth network.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-03T06:13:07Z</published>
+    <arxiv:comment>Accepted by The 22nd Annual IFIP International Conference on Network and Parallel Computing (NPC 2026)</arxiv:comment>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Junhong Wu</name>
+    </author>
+    <author>
+      <name>Zedong Liu</name>
+    </author>
+    <author>
+      <name>Xinyang Ma</name>
+    </author>
+    <author>
+      <name>Yuhan Chen</name>
+    </author>
+    <author>
+      <name>Guangming Tan</name>
+    </author>
+    <author>
+      <name>Dingwen Tao</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.04137v1</id>
+    <title>LoopKV: Loop-Aware KV Cache Compression for Serving Looped Transformers</title>
+    <updated>2026-11-03T01:28:57Z</updated>
+    <link href="https://arxiv.org/abs/2611.04137v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.04137v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Looped transformers apply a shared block several times per token to improve accuracy without adding parameters. For models such as Ouro that keep a separate key-value (KV) cache per loop, cache memory limits the batch size that amortizes repeated weight reads. Uniform-bit quantization and fixed rules per loop do not allocate precision according to each layer's sensitivity in each loop. Measurements on Ouro show that quantization sensitivity varies across (loop, layer) cells, and the sum of individual cell damages approximates the overall output damage. Sharing damage also varies by cell, with later loops generally tolerating sharing better. Skipping low-attention values to save reads produces errors that compound across loops. LoopKV uses a one-time offline profile to choose 4-bit storage, 2-bit storage or reuse of the final loop's KV for each cell. The planner minimizes reads under budgets for predicted damage and storage. During decoding, each loop reads the high 2 bits of each 4-bit value and fetches the low bits only where its own attention weights require 4-bit precision. A single fused kernel in vLLM executes the plan. Serving Ouro-1.4B on one RTX PRO 6000, the memory-optimized LoopKV-M plan stores 35% less KV than uniform 4-bit quantization (KIVI-4) on the same fused kernel and CUDA graph. It sustains 1.7-2.2x KIVI-4's goodput under a latency service-level objective with a 16K-token maximum length. None of its averages on six public benchmarks falls significantly below BF16's.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-03T01:28:57Z</published>
+    <arxiv:comment>28 pages, 15 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Tianle Zhou</name>
+    </author>
+    <author>
+      <name>Yang Zhang</name>
+    </author>
+    <author>
+      <name>Tianyu Wu</name>
+    </author>
+    <author>
+      <name>Zhuohan Wang</name>
+    </author>
+    <author>
+      <name>William Nixon</name>
+    </author>
+    <author>
+      <name>Juncheng Yang</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.04032v1</id>
+    <title>ROCm InferaSim: Cut LLM Serving Trial Costs and Deploy the Best Configuration</title>
+    <updated>2026-11-02T22:23:40Z</updated>
+    <link href="https://arxiv.org/abs/2611.04032v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.04032v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Serving an LLM efficiently depends on the engine, how the model is split across GPUs, precision, scheduler settings, speculative decoding, KV-cache management, and prefill-decode disaggregation. The best configuration depends on the model, hardware, workload, and objective. Operators usually find it by trial and error. Exhaustively measuring the candidates in our study would take about 25,000 GPU-hours. ROCm InferaSim predicts serving performance from a few short measurements. Choices such as batch size, prompt length, and GPU count change the amount of work per GPU without changing the kernels. ROCm InferaSim benchmarks each distinct set of kernels once, on at most one node. We call this measurement an anchor. Analytical laws carry that anchor to other deployments that run the same kernels. For multi-node deployments, ROCm InferaSim reduces the configuration to a single-node equivalent, measures it, and scales the result analytically. A simulator replays multi-turn traffic, and a tuning agent searches configurations using the predictions. On AMD Instinct MI355X GPUs with vLLM, SGLang, and ATOM, 11 anchors took 9.1 GPU-hours, against 204 GPU-hours to measure the 226 fixed-length configurations they cover. On 172 configurations, time per output token has 8.1% median error. On a multi-turn coding workload, throughput is within 8%. For 159 disaggregated deployments, none used as an anchor, throughput is within 5.5%. A five-candidate short list contains a deployment within 12% of the best feasible pairing of model and latency target.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-02T22:23:40Z</published>
+    <arxiv:comment>37 pages, 11 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Anshu Raina</name>
+    </author>
+    <author>
+      <name>Yao Fu</name>
+    </author>
+    <author>
+      <name>Zhang Jiejing</name>
+    </author>
+    <author>
+      <name>Peyman Razaghi</name>
+    </author>
+    <author>
+      <name>Shiksha Patel</name>
+    </author>
+    <author>
+      <name>Ravi Gupta</name>
+    </author>
+    <author>
+      <name>Deval Shah</name>
+    </author>
+    <author>
+      <name>Adeem Jassani</name>
+    </author>
+    <author>
+      <name>Subhajit Dutta Chowdhury</name>
+    </author>
+    <author>
+      <name>Lorri Rao</name>
+    </author>
+    <author>
+      <name>Kailash Gogineni</name>
+    </author>
+    <author>
+      <name>Zhenyu Gu</name>
+    </author>
+    <author>
+      <name>Onil Gunawardana</name>
+    </author>
+    <author>
+      <name>Emad Barsoum</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.03330v1</id>
+    <title>The SIMPLE Law for Energy Cost of LLM Inference</title>
+    <updated>2026-11-02T15:51:46Z</updated>
+    <link href="https://arxiv.org/abs/2611.03330v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.03330v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Generative AI is billed per token, yet tokens are not equally expensive. Each token enters the KV-cache and raises the cost of those that follow, so energy grows non-linearly along a sequence whose tokens look identical. No analytical model states what a token costs, and the most accurate SOTA model is a fit, not a law: it absorbs architecture into fitted coefficients, requiring per-LLM fitting. We derive closed-form expressions of the computational and memory-access complexity of LLM inference in terms of architectural hyperparameters, covering MHA and GQA, and compare a family of analytical models of increasing granularity. From these, we obtain the SIMPLE Inference Model to Predict LLMs Energy (SIMPLE), a four-parameter law that separates prefill from decode, and decode into KV-cache cost and next-token computation. Over traces of 13 dense LLMs from six families on NVIDIA H100 GPUs, it attains R2 = 0.969 and 11.97% MAPE, 3.1-3.5x below the SOTA, without per-LLM calibration. The SIMPLE law explains as well as predicts: prefill energy grows quadratically with the hidden dimension, so larger LLMs suffer most from long inputs; and more aggressive GQA KV grouping reduces the per-token energy by up to 3x relative to standard MHA. Increasing the reasoning token budget pushes output length beyond the analytically derived energy minimum, driving super-linear energy growth; although accuracy grows with the budget, energy grows faster, so Intelligence per Joule peaks at an intermediate budget and falls by up to 3.14x across a 4.0x reasoning-budget range. Agentic serving raises energy per request by 13.0x relative to non-agentic ones, driven by the growth of both the prefill and the KV-cache terms with input length; while prefix caching removes most of the prefill cost (-93%), the KV-cache term is unaffected, so even a cached agentic request costs 4.8x more.</summary>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.PF" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-02T15:51:46Z</published>
+    <arxiv:comment>Submitted to Future Generation Computer Systems</arxiv:comment>
+    <arxiv:primary_category term="cs.AI"/>
+    <author>
+      <name>Hiari Pizzini Cavagna</name>
+    </author>
+    <author>
+      <name>Andrea Proia</name>
+    </author>
+    <author>
+      <name>Daniele Cesarini</name>
+    </author>
+    <author>
+      <name>Zeynep Kiziltan</name>
+    </author>
+    <author>
+      <name>Andrea Bartolini</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.02975v2</id>
+    <title>Introducing Cluster Efficiency to LLM Serving: Pooling Economical Accelerators over Fast Interconnects</title>
+    <updated>2026-11-06T12:16:12Z</updated>
+    <link href="https://arxiv.org/abs/2611.02975v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.02975v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Long-context large language model (LLM) serving places substantial demands on compute, memory capacity, and memory bandwidth. Economical accelerators can offer these resources at lower cost, but their limited per-device capacity requires pooling across devices, making communication overhead critical. We study cluster efficiency, measured in tokens per dollar and per joule, and show how low-latency, high-bandwidth interconnects enable economical accelerators to retain their cost advantage. Guided by a characterization of coding-agent workloads and accelerator scaling, we realize this design on the Tenstorrent Galaxy, a cluster of Blackhole chips. The serving stack combines integrated communication engines, pipelined ring transfers, communication-computation overlap, and device-side decode replay to reduce collective overhead. Across three dense models in BF16 and 8-bit configurations with 8K-256K-token contexts, the Galaxy achieves 1.07-2.24$\times$ the tokens per dollar of an eight-GPU RTX PRO 6000 Blackwell server under a three-year acquisition-and-electricity cost model. Emulating TCP-class communication on the same chips reduces throughput by 23.5-67.4% and eliminates the cost advantage in every evaluated configuration. These results demonstrate how fast interconnects translate the per-dollar resource advantages of economical accelerators into cost-efficient long-context LLM serving.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-02T11:43:55Z</published>
+    <arxiv:comment>17 pages, 8 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Youhe Jiang</name>
+    </author>
+    <author>
+      <name>Pavle Glušac</name>
+    </author>
+    <author>
+      <name>Binhang Yuan</name>
+    </author>
+    <author>
+      <name>Eiko Yoneki</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.02082v1</id>
+    <title>Fairway: Load-Aware KV Cache Reuse for LLM Prefill Scheduling</title>
+    <updated>2026-11-01T17:42:31Z</updated>
+    <link href="https://arxiv.org/abs/2611.02082v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.02082v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>LLM-based applications often employ agentic workflows and retrieval-augmented generation (RAG), which build long prompts from shared context. When prefixes are shared across requests, serving engines reuse the key-value (KV) cache to skip parts of the prefill computation. Reuse is typically graded: the uncached work of requests in a queue can differ by up to 100x. In this setting, the order of scheduling determines the time-to-first-token (TTFT) for the queued requests. KV reuse-first scheduling, which prioritizes the requests with the longest KV cache hit, gives the lowest median TTFT but starves expensive requests under load spikes; first-come-first-served (FCFS) scheduling bounds the tail but raises the median TTFT. We present Fairway, a prefill scheduler built on adaptive reuse prioritization: it favors KV cache reuse while queues are short, and shifts toward fair allocation as requests wait longer relative to their own prefill time. Fairway employs a virtual dual lane model: a KV reuse-first Fast lane and a Fair lane atop the serving engine's waiting queue that enables speeding up of cheap reuse requests without starving expensive ones. This model automatically adapts to the workload without any per-workload tuning. Fairway lowers the tail TTFT at no cost to the median in transient overload. Across workloads and load levels, Fairway matches or beats the best baseline, with a p99 TTFT up to 8.6x lower than prior prefix-aware schedulers. During load spikes, it keeps the tail of FCFS at a 6x lower median TTFT.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-01T17:42:31Z</published>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Hamidreza Alikhani</name>
+    </author>
+    <author>
+      <name>Nazmul Takbir</name>
+    </author>
+    <author>
+      <name>Matin Khajavi</name>
+    </author>
+    <author>
+      <name>Rajat Bhattacharjya</name>
+    </author>
+    <author>
+      <name>Sangeetha Abdu Jyothi</name>
+    </author>
+    <author>
+      <name>Nikil Dutt</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.01735v1</id>
+    <title>CacheWeave: Learning to Recompute for Efficient Position-Independent KV Caching</title>
+    <updated>2026-11-01T09:35:55Z</updated>
+    <link href="https://arxiv.org/abs/2611.01735v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.01735v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Position-independent caching reuses chunk KV caches across positions and requests. Independent encoding, however, omits cross-chunk interactions and can degrade accuracy. In our study, neither PIC training nor rule-based recomputation, alone or combined, consistently recovers full-prefill accuracy. Oracle-guided recomputation on PIC-trained models improves accuracy at the same budget, motivating better selection. We present CacheWeave, which adapts the full backbone to PIC, then freezes it and trains a model-native block selector on the adapted model's oracles. The selector uses compact cached chunk features and question hidden states without extracting backbone attention scores. It selects contiguous token blocks aligned with KV blocks to support efficient recomputation and limit copy-on-write amplification. Its runtime, CacheWeave-Serve, supports private and shared KV caches, keeps selection and recomputation on the GPU, and stages sliding-window KV for hybrid attention models. Across three models and four tasks, CacheWeave outperforms CacheBlend and ProphetKV by 7.2 and 3.5 percentage points on average at a 5% recomputation budget, with a mean relative accuracy loss of 1.6% to full prefill. With 32-token blocks, CacheWeave-Serve cuts single-request TTFT by up to 16.1x over full prefill and 1.7x over ProphetKV, and raises SLO goodput under load by up to 7.8x.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-01T09:35:55Z</published>
+    <arxiv:comment>14 pages</arxiv:comment>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Yueyang Pan</name>
+    </author>
+    <author>
+      <name>Qianchao Zhu</name>
+    </author>
+    <author>
+      <name>Yuliang Liu</name>
+    </author>
+    <author>
+      <name>Teng Ma</name>
+    </author>
+    <author>
+      <name>Sanidhya Kashyap</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.01404v1</id>
+    <title>Serving Agentic Robot Fleets: Workload Characterization, KV-Cache Thrashing, and Admission Control</title>
+    <updated>2026-11-01T01:15:32Z</updated>
+    <link href="https://arxiv.org/abs/2611.01404v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.01404v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Agentic robots combine a vision-language brain, a tool-using harness, and a vision-language-action (VLA) policy. Serving a fleet of these agents introduces two coupled resource constraints: the brain repeatedly revisits long, growing key-value (KV) cache states, while the VLA executes action chunks under tight control deadlines. We characterize 80 LIBERO-PRO episodes generated by GPT-6-Astra, RPent, and pi0.5 (1,862 brain turns and 1,582 VLA inference chunks), profile both layers on H800 graphics processing units (GPUs), and replay the resulting agent programs on a vLLM serving engine. Brain contexts reach 215k tokens; the median Astra request takes 7.78 s, while the intervening environment-step gap is only 1.0 s. Under a 0.25 s action-chunk deadline, one VLA GPU meets the 1% starvation target for one robot; under a 1.0 s deadline, its measured capacity reaches at least 32. In sustained brain replay, increasing concurrency from 20 to 32 robots reduces throughput from about 2.4 to 0.6 requests/s as repetitive prefill displaces generation. A static active-episode cap restores 2.24-2.25 requests/s and raises completed trace-program throughput from 1.30 to 5.00-5.55 episodes/min. Our measurements expose the workload-dependent shift between action deadlines and brain KV residency, and establish practical principles for capacity planning and admission in sustained agentic robot fleets.</summary>
+    <category term="cs.RO" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-11-01T01:15:32Z</published>
+    <arxiv:comment>12 pages, 17 figures, 8 tables</arxiv:comment>
+    <arxiv:primary_category term="cs.RO"/>
+    <author>
+      <name>Sida He</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.01174v1</id>
+    <title>TRIAGE: Reliability- and Load-Conditioned Escalation for Two-Tier LLM Serving with a Semantic Evidence Judge</title>
+    <updated>2026-10-31T18:25:45Z</updated>
+    <link href="https://arxiv.org/abs/2611.01174v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.01174v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Two-tier LLM serving escalates selected requests from a small model to a large one, but prompt-based routers cannot see whether retrieved evidence supports an answer, and they treat the GPU cost of an escalation as constant. We study TRIAGE, which conditions escalation on a post-generation reliability state and on a load-dependent GPU price, and we report both what held and what did not on one A40 serving Qwen2.5-7B and 32B (AWQ) under VLLM. Escalation cost rose 21.9x from 1 to 10 requests/s but showed no monotone dependence on KV-cache headroom, and a pre-registered claim that the reliability state detects corrupted evidence (AUROC&gt;=0.70) was falsified at 0.571, although any prompt-only router scores exactly 0.500 by construction. Post hoc, a semantic evidence judge raised detection to 0.846 (0.926 on never-served items) and predicted wrong small-model answers at AUROC 0.90-0.96 on RGB and three RouterBench model pairs; the resulting cascade stayed within about 3 pp of GPT-4 at 79.5% lower API cost for GPT-3.5-&gt;GPT-4, yet fell below random routing for open-model pairs with 2-3x price ratios. End to end, the 7B-&gt;32B pair showed only a +2.88 pp held-out gap, so the allocator rightly declined to escalate and the headline is a null that a small pre-launch gate failed to expose.</summary>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.PF" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-31T18:25:45Z</published>
+    <arxiv:comment>7 pages, Technical report</arxiv:comment>
+    <arxiv:primary_category term="cs.LG"/>
+    <author>
+      <name>Basavaraj R M</name>
+    </author>
+    <author>
+      <name>Aryan Bharat Kumar</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.09973v1</id>
+    <title>ReelCache: An Efficient KV Cache Compression and Management System for Multi-Round Video Generation</title>
+    <updated>2026-10-31T02:36:10Z</updated>
+    <link href="https://arxiv.org/abs/2611.09973v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.09973v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Autoregressive video diffusion models produce large KV caches during multi-round video generation. Keeping all these KV chunks would consume substantial memory, while rebuilding discarded caches would significantly delay video chunk generation. This paper presents ReelCache, a KV cache compression system for efficient multi-round, long video generation. ReelCache combines an intra-chunk compressor with an inter-chunk cache manager. The compressor applies low-rank decomposition across channels and video coding to the resulting coefficients, predicting the decomposition rank per transformer layer online to meet retained-energy targets. The cache manager shares basis directions across consecutive chunks and organizes chunk states in a tree, allowing generation branches to share historical state while supporting restoration for resume, rewind, and fork. Experiments across five video generation models show that ReelCache reduces KV storage by 14.46-21.13x relative to baselines and accelerates next-chunk generation by 1.25-3.36x, with less than 1% drop in six representative VBench metrics. GitHub: https://github.com/Tianyu9748/ReelCache</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-31T02:36:10Z</published>
+    <arxiv:comment>18 pages total, 11 pages body plus 5 pages appendix</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Tianyu Wang</name>
+    </author>
+    <author>
+      <name>Daiyang Yu</name>
+    </author>
+    <author>
+      <name>Zhiwei Ren</name>
+    </author>
+    <author>
+      <name>Junbo Li</name>
+    </author>
+    <author>
+      <name>Jitian Zhang</name>
+    </author>
+    <author>
+      <name>Longfei Shangguan</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.00547v1</id>
+    <title>BitLLM: Efficient Low-Bit, Conversion-Hiding LLM Decoding on Mobile GPUs</title>
+    <updated>2026-10-31T02:13:33Z</updated>
+    <link href="https://arxiv.org/abs/2611.00547v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.00547v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The rapid scaling of large language models (LLMs) has unlocked remarkable capabilities across various domains. However, deploying LLMs on mobile devices remains challenging because of their high computational and memory requirements. Low-bit quantization (e.g., 4-bit weights, 8-bit activations) can reduce model size while preserving accuracy, but its practical efficacy on mobile GPUs has been limited so far. In this paper, we identify that the performance gap stems primarily from frequent data type conversions between quantized and floating-point values, and dynamic and inefficient memory access patterns caused by the growing Key-Value (KV) cache during autoregressive decoding. We introduce BitLLM, a mobile inference engine that addresses type conversion overhead and suboptimal memory accesses in quantized LLMs. Our approach features an adaptive layout and packing strategy for the KV cache that ensures efficient memory access throughout LLM decoding. This is coupled with an integer-native execution pipeline that defers and overlaps type conversion outside the compute hot path, keeping the critical MatMul stages in the integer domain. Implemented on off-the-shelf mobile GPUs, BitLLM outperforms leading engines, i.e., LLAMA.CPP, MNN-LLM, LiteRT-LM, and MLC-LLM, achieving average speedups of 1.78$\times$, 1.73$\times$, 1.58$\times$, and 1.47$\times$, respectively, across various models and quantization levels. Under long-context generation, BitLLM reduces average energy consumption (per token) by up to 88.9%.</summary>
+    <category term="cs.AR" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.OS" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.PF" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-31T02:13:33Z</published>
+    <arxiv:primary_category term="cs.AR"/>
+    <author>
+      <name>Hangyu Zheng</name>
+    </author>
+    <author>
+      <name>Zhihao Shu</name>
+    </author>
+    <author>
+      <name>Kunxiong Zhu</name>
+    </author>
+    <author>
+      <name>Minghai Qin</name>
+    </author>
+    <author>
+      <name>Xiaolong Ma</name>
+    </author>
+    <author>
+      <name>Gagan Agrawal</name>
+    </author>
+    <author>
+      <name>Wei Niu</name>
+    </author>
+    <arxiv:doi>10.1145/3845814.3850028</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1145/3845814.3850028" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2611.00391v1</id>
+    <title>Rethinking KV Cache Eviction for Agentic LLM Serving</title>
+    <updated>2026-10-30T21:14:26Z</updated>
+    <link href="https://arxiv.org/abs/2611.00391v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2611.00391v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Key-value (KV) caches impose substantial memory pressure on large language model serving systems, requiring cache eviction when capacity is insufficient. Existing mechanisms typically evict KV from the ends of cached sequences to preserve prefix sharing across requests. However, agent workloads repeatedly reuse long histories across successive turns. Recomputing the KV cache for tokens near the end of a sequence is substantially more expensive than for earlier tokens because their attention computation involves longer histories. To address this problem, we propose preserving shared prefixes and evicting the KV cache from the beginning of the remaining history while retaining the cached suffix. We build Penelope around this strategy by co-designing the eviction policy, KV recomputation, and unified GPU-CPU cache management. Returning requests reuse the KV cache retained in GPU or CPU memory and recompute only missing segments while preserving reuse of the cached suffix. We implement Penelope in SGLang and evaluate it on three Qwen3 model sizes using real agent traces. Compared with SGLang, Penelope reduces mean time to first token by up to 60% and job completion time by up to 37% with a GPU-only cache, and by up to 76% and 60% with a two-tier GPU-CPU cache.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-30T21:14:26Z</published>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Jiakun Fan</name>
+    </author>
+    <author>
+      <name>Han Meng</name>
+    </author>
+    <author>
+      <name>Yuxuan Xia</name>
+    </author>
+    <author>
+      <name>Hao Mark Chen</name>
+    </author>
+    <author>
+      <name>Dong Li</name>
+    </author>
+    <author>
+      <name>Dimitrios S. Nikolopoulos</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.41919v1</id>
+    <title>Matching Workloads to Blackwell: Power-Resolved Benchmarking of NVIDIA B200 and B300 across HPC and AI Workloads</title>
+    <updated>2026-10-30T15:51:19Z</updated>
+    <link href="https://arxiv.org/abs/2610.41919v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.41919v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We evaluate NVIDIA B200 and B300 (Blackwell Ultra) GPUs on two independent eight-GPU clusters, spanning computer-vision inference and training, LLM inference with Llama-3-8B and 70B~\cite{llama3}, and six production HPC codes. The B300 is not a uniform successor to the B200: it trails by up to 5.6$\times$ on convolutional inference, 8$\times$ on 3D vision transformer training, 24--27\% on 70B LLM throughput, and 16$\times$ on double-precision Quantum ESPRESSO. We resolve the convolutional deficit using per-GPU board power rather than throughput alone: on the affected workloads the B300 draws only 36--53\% of its 1100\,W envelope, whereas on ViT-Large, which it wins, both parts saturate at 95--97\% of TDP. Because our harness keeps inputs resident in device memory, a host-side data pipeline is excluded by construction, localizing the cause to per-kernel cost. Two B300 nodes of identical silicon differ by 2.1$\times$ in time-to-first-token solely from a development vLLM build. We give per-workload procurement guidance.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AR" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-30T15:51:19Z</published>
+    <arxiv:comment>10 pages, 8 figures. Accepted at the 17th International Workshop on Performance Modeling, Benchmarking and Simulation of High Performance Computer Systems (PMBS 2026), held in conjunction with SC26</arxiv:comment>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Mohsen Zand</name>
+    </author>
+    <author>
+      <name>Trung Dac Nguyen</name>
+    </author>
+    <author>
+      <name>H. Birali Runesha</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.41160v1</id>
+    <title>ARK: Avoiding Routing Collisions for KV Cache Transfer in Disaggregated LLM Inference</title>
+    <updated>2026-10-30T02:35:39Z</updated>
+    <link href="https://arxiv.org/abs/2610.41160v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.41160v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Disaggregated LLM inference separates the prefill and decode phases across GPU pools, generating massive KV-cache transfers. Because these transfers last hundreds of milliseconds to seconds, they behave as mega elephant flows that dominate link bandwidth utilization. In this regime, stateless ECMP can perform poorly: hash collisions may overload one spine link while leaving others idle, stretching transfer times by seconds. Yet this same persistence makes coordination practical. Since these flows are long-lived, even lightweight one-to-all coordination can be amortized over their lifetime. We present ARK, a distributed elephant-flow path reservation mechanism. ARK coordinates senders to choose source ports whose hashes map concurrent flows onto distinct spines, without requiring switch changes or receiver-side packet reordering. Packet-level RDMA simulations show that ARK reduces mean and P95 FCT by up to 27.3% and 34.0% under moderate load, and further reduces mean TTFT by up to 12.9%.</summary>
+    <category term="cs.NI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-30T02:35:39Z</published>
+    <arxiv:comment>7 pages. Published in the Proceedings of the ACM SIGCOMM 2026 Conference (SIGCOMM '26)</arxiv:comment>
+    <arxiv:primary_category term="cs.NI"/>
+    <arxiv:journal_ref>In Proceedings of the ACM SIGCOMM 2026 Conference (SIGCOMM '26), pp. 2067-2073, 2026</arxiv:journal_ref>
+    <author>
+      <name>Hung-Chun Lin</name>
+    </author>
+    <author>
+      <name>Ting-Wei Hsu</name>
+    </author>
+    <author>
+      <name>Chung-En Ho</name>
+    </author>
+    <author>
+      <name>Ahmed Saeed</name>
+    </author>
+    <arxiv:doi>10.1145/3789240.3828750</arxiv:doi>
+    <link rel="related" href="https://doi.org/10.1145/3789240.3828750" title="doi"/>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.40494v1</id>
+    <title>AI in the EGI e-infrastructure -- Past experiences and future strategies</title>
+    <updated>2026-10-29T17:18:38Z</updated>
+    <link href="https://arxiv.org/abs/2610.40494v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.40494v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>The EGI Federation has provided federated e-infrastructure services to European and global science for over 15 years. We review EGI's early experiences with AI in the interTwin and iMagine Horizon Europe projects, which built digital twins in physics and environmental sciences and an image-analysis platform for aquatic research. We then examine how the AI landscape has changed since 2023 and argue that the focus of AI in science has shifted from model training to adapting and applying AI to specific domains, projects and questions. Building on these lessons, we present the AI strategy emerging from the EGI Federation Strategy 2026-2030, organised around three enablers: (1) an AI-ready infrastructure connecting compute, data and application resources across the continuum; (2) human skills to know what is possible with AI and how to implement it; and (3) trust, to run AI with confidence even in high-risk environments. We describe the projects implementing each enabler, including federated LLM inference, AI-ready data platforms and AI competence centres, and discuss a division of labour with EuroHPC's AI Factories, RAISE, research infrastructures and EOSC, in which EGI specialises in the customisation and long-term operation of AI for research.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CY" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-29T17:18:38Z</published>
+    <arxiv:comment>8 pages, 1 figure. Preprint of a paper submitted to the proceedings of the 28th Conference on Computing in High Energy and Nuclear Physics (CHEP 2026), to be published in EPJ Web of Conferences</arxiv:comment>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Gergely Sipos</name>
+    </author>
+    <author>
+      <name>Sergio Andreozzi</name>
+    </author>
+    <author>
+      <name>Marco Rorro</name>
+    </author>
+    <author>
+      <name>Andrea Manzi</name>
+    </author>
+    <author>
+      <name>Tiziana Ferrari</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.40305v1</id>
+    <title>Rimuru: Unified Memory Management for Modern LLM Serving via Elastic Expert Offloading</title>
+    <updated>2026-10-29T15:47:19Z</updated>
+    <link href="https://arxiv.org/abs/2610.40305v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.40305v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Modern LLMs strain device memory through large model weights and attention states, particularly in resource-constrained scenarios. Existing systems separately provision memory for model weights and attention states, imposing fixed fixed boundaries that cannot adapt to the changing memory demands of workloads. Under heavy workloads, insufficient state capacity limits request concurrency and reduces throughput; under light workloads, idle memory in one region cannot be reallocated to another, wasting device memory. Meanwhile, modern LLM architectures introduce heterogeneous tensors with diverse layouts and lifetimes, further complicating memory management. These problems motivate unified memory management for heterogeneous tensors. However, a shared pool alone does not make memory directly reusable across tensors with different allocation granularities and execution layouts. This paper presents Rimuru, a modern LLM serving system that unifies memory management through elastic expert offloading. Rimuru establishes a shared page pool to enables elastic memory sharing across heterogeneous tensors. To accommodate different allocation granularities, Rimuru introduces memory views that allow each tensor type to interpret the shared memory space using its own page size and page table. Furthermore, Rimuru combines huge-page alignment with a multi-level page allocator that splits and merges pages, enabling cross-type capacity reuse. A page-table-aware fused MoE kernel directly accesses non-contiguous expert weights, avoiding copy overhead. Building on these mechanisms, Rimuru employs a workload-aware adjuster that dynamically reallocates pages across tensor types according to runtime demands. Implemented on top of vLLM, Rimuru remains compatible with modern LLMs. Evaluations show that Rimuru achieves up to 19.03x baseline throughput and reduces TTFT by 98.1% on average.</summary>
+    <category term="cs.OS" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-29T15:47:19Z</published>
+    <arxiv:primary_category term="cs.OS"/>
+    <author>
+      <name>Zhiyuan Fang</name>
+    </author>
+    <author>
+      <name>Dingyang Li</name>
+    </author>
+    <author>
+      <name>Jianfeng Zhong</name>
+    </author>
+    <author>
+      <name>Bin Wang</name>
+    </author>
+    <author>
+      <name>Weixi Zhu</name>
+    </author>
+    <author>
+      <name>Cunshu Ni</name>
+    </author>
+    <author>
+      <name>Zicong Hong</name>
+    </author>
+    <author>
+      <name>Wuhui Chen</name>
+    </author>
+    <author>
+      <name>Zibin Zheng</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.40287v1</id>
+    <title>Only Accepted Tokens Count: An Energy Accounting of Speculative Decoding Under Latency Targets</title>
+    <updated>2026-10-29T15:37:45Z</updated>
+    <link href="https://arxiv.org/abs/2610.40287v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.40287v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Large language model serving is limited by facility power. Energy per token determines how many tokens a datacenter can serve, while a latency target bounds how quickly each user receives them. During decode, every weight is read from memory for every generated token. Batching amortizes this read across users but makes no individual user faster. Speculative decoding does: a drafter proposes several future tokens, and the target model verifies them in a single forward pass that reuses the same weight read. Because every drafted token must be verified whether or not it is accepted, the energy speculation saves depends on how many drafted tokens are accepted. This saving is hard to pin down. It varies across target models from different attention families and across drafting schemes, and it depends on the text being served. Every drafter we evaluate accepts fewer tokens on conversation than on code, and every trained drafter accepts fewer on Romansh, a low-resource language, than on English. We measure speculative decoding under production serving conditions (SGLang, CUDA graphs enabled) on H100 and H200 GPUs, at batch sizes up to 64 across 5 corpora. On dense models, verification, not drafting, dominates the energy cost. The saving shrinks as the batch grows, because batching has already shared the weight read that speculation would divide among the accepted tokens. At large batch sizes, block drafters push verification past the balance point between arithmetic and memory traffic into the compute-bound regime, where the saving becomes a loss, and a drafter with low acceptance raises energy per token. Meeting a tighter latency target with speculation then costs additional energy. Larger batches lower energy per token without speculation. Speculation adds to that saving only when acceptance is high, and on the model we tested it leaves little headroom for latency-preserving DVFS.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.PF" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-29T15:37:45Z</published>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Bole Ma</name>
+    </author>
+    <author>
+      <name>Ayesha Afzal</name>
+    </author>
+    <author>
+      <name>Jan Eitzinger</name>
+    </author>
+    <author>
+      <name>Harald Koestler</name>
+    </author>
+    <author>
+      <name>Gerhard Wellein</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.38355v1</id>
+    <title>FlatCake: A Flat KVCache Storage Architecture for LLM Serving</title>
+    <updated>2026-10-28T06:54:51Z</updated>
+    <link href="https://arxiv.org/abs/2610.38355v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.38355v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>KV cache reuse accelerates LLM serving, but existing systems manage host DRAM and NVMe SSD as a tiered hierarchy where DRAM acts as an intermediate cache. Production LLM workloads break both premises of this hierarchy. First, bimodal reuse defeats DRAM temporal filtering, since workloads are dominated either by one-shot blocks with long reuse distances or by multi-gigabyte agentic sessions that exceed DRAM capacity, putting SSD on the critical read path. Second, DRAM staging and eviction-ordered layout bottleneck SSD restoration. Holding host staging buffers for in-flight prefixes causes contention under load that aborts prefetches, while incremental eviction scatters a session's blocks across the SSD and prevents large sequential reads.
+  We present FlatCake, a flat KV storage architecture that exposes host DRAM and NVMe SSD as peer media in a unified 64-bit address space. Exploiting the fact that KV blocks are write-once, immutable, and reused at session scope, FlatCake places each block directly onto its target medium in session-contiguous, layer-major order at creation time and never migrates it. FlatCake streams coalesced SSD reads directly into a bounded GPU window via GPUDirect Storage and decouples DRAM and SSD request queues to prevent head-of-line blocking. On a production Claude Code trace with DeepSeek-V4-Flash, FlatCake sustains a 94% cache hit rate as load increases (versus 64% for Mooncake), eliminates Mooncake's $6.5\times$--$6.7\times$ SSD read amplification, and reduces peak-load mean TTFT by $1.6\times$ while improving total token throughput by $1.6\times$. Across 8K--128K contexts on Llama-3.1-70B, FlatCake further reduces mean TTFT by up to $2.4\times$ over Mooncake and $1.8\times$ over Mooncake-GDS.</summary>
+    <category term="cs.DC" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.OS" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-28T06:54:51Z</published>
+    <arxiv:comment>10 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.DC"/>
+    <author>
+      <name>Xin Huang</name>
+    </author>
+    <author>
+      <name>Teng Ma</name>
+    </author>
+    <author>
+      <name>Zhuoran Li</name>
+    </author>
+    <author>
+      <name>Yibo Zhao</name>
+    </author>
+    <author>
+      <name>Zhaoshi Li</name>
+    </author>
+    <author>
+      <name>Qianchao Zhu</name>
+    </author>
+    <author>
+      <name>Wei Yang</name>
+    </author>
+    <author>
+      <name>Chenxi Wang</name>
+    </author>
+    <author>
+      <name>Tao Xie</name>
+    </author>
+    <author>
+      <name>Youwei Zhuo</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2610.38315v1</id>
+    <title>LLM-PowerTrace: A Dataset of Time-Resolved GPU Power Traces for AI Compute</title>
+    <updated>2026-10-28T05:58:47Z</updated>
+    <link href="https://arxiv.org/abs/2610.38315v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2610.38315v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>AI compute is becoming large and fast-changing electrical loads. Its impacts on data center infrastructure and power grids depend not only on total energy consumption, but also on how their power draw moves over sub-second to minute timescales, including peaks, ramps, and synchronized fluctuations across accelerators. Existing energy benchmarks for large language models (LLMs) report aggregate quantities such as joules per token and rarely release the underlying time-series measurements, leaving these power dynamics poorly characterized and difficult to model. We introduce LLM-PowerTrace, an open dataset of time-resolved, per-GPU power traces for LLM fine-tuning and inference, sampled every 100\,ms on varying NVIDIA platforms paired with complete workload and system metadata. For fine-tuning, LLM-PowerTrace profiles open model families spanning a wide range of model sizes and fine-tuning methods, together with controlled sweeps over batch size, sequence length, precision, parallelism, and checkpointing. For inference, it covers variations in concurrency, GPU frequency, KV-cache and weight quantization, prompt and output lengths, and request-arrival patterns. LLM-PowerTrace profiles a set of open model families across a wide range of model sizes, and controlled sweeps over batch size, sequence length, precision, parallelism, and checkpointing for fine-tuning, and it sweeps concurrency, GPU frequency, KV cache and weight quantization, prompt and output lengths, and request arrival patterns for inference. Built upon power traces, we define power-grid-facing metrics as well as AI-compute power\&amp;energy scaling law for extrapolating beyond the measured settings. Together, LLM-PowerTrace provides a dataset foundation for modeling, forecasting, and managing the fast-changing electrical behavior of AI compute.</summary>
+    <category term="eess.SY" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.OS" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-10-28T05:58:47Z</published>
+    <arxiv:comment>In Submission; Code and dataset are available at https://systems-power-review.github.io/training-power-trace-explorer/</arxiv:comment>
+    <arxiv:primary_category term="eess.SY"/>
+    <author>
+      <name>Jiansheng Wang</name>
+    </author>
+    <author>
+      <name>Jaskeerat Singh</name>
+    </author>
+    <author>
+      <name>Haochen Xu</name>
+    </author>
+    <author>
+      <name>Xinyi Li</name>
+    </author>
+    <author>
+      <name>Mingyuan Yan</name>
+    </author>
+    <author>
+      <name>Shaohui Liu</name>
+    </author>
+    <author>
+      <name>Yuzhuo Li</name>
+    </author>
+    <author>
+      <name>Yize Chen</name>
+    </author>
+    <author>
+      <name>Wenqi Cui</name>
+    </author>
+  </entry>
+</feed>
