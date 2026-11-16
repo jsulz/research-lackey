@@ -197,4 +197,26 @@ describe("Runs read fixture feeds and record deduplicated Items", () => {
       "https://vllm.ai/blog/fixture-extra-entry",
     ]);
   });
+
+  it("counts Items recorded by a Run that later fails as unseen, so the next Run records them", async () => {
+    await addSource("t-vllm", "rss2", "vllm-blog.rss.xml");
+
+    // The Run records its Items in dedupe, then fails at the last step.
+    const failed = await runTopic("items-failed", { expect: "errored", failStep: "complete" });
+    expect(failed).toMatchObject({ status: "failed", failed_stage: "complete" });
+    expect(await itemCount(failed.id)).toBe(50);
+
+    const next = await runTopic("items-after-failed");
+    expect(next.status).toBe("completed_no_new_findings");
+    // Still a first poll: no completed Run has recorded this Source's Items.
+    expect(await dedupe(next.id)).toMatchObject({ recorded: 50, passed: 10 });
+    expect(await itemCount(next.id)).toBe(50);
+    expect(await itemCount(failed.id)).toBe(0);
+
+    const row = await env.DB.prepare(
+      "SELECT content_key FROM items WHERE source_id = 't-vllm' LIMIT 1",
+    ).first<{ content_key: string }>();
+    expect(row?.content_key).toMatch(new RegExp(`/${next.id}\\.md$`));
+    expect(await env.ARTIFACTS.head(row?.content_key ?? "")).not.toBeNull();
+  });
 });
