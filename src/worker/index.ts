@@ -43,3 +43,5 @@ export default {
     return response;
   },
 } satisfies ExportedHandler<Env>;
+
+export { RunWorkflow } from "./run-workflow";

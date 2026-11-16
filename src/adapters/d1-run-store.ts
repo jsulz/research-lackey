@@ -1,4 +1,11 @@
-import type { RunStatus, RunStore, TopicLastChecked } from "../core/ports";
+import type {
+  FinalStatus,
+  Run,
+  RunRef,
+  RunStatus,
+  RunStore,
+  TopicLastChecked,
+} from "../core/ports";
 
 /** RunStore backed by D1 with hand-written SQL (ADR-0005). */
 export class D1RunStore implements RunStore {
@@ -24,5 +31,71 @@ export class D1RunStore implements RunStore {
         last_run_status: RunStatus | null;
       }>();
     return results;
+  }
+
+  async createQueuedRun(run: RunRef): Promise<void> {
+    await this.db
+      .prepare(
+        `INSERT INTO runs (id, topic_id, kind, scheduled_slot, status)
+         VALUES (?, ?, ?, ?, 'queued')`,
+      )
+      .bind(run.id, run.topic_id, run.kind, run.scheduled_slot)
+      .run();
+  }
+
+  async markRunning(run: RunRef, at: Date): Promise<void> {
+    // Manual Runs have no row until here. A retried step keeps the first start time.
+    await this.db
+      .prepare(
+        `INSERT INTO runs (id, topic_id, kind, scheduled_slot, status, started_at)
+         VALUES (?, ?, ?, ?, 'running', ?)
+         ON CONFLICT (id) DO UPDATE SET
+           status = 'running',
+           started_at = coalesce(runs.started_at, excluded.started_at)
+         WHERE runs.status IN ('queued', 'running')`,
+      )
+      .bind(run.id, run.topic_id, run.kind, run.scheduled_slot, at.toISOString())
+      .run();
+  }
+
+  async completeRun(runId: string, status: FinalStatus, at: Date): Promise<void> {
+    await this.end(runId, status, null, null, at, "('running')");
+  }
+
+  async failRun(runId: string, stage: string, reason: string, at: Date): Promise<void> {
+    await this.end(runId, "failed", stage, reason, at, "('queued', 'running')");
+  }
+
+  async getRun(runId: string): Promise<Run | null> {
+    return this.db
+      .prepare(
+        `SELECT id, topic_id, kind, scheduled_slot, status, failed_stage, failure_reason,
+                created_at, started_at, ended_at, duration_ms
+         FROM runs WHERE id = ?`,
+      )
+      .bind(runId)
+      .first<Run>();
+  }
+
+  /** Sets a final status on a Run whose status is in `from`. Duration counts from `started_at`. */
+  private async end(
+    runId: string,
+    status: FinalStatus,
+    stage: string | null,
+    reason: string | null,
+    at: Date,
+    from: "('running')" | "('queued', 'running')",
+  ): Promise<void> {
+    const ended = at.toISOString();
+    await this.db
+      .prepare(
+        `UPDATE runs SET
+           status = ?, failed_stage = ?, failure_reason = ?, ended_at = ?,
+           duration_ms = CASE WHEN started_at IS NULL THEN NULL
+             ELSE CAST(round((julianday(?) - julianday(started_at)) * 86400000) AS INTEGER) END
+         WHERE id = ? AND status IN ${from}`,
+      )
+      .bind(status, stage, reason, ended, ended, runId)
+      .run();
   }
 }

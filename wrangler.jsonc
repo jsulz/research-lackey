@@ -16,6 +16,8 @@
       "migrations_dir": "migrations"
     }
   ],
+  "workflows": [{ "name": "research-run", "binding": "RUN_WORKFLOW", "class_name": "RunWorkflow" }],
+  "r2_buckets": [{ "binding": "ARTIFACTS", "bucket_name": "research-lackey" }],
   "vars": {
     "LOG_LEVEL": "info"
   },
