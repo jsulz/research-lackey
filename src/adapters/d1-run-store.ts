@@ -70,11 +70,17 @@ export class D1RunStore implements RunStore {
   }
 
   async createQueuedRun(run: RunRef): Promise<boolean> {
-    // DO NOTHING covers both the primary key and the one-Run-per-slot index.
+    // One statement, so the active-Run check and the insert are atomic. DO NOTHING covers
+    // both the primary key and the one-Run-per-slot index.
     const { meta } = await this.db
       .prepare(
         `INSERT INTO runs (id, topic_id, kind, scheduled_slot, status)
-         VALUES (?, ?, ?, ?, 'queued')
+         SELECT ?1, ?2, ?3, ?4, 'queued'
+         WHERE ?3 = 'replay' OR NOT EXISTS (
+           SELECT 1 FROM runs
+           WHERE topic_id = ?2 AND kind IN ('scheduled', 'manual')
+             AND status IN ('queued', 'running')
+         )
          ON CONFLICT DO NOTHING`,
       )
       .bind(run.id, run.topic_id, run.kind, run.scheduled_slot)

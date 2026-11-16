@@ -78,7 +78,8 @@ export interface RunStore {
   dueTopicsInput(): Promise<TopicSchedule[]>;
   /**
    * Inserts the Run as `queued`. Returns false, inserting nothing, when a Run with that ID
-   * already exists or the Run's scheduled slot already has a Run.
+   * already exists, the Run's scheduled slot already has a Run, or (except for a `replay`
+   * Run) the Topic has an active Run. The check and the insert are one atomic statement.
    */
   createQueuedRun(run: RunRef): Promise<boolean>;
   /** Sets the Run `running`, inserting it first when it does not exist (manual Runs). Never changes a final status. */

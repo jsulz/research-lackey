@@ -94,3 +94,33 @@ describe("scheduled handler", () => {
     expect((await store.getRun(ok))?.status).toBe("completed_no_new_findings");
   });
 });
+
+describe("D1RunStore.createQueuedRun", () => {
+  afterEach(async () => {
+    await env.DB.prepare("DELETE FROM runs").run();
+  });
+
+  it("inserts nothing and returns false when the Topic already has an active manual Run", async () => {
+    // The scheduler's active-Run snapshot can be stale; the insert itself must re-check.
+    await insertRun("manual-ai-infra-20261121T115959Z", "manual", "running");
+    const created = await store.createQueuedRun({
+      id: "topic-ai-infra-20261121T1200Z",
+      topic_id: "ai-infra",
+      kind: "scheduled",
+      scheduled_slot: "2026-11-21T12:00:00Z",
+    });
+    expect(created).toBe(false);
+    expect(await runIds()).toEqual(["manual-ai-infra-20261121T115959Z"]);
+  });
+
+  it("ignores an active replay Run", async () => {
+    await insertRun("replay-ai-infra-2", "replay", "running");
+    const created = await store.createQueuedRun({
+      id: "topic-ai-infra-20261122T1200Z",
+      topic_id: "ai-infra",
+      kind: "scheduled",
+      scheduled_slot: "2026-11-22T12:00:00Z",
+    });
+    expect(created).toBe(true);
+  });
+});
