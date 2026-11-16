@@ -20,6 +20,9 @@ const xml = new XMLParser({
   attributeNamePrefix: "@_",
   parseTagValue: false,
   parseAttributeValue: false,
+  // Decodes numeric character references (`&#233;`, `&#38;`) as well as the XML entities,
+  // once, so the same text has the same value however the feed escapes it.
+  htmlEntities: true,
   // Repeatable elements are always arrays, so a one-entry feed parses like a long one.
   isArray: (_name, jpath) =>
     jpath === "rss.channel.item" || jpath === "feed.entry" || jpath === "feed.entry.link",

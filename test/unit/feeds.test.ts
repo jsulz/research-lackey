@@ -140,3 +140,18 @@ describe("parseFeed, malformed XML", () => {
     expect(() => parseFeed(format, text)).toThrow(/not well-formed XML.*line 1/);
   });
 });
+
+describe("parseFeed, character references", () => {
+  it("decodes numeric references once, so identities match however the feed escapes them", () => {
+    const text = `<rss><channel>
+      <item><guid>https://e.com/p?a=1&#38;b=2</guid><title>Caf&#233; &#x41;</title></item>
+      <item><guid>https://e.com/p?a=1&amp;b=2</guid><title>Literal &amp;#38; stays</title></item>
+    </channel></rss>`;
+    const items = parseFeed("rss2", text);
+    expect(items.map((i) => i.externalId)).toEqual([
+      "https://e.com/p?a=1&b=2",
+      "https://e.com/p?a=1&b=2",
+    ]);
+    expect(items.map((i) => i.title)).toEqual(["Café A", "Literal &#38; stays"]);
+  });
+});
