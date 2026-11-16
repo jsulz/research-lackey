@@ -54,3 +54,18 @@ export function itemMarkdown(raw: RawItem): string {
   if (raw.content) parts.push("", "## Content", "", raw.content);
   return `${parts.join("\n")}\n`;
 }
+
+/**
+ * Items newest first by `published_at`, for the first-poll cap. Equal dates keep feed order and
+ * undated Items go last. Dates order Items only; they never decide identity. Returns a new array.
+ */
+export function newestFirst<T extends { published_at: string | null }>(items: readonly T[]): T[] {
+  const time = (item: T) =>
+    item.published_at === null ? Number.NEGATIVE_INFINITY : Date.parse(item.published_at);
+  // Array.prototype.sort is stable, so ties keep their feed order.
+  return [...items].sort((a, b) => {
+    const ta = time(a);
+    const tb = time(b);
+    return ta === tb ? 0 : tb > ta ? 1 : -1;
+  });
+}

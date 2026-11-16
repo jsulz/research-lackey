@@ -157,4 +157,44 @@ describe("Runs read fixture feeds and record deduplicated Items", () => {
     expect(text).toContain("https://arxiv.org/abs/2611.17097v1");
     expect(text).toContain("Large language model (LLM) inference at datacenter scale is");
   });
+
+  it("records all of a Source's Items on its first poll but passes only the newest 10", async () => {
+    await addSource("t-modal", "atom", "modal-blog.atom.xml");
+    const run = await runTopic("items-first-poll");
+
+    expect(await itemCount(run.id)).toBe(157);
+    const output = await dedupe(run.id);
+    expect(output).toMatchObject({ recorded: 157, passed: 10 });
+    // The 10 newest by Atom `updated`, worked out from the fixture with Python.
+    expect(output.items.map((i) => i.item_key)).toEqual([
+      "https://modal.com/blog/scaling-intelligence",
+      "https://modal.com/blog/sandbox-bursting",
+      "https://modal.com/blog/modal-gvisor-maintainer",
+      "https://modal.com/blog/how-snorkel-runs-realistic-agent-simulations-with-modal",
+      "https://modal.com/blog/sakana-case-study",
+      "https://modal.com/blog/introducing-training-api",
+      "https://modal.com/blog/get-started-with-llm-training-on-modal",
+      "https://modal.com/blog/serverless-routing-made-sticky",
+      "https://modal.com/blog/nvidia-vera-sandboxes",
+      "https://modal.com/blog/how-legora-runs-thousand-scale-parallel-agent-evals-on-modal-sandboxes",
+    ]);
+  });
+
+  it("caps each Source separately, and only on that Source's first poll", async () => {
+    await addSource("t-vllm", "rss2", "vllm-blog.rss.xml");
+    await runTopic("items-cap-a");
+    await addSource("t-arxiv", "atom", "arxiv-serving.atom.xml");
+    await env.DB.prepare(
+      "UPDATE sources SET fixture_ref = 'vllm-blog-plus-one.rss.xml' WHERE id = 't-vllm'",
+    ).run();
+
+    const output = await dedupe((await runTopic("items-cap-b")).id);
+    // t-arxiv is on its first poll (50 recorded, 10 passed); t-vllm is not (1 recorded, 1 passed).
+    expect(output).toMatchObject({ recorded: 51, passed: 11 });
+    const passedBySource = Object.groupBy(output.items, (i) => i.source_id);
+    expect(passedBySource["t-arxiv"]).toHaveLength(10);
+    expect(passedBySource["t-vllm"]?.map((i) => i.item_key)).toEqual([
+      "https://vllm.ai/blog/fixture-extra-entry",
+    ]);
+  });
 });

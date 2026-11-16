@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { parseFeed } from "../../src/core/feeds";
-import { itemKey } from "../../src/core/items";
+import { itemKey, newestFirst } from "../../src/core/items";
 import type { FeedFormat, RawItem } from "../../src/core/ports";
 
 function raw(fields: Partial<RawItem>): RawItem {
@@ -114,5 +114,34 @@ describe("itemKey on the committed fixtures", () => {
     );
     for (const item of arxiv) expect(itemKey("atom", item)).toMatch(/^arxiv:\d{4}\.\d{5}$/);
     for (const item of hf) expect(itemKey("hf_daily_papers", item)).toMatch(/^arxiv:\d{4}\.\d{5}$/);
+  });
+});
+
+describe("newestFirst", () => {
+  const at = (key: string, published_at: string | null) => ({ item_key: key, published_at });
+
+  it("orders by date, newest first, keeping feed order for equal dates and undated Items last", () => {
+    const items = [
+      at("old", "2026-01-01T00:00:00.000Z"),
+      at("undated-1", null),
+      at("tie-a", "2026-11-12T00:00:00.000Z"),
+      at("newest", "2026-11-14T00:00:00.000Z"),
+      at("tie-b", "2026-11-12T00:00:00.000Z"),
+      at("undated-2", null),
+    ];
+    expect(newestFirst(items).map((i) => i.item_key)).toEqual([
+      "newest",
+      "tie-a",
+      "tie-b",
+      "old",
+      "undated-1",
+      "undated-2",
+    ]);
+  });
+
+  it("does not reorder its input", () => {
+    const items = [at("a", "2026-01-01T00:00:00.000Z"), at("b", "2026-02-01T00:00:00.000Z")];
+    newestFirst(items);
+    expect(items.map((i) => i.item_key)).toEqual(["a", "b"]);
   });
 });

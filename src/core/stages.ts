@@ -1,5 +1,5 @@
 import type { RunConfig } from "./config";
-import { itemKey, itemMarkdown } from "./items";
+import { itemKey, itemMarkdown, newestFirst } from "./items";
 import type { ArtifactStore, FeedFormat, Item, RawItem, RunStore, SourceFetcher } from "./ports";
 import type { Stage } from "./run-pipeline";
 
@@ -104,9 +104,13 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
         const items: PassedItem[] = [];
         let recorded = 0;
         for (const source of sources) {
+          const firstPoll = await deps.store.isFirstPoll(source.source_id);
           const fresh = await recordNew(source, run.id);
           recorded += fresh.length;
-          items.push(...fresh);
+          // A Source's first poll can hold its whole history: record it all, pass on the newest N.
+          items.push(
+            ...(firstPoll ? newestFirst(fresh).slice(0, deps.config.first_poll_cap) : fresh),
+          );
         }
         return { recorded, passed: items.length, items };
       },
