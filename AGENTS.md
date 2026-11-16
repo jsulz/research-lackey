@@ -7,8 +7,8 @@ Read `docs/dev-loop.md` first. It covers commands, receipts, conventions, ship s
 | Path | What |
 |---|---|
 | `src/core/ports.ts` | Interfaces between the pipeline core and its adapters. Add only what a change uses, then run `npm run docs:interfaces` (a test fails when `docs/interfaces.md` is stale) |
-| `src/adapters/` | One adapter per port: `D1RunStore` (hand-written SQL), `JsonLogger`. No business logic |
-| `src/worker/index.ts` | Worker `fetch` handler. Routes `/api/*`; Static Assets serves the SPA for everything else |
+| `src/adapters/` | One adapter per port: `D1RunStore` (hand-written SQL), `R2ArtifactStore`, `WorkflowRunStarter`, `JsonLogger`. No business logic |
+| `src/worker/index.ts` | Worker `fetch` handler, which routes `/api/*` (Static Assets serves the SPA for everything else), and the `scheduled` handler for the 15-minute cron. Exports `RunWorkflow` (`src/worker/run-workflow.ts`) |
 | `src/web/` | React SPA built by Vite into `dist/client`. Keep testable logic in plain `.ts` modules with no DOM |
 | `migrations/` | D1 schema and seed, applied in order |
 | `scripts/` | Node scripts run with type stripping (`docs-interfaces.ts`, `screenshot.ts`) |
