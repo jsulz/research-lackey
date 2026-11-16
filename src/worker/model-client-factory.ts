@@ -24,6 +24,8 @@ export function createModelClient(env: Env, log: Logger): ModelClient {
       accountId: env.CF_ACCOUNT_ID,
       gatewayId: env.AI_GATEWAY_ID,
       token: env.CF_AIG_TOKEN,
+      // Optional: set when the stored Anthropic key's alias is not `default`.
+      ...(env.AI_GATEWAY_BYOK_ALIAS ? { byokAlias: env.AI_GATEWAY_BYOK_ALIAS } : {}),
     },
     log,
   });

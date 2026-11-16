@@ -7,6 +7,11 @@ export interface GatewayConfig {
   gatewayId: string;
   /** The gateway's authentication token, sent as `cf-aig-authorization`. Never logged. */
   token: string;
+  /**
+   * Alias of the stored Anthropic key, sent as `cf-aig-byok-alias`. Without it the gateway uses
+   * the key aliased `default`, and with no such key it falls through to Unified Billing.
+   */
+  byokAlias?: string;
 }
 
 /** Longest prompt or response text written to a debug log line. */
@@ -22,7 +27,7 @@ export class AnthropicModelClient implements ModelClient {
   private readonly log: Logger;
 
   constructor(opts: { gateway: GatewayConfig; log: Logger; fetch?: typeof fetch }) {
-    const { accountId, gatewayId, token } = opts.gateway;
+    const { accountId, gatewayId, token, byokAlias } = opts.gateway;
     this.log = opts.log;
     this.client = new Anthropic({
       apiKey: "gateway-stored-key",
@@ -33,6 +38,7 @@ export class AnthropicModelClient implements ModelClient {
         "x-api-key": null,
         authorization: null,
         "cf-aig-authorization": `Bearer ${token}`,
+        ...(byokAlias ? { "cf-aig-byok-alias": byokAlias } : {}),
       },
       // The SDK's own logger prints request headers at debug (ANTHROPIC_LOG) and doesn't redact
       // `cf-aig-authorization`. Turn it off; this class logs through the injected Logger.

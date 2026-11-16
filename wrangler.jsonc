@@ -29,7 +29,8 @@
   "triggers": { "crons": ["*/15 * * * *"] },
   "workflows": [{ "name": "research-run", "binding": "RUN_WORKFLOW", "class_name": "RunWorkflow" }],
   "r2_buckets": [{ "binding": "ARTIFACTS", "bucket_name": "research-lackey" }],
-  // Secrets, never committed: CF_AIG_TOKEN, CF_ACCOUNT_ID, AI_GATEWAY_ID (.dev.vars locally).
+  // Secrets, never committed: CF_AIG_TOKEN, CF_ACCOUNT_ID, AI_GATEWAY_ID, and optionally
+  // AI_GATEWAY_BYOK_ALIAS (.dev.vars locally).
   "vars": {
     "LOG_LEVEL": "info",
     // Sent as `env` in AI Gateway metadata. `.dev.vars` sets "dev" locally.

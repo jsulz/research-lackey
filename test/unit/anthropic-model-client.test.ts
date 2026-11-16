@@ -33,7 +33,11 @@ interface Captured {
 }
 
 /** A client whose fetch records each request and answers with a recorded response body. */
-function clientAnswering(body: string, logLines: string[] = []) {
+function clientAnswering(
+  body: string,
+  logLines: string[] = [],
+  gateway: { accountId: string; gatewayId: string; token: string; byokAlias?: string } = GATEWAY,
+) {
   const requests: Captured[] = [];
   const fetchFn = async (input: string | URL | Request, init?: RequestInit) => {
     const req = new Request(input, init);
@@ -55,7 +59,7 @@ function clientAnswering(body: string, logLines: string[] = []) {
     error: (msg: string, f?: object) =>
       logLines.push(JSON.stringify({ level: "error", msg, ...f })),
   };
-  const client = new AnthropicModelClient({ gateway: GATEWAY, log, fetch: fetchFn });
+  const client = new AnthropicModelClient({ gateway, log, fetch: fetchFn });
   return { client, requests };
 }
 
@@ -76,6 +80,21 @@ describe("AnthropicModelClient request", () => {
     expect(headers?.get("x-api-key")).toBeNull();
     expect(headers?.get("authorization")).toBeNull();
     expect(headers?.get("cf-aig-authorization")).toBe(`Bearer ${TOKEN}`);
+  });
+
+  it("names the stored key's alias in cf-aig-byok-alias when one is configured", async () => {
+    const { client, requests } = clientAnswering(recorded("structured-with-thinking"), [], {
+      ...GATEWAY,
+      byokAlias: "my-key",
+    });
+    await client.call(REQUEST);
+    expect(requests[0]?.headers.get("cf-aig-byok-alias")).toBe("my-key");
+  });
+
+  it("sends no cf-aig-byok-alias without a configured alias, so the gateway uses its default key", async () => {
+    const { client, requests } = clientAnswering(recorded("structured-with-thinking"));
+    await client.call(REQUEST);
+    expect(requests[0]?.headers.get("cf-aig-byok-alias")).toBeNull();
   });
 
   it("sends run_id, topic_id, step and env as cf-aig-metadata", async () => {

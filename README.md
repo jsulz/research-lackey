@@ -14,6 +14,7 @@ Scheduled research Runs on Cloudflare Workers. A Worker serves a React homepage 
    CF_ACCOUNT_ID=<Cloudflare account ID>
    AI_GATEWAY_ID=<AI Gateway ID>
    CF_AIG_TOKEN=<AI Gateway token>
+   AI_GATEWAY_BYOK_ALIAS=<alias of the stored Anthropic key; omit if it is "default">
    ```
 
    Runs call Claude through AI Gateway, which stores the Anthropic key. `APP_ENV=dev` tags local calls `env=dev` in the gateway logs; production is `prod`. A Run whose new Items reach Synthesis makes one real, billed model call.
