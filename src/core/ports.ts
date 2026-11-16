@@ -78,6 +78,32 @@ export interface RawItem {
   publishedAt?: string;
 }
 
+/** A `feed` Source of a Topic. In T1 every feed reads a bundled fixture file. */
+export interface Source {
+  id: string;
+  topic_id: string;
+  format: FeedFormat;
+  /** File name under `fixtures/feeds/`. Null when the Source has none, which fails its fetch. */
+  fixture_ref: string | null;
+}
+
+/** Reads a Source's entries. T1 reads fixtures; T3 adds HTTP. Throws when the Source can't be read. */
+export interface SourceFetcher {
+  fetch(source: Source): Promise<RawItem[]>;
+}
+
+/** An Item as recorded in D1: one row per Source and normalized identity. */
+export interface Item {
+  source_id: string;
+  /** Normalized identity, unique within the Source. */
+  item_key: string;
+  url: string;
+  title: string;
+  published_at: string | null;
+  /** R2 key of the Item's content, written by the Run that recorded it. */
+  content_key: string;
+}
+
 /** All D1 access goes through this interface. */
 export interface RunStore {
   /** Every Topic, ordered by name, with its last-checked fields. */
@@ -105,6 +131,20 @@ export interface RunStore {
    */
   failRun(run: RunRef | string, stage: string, reason: string, at: Date): Promise<void>;
   getRun(runId: string): Promise<Run | null>;
+  /** The Topic's `feed` Sources, ordered by ID. */
+  listFeedSources(topicId: string): Promise<Source[]>;
+  /**
+   * The keys, of those given, that the Source has not seen. An Item is seen only when the Run
+   * that recorded it ended `completed_with_report` or `completed_no_new_findings`.
+   */
+  unseenItemKeys(sourceId: string, keys: string[]): Promise<string[]>;
+  /** True until a completed Run has recorded an Item of the Source. */
+  isFirstPoll(sourceId: string): Promise<boolean>;
+  /**
+   * Records the Items as first seen by the Run. An existing row is taken over only when the Run
+   * that recorded it did not complete, so a failed Run's Items are recorded again by the next Run.
+   */
+  recordItems(runId: string, items: Item[]): Promise<void>;
 }
 
 /** The recorded input and output of one stage within a Run. */
@@ -118,6 +158,16 @@ export interface ArtifactStore {
   /** Writes the Step artifact and returns its key, `runs/<run_id>/steps/<stage>.json`. */
   putStepArtifact(runId: string, step: StepName, data: StepArtifact): Promise<string>;
   getStepArtifact(runId: string, step: StepName): Promise<StepArtifact | null>;
+  /**
+   * Writes an Item's content as Markdown and returns its key,
+   * `items/<source_id>/<encodeURIComponent(item_key)>/<run_id>.md`.
+   */
+  putItemContent(
+    sourceId: string,
+    itemKey: string,
+    runId: string,
+    markdown: string,
+  ): Promise<string>;
 }
 
 /**

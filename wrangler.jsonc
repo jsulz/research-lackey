@@ -3,6 +3,14 @@
   "name": "research-lackey",
   "main": "src/worker/index.ts",
   "compatibility_date": "2026-11-13",
+  // Fixture feeds are bundled as text (JSU-28). Real HTTP fetching replaces them in T3.
+  "rules": [
+    {
+      "type": "Text",
+      "globs": ["**/fixtures/feeds/*.xml", "**/fixtures/feeds/*.json"],
+      "fallthrough": true
+    }
+  ],
   "assets": {
     "directory": "./dist/client",
     "not_found_handling": "single-page-application",

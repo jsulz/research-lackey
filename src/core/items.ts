@@ -45,3 +45,12 @@ function cyrb53(text: string): string {
   h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
   return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16);
 }
+
+/** The Markdown stored in R2 for an Item: title, link, time, then summary and content as given. */
+export function itemMarkdown(raw: RawItem): string {
+  const parts = [`# ${raw.title || "(untitled)"}`, "", raw.url];
+  if (raw.publishedAt) parts.push("", `Published: ${raw.publishedAt}`);
+  if (raw.summary) parts.push("", "## Summary", "", raw.summary);
+  if (raw.content) parts.push("", "## Content", "", raw.content);
+  return `${parts.join("\n")}\n`;
+}

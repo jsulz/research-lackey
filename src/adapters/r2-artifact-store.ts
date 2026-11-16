@@ -12,6 +12,20 @@ export class R2ArtifactStore implements ArtifactStore {
     return key;
   }
 
+  async putItemContent(
+    sourceId: string,
+    itemKey: string,
+    runId: string,
+    markdown: string,
+  ): Promise<string> {
+    // Item keys contain "/", ":" and "//" (URLs, GitHub tag URIs), so the key segment is encoded.
+    const key = `items/${sourceId}/${encodeURIComponent(itemKey)}/${runId}.md`;
+    await this.bucket.put(key, markdown, {
+      httpMetadata: { contentType: "text/markdown; charset=utf-8" },
+    });
+    return key;
+  }
+
   async getStepArtifact(runId: string, step: StepName): Promise<StepArtifact | null> {
     const object = await this.bucket.get(stepKey(runId, step));
     return object ? object.json<StepArtifact>() : null;

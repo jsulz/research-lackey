@@ -3,6 +3,7 @@ import { env } from "cloudflare:workers";
 import { afterEach, describe, expect, it } from "vitest";
 import { D1RunStore } from "../../src/adapters/d1-run-store";
 import worker from "../../src/worker/index";
+import { deleteRuns, deleteTestTopics } from "./cleanup";
 
 // The seed Topic `ai-infra` runs daily at 12:00 UTC. Each test ticks a different day, so
 // Workflow instance IDs never repeat within this file.
@@ -32,8 +33,8 @@ async function insertRun(id: string, kind: string, status: string) {
 
 describe("scheduled handler", () => {
   afterEach(async () => {
-    await env.DB.prepare("DELETE FROM runs").run();
-    await env.DB.prepare("DELETE FROM topics WHERE id != 'ai-infra'").run();
+    await deleteRuns();
+    await deleteTestTopics();
   });
 
   it("creates the slot's scheduled Run, and a repeated tick for the same slot creates no second Run", async () => {
@@ -97,7 +98,7 @@ describe("scheduled handler", () => {
 
 describe("D1RunStore.createQueuedRun", () => {
   afterEach(async () => {
-    await env.DB.prepare("DELETE FROM runs").run();
+    await deleteRuns();
   });
 
   it("inserts nothing and returns false when the Topic already has an active manual Run", async () => {
