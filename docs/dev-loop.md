@@ -22,7 +22,7 @@ How to work in this repo: commands, environments, receipts, conventions, ship st
 | Environment | URL                        | Deployed by                   | Needs Jared for                                                                    |
 | ----------- | -------------------------- | ----------------------------- | ---------------------------------------------------------------------------------- |
 | local       | `http://localhost:8787`    | `npx wrangler dev`            | `.dev.vars` secrets (already present)                                              |
-| production  | `https://lackey.jsulz.com` | Ship steps below, after merge | `npx wrangler login` once; `npx wrangler secret put <NAME>` for each Worker secret |
+| production  | `https://lackey.jsulz.com` | Ship steps below, after merge | `npx wrangler login` once; `npx wrangler secret put <NAME>` for each Worker secret: `CF_AIG_TOKEN`, `CF_ACCOUNT_ID`, `AI_GATEWAY_ID` |
 
 There are no preview deployments. Cloudflare preview versions share production D1 and R2 bindings.
 
@@ -65,3 +65,5 @@ After merge to `main`, in order. Each step runs only after Jared approves it.
 - A git worktree has no `.dev.vars` (gitignored). Copy it in before `npm run types`, or the generated `Env` drops its secrets and narrows `LOG_LEVEL` to `"info"`.
 - Integration tests read `.dev.vars` ("Using secrets defined in .dev.vars"). Tests must never log `env` values.
 - `npx wrangler r2 object get research-lackey/<content_key> --remote` fails with "The specified key does not exist" for Item content keys. The keys contain `%` (the Item identity is URI-encoded, for example `items/arxiv-serving/arxiv%3A2611.17097/<run_id>.md`), and Wrangler does not escape the key in the remote API URL, so `%3A` arrives as `:`. Escape each `%` as `%25`: `.../arxiv%253A2611.17097/<run_id>.md`. `--local` reads take the key as stored.
+- Integration tests never call a model: `vitest.integration.config.ts` aliases `./model-client-factory` to `test/integration/scripted-model-client.ts`. The Workflow runs in the test isolate, so a test scripts answers with `script(...)` and reads requests from `calls`. Keep the factory's import specifier exactly `./model-client-factory`, or the alias stops matching and tests would build the real client.
+- A local Run only calls the model when it has new Items. After earlier local Runs, every fixture Item is seen; reset local state (delete rows from `finding_items`, `findings`, `reports`, `run_steps`, `items`, `runs`, in that order) before a Run meant to call the model.
