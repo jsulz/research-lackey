@@ -82,4 +82,23 @@ describe("synthesisPrompt", () => {
       ].join("\n"),
     );
   });
+
+  it("caps each Item's title at 300 characters and its URL at 2,000, so feed metadata can't inflate the prompt", () => {
+    const long = {
+      ...item("a", null),
+      title: "T".repeat(100_000),
+      url: `https://example.com/${"u".repeat(100_000)}`,
+    };
+    const prompt = synthesisPrompt({ name: "n", research_goal: "g" }, [
+      { ref: "I1", item: long, text: "x" },
+    ]);
+    const lines = prompt.split("\n");
+    const titleAt = lines.findIndex((l) => l.startsWith("Title: "));
+    expect(lines[titleAt]).toBe(`Title: ${"T".repeat(300)}`);
+    expect(lines[titleAt + 1]).toBe("[truncated]");
+    const urlAt = lines.findIndex((l) => l.startsWith("URL: "));
+    expect(lines[urlAt]).toHaveLength("URL: ".length + 2_000);
+    expect(lines[urlAt + 1]).toBe("[truncated]");
+    expect(prompt.length).toBeLessThan(3_000);
+  });
 });

@@ -20,6 +20,10 @@ export function capText(text: string, cap: number): string {
   return text.length <= cap ? text : `${text.slice(0, cap)}\n[truncated]`;
 }
 
+/** Feed-controlled metadata is capped like Item text, so one entry can't inflate the prompt. */
+const TITLE_CAP = 300;
+const URL_CAP = 2_000;
+
 /** The user message for Synthesis: the Topic, then each Item's metadata and text. */
 export function synthesisPrompt(
   topic: { name: string; research_goal: string },
@@ -37,8 +41,8 @@ export function synthesisPrompt(
       `<item ref="${ref}">`,
       `Source: ${item.source_id}`,
       `Published: ${item.published_at ?? "unknown"}`,
-      `Title: ${item.title}`,
-      `URL: ${item.url}`,
+      `Title: ${capText(item.title, TITLE_CAP)}`,
+      `URL: ${capText(item.url, URL_CAP)}`,
       "",
       text,
       "</item>",
