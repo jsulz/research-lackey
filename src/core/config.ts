@@ -32,9 +32,13 @@ export interface TaskConfig {
 export interface RunConfig {
   /** On a Source's first poll, every Item is recorded but only the newest this many pass onward. */
   first_poll_cap: number;
-  /** How many new Items, newest first, Synthesis reads. Until Triage (JSU-31), all it sees. */
+  /** How many new Items Triage scores per Run, newest first. Items over the limit are recorded but not read. */
+  triage_limit: number;
+  /** For an Item with no summary, how many characters of its content, as text, Triage reads. */
+  triage_content_chars: number;
+  /** How many Items, highest Triage score first, Synthesis reads. */
   synthesis_k: number;
-  /** Longest text, in characters, sent to a model per Item. Keeps prompts small and cheap. */
+  /** Longest text, in characters, sent to a model per Item (Triage caps summaries at it too). */
   item_text_cap: number;
   /** Which model runs each task. T2 moves Synthesis to Sonnet by editing this table. */
   tasks: Record<TaskName, TaskConfig>;
@@ -44,9 +48,13 @@ export interface RunConfig {
 
 export const CONFIG: RunConfig = {
   first_poll_cap: 10,
+  triage_limit: 50,
+  triage_content_chars: 1_500,
   synthesis_k: 5,
   item_text_cap: 4_000,
   tasks: {
+    // Scoring is classification: low effort keeps thinking tokens down.
+    triage: { model: "claude-haiku-5-5", effort: "low", max_tokens: 8_000 },
     synthesis: { model: "claude-haiku-5-5", effort: "medium", max_tokens: 16_000 },
   },
   prices: {

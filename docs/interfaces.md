@@ -346,7 +346,7 @@ export interface Logger {
 }
 
 /** A pipeline stage that calls a model. Each maps to a model in the config's task table. */
-export type TaskName = "synthesis";
+export type TaskName = "triage" | "synthesis";
 
 /** Effort levels accepted by current Claude models. */
 export type Effort = "low" | "medium" | "high" | "xhigh" | "max";
