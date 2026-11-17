@@ -22,6 +22,11 @@ export interface PipelineDeps {
   run: RunRef;
   /** The ordered stage list. Production passes `buildStages(...)`; tests pass trivial stages. */
   stages: readonly Stage[];
+  /**
+   * The first stage's input, read inside its step. Defaults to `{ topic_id }`. A Replay passes
+   * the source Run's Step artifact output for the stage before the one it starts from.
+   */
+  firstInput?: () => Promise<unknown>;
   store: Pick<
     RunStore,
     "markRunning" | "recordRunConfig" | "recordStepArtifact" | "completeRun" | "failRun"
@@ -51,6 +56,7 @@ const MAX_REASON = 1000;
  */
 export async function runPipeline(deps: PipelineDeps): Promise<FinalStatus> {
   const { run, stages, store, artifacts, step, runConfig, clock, log } = deps;
+  const firstInput = deps.firstInput ?? (async () => ({ topic_id: run.topic_id }));
   let current = "start";
   try {
     const started = await step.do("start", async () => {
@@ -76,7 +82,7 @@ export async function runPipeline(deps: PipelineDeps): Promise<FinalStatus> {
       current = stage.name;
       const prior: StepName | null = previous;
       const result = await step.do(stage.name, async () => {
-        const input = prior === null ? { topic_id: run.topic_id } : await priorOutput(prior);
+        const input = prior === null ? await firstInput() : await priorOutput(prior);
         const output = await stage.run(input, { run, log });
         const key = await artifacts.putStepArtifact(run.id, stage.name, { input, output });
         await store.recordStepArtifact(run.id, stage.name, key);

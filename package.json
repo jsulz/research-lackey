@@ -14,7 +14,8 @@
     "check": "npm test && npm run test:integration",
     "docs:interfaces": "node scripts/docs-interfaces.ts",
     "screenshot": "node scripts/screenshot.ts",
-    "run:local": "node scripts/run-local.ts"
+    "run:local": "node scripts/run-local.ts",
+    "replay": "node scripts/replay.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.8",

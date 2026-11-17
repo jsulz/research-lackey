@@ -200,14 +200,15 @@ export class D1RunStore implements RunStore {
   private async markRunningRow(run: RunRef, at: Date): Promise<void> {
     await this.db
       .prepare(
-        `INSERT INTO runs (id, topic_id, kind, scheduled_slot, status, started_at)
-         VALUES (?, ?, ?, ?, 'running', ?)
+        `INSERT INTO runs
+           (id, topic_id, kind, scheduled_slot, source_run_id, from_stage, status, started_at)
+         VALUES (?, ?, ?, ?, ?, ?, 'running', ?)
          ON CONFLICT (id) DO UPDATE SET
            status = 'running',
            started_at = coalesce(runs.started_at, excluded.started_at)
          WHERE runs.status IN ('queued', 'running')`,
       )
-      .bind(run.id, run.topic_id, run.kind, run.scheduled_slot, at.toISOString())
+      .bind(...runColumns(run), at.toISOString())
       .run();
   }
 
@@ -233,8 +234,9 @@ export class D1RunStore implements RunStore {
     await this.db
       .prepare(
         `INSERT INTO runs
-           (id, topic_id, kind, scheduled_slot, status, failed_stage, failure_reason, ended_at)
-         VALUES (?, ?, ?, ?, 'failed', ?, ?, ?)
+           (id, topic_id, kind, scheduled_slot, source_run_id, from_stage, status, failed_stage,
+            failure_reason, ended_at)
+         VALUES (?, ?, ?, ?, ?, ?, 'failed', ?, ?, ?)
          ON CONFLICT (id) DO UPDATE SET
            status = 'failed',
            failed_stage = excluded.failed_stage,
@@ -243,7 +245,7 @@ export class D1RunStore implements RunStore {
            duration_ms = ${DURATION_MS("excluded.ended_at", "runs.started_at")}
          WHERE runs.status IN ('queued', 'running')`,
       )
-      .bind(run.id, run.topic_id, run.kind, run.scheduled_slot, stage, reason, ended)
+      .bind(...runColumns(run), stage, reason, ended)
       .run();
   }
 
@@ -444,6 +446,18 @@ export class D1RunStore implements RunStore {
       .bind(status, stage, reason, ended, ended, runId)
       .run();
   }
+}
+
+/** A Run's identity columns, in insert order: id, topic, kind, slot, source Run, starting stage. */
+function runColumns(run: RunRef): (string | null)[] {
+  return [
+    run.id,
+    run.topic_id,
+    run.kind,
+    run.scheduled_slot,
+    run.replay?.source_run_id ?? null,
+    run.replay?.from_stage ?? null,
+  ];
 }
 
 function toSchedule(t: {

@@ -12,7 +12,7 @@ How to work in this repo: commands, environments, receipts, conventions, ship st
 | Run locally | `npm run dev` | Builds the SPA, applies local D1 migrations, starts `wrangler dev` on `http://localhost:8787`. Set `LOG_LEVEL=debug` in `.dev.vars` |
 | Start a Run locally | `npm run run:local -- --topic <id>` | Needs `npm run dev` running. Starts a `manual` Run with `wrangler workflows trigger --local` and prints its ID. Inspect it with `npx wrangler workflows instances describe research-run <id> --local` |
 | Fire the cron locally | `curl "http://localhost:8787/cdn-cgi/handler/scheduled?cron=*/15+*+*+*+*&time=<ms>"` | Needs `npm run dev` running. `time` is the tick in Unix milliseconds; omit it to use now. Starts a `scheduled` Run for each due Topic |
-| Replay a Run | `npm run replay -- --run <id> --from <stage> --config <file>` | Local only _(planned)_ |
+| Replay a Run | `npm run replay -- --run <id> --from triage\|synthesis --config <file>` | Needs `npm run dev` running. Local only. `<file>` is `.json` or a copy of `src/core/config.ts`. Prints the Replay's Run ID |
 | Regenerate interface docs | `npm run docs:interfaces` | Writes `docs/interfaces.md` from `src/core/ports.ts` |
 | Regenerate binding types | `npm run types` | Rerun after changing `wrangler.jsonc` |
 | Query local D1 | `npx wrangler d1 execute research-lackey --local --command "<sql>"` | Use `--remote` for production, read-only queries only |
