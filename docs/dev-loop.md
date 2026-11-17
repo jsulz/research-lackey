@@ -60,6 +60,7 @@ The deploy token: in the Cloudflare dashboard, create an API token from the "Edi
 
 ## Gotchas
 
+- A new git worktree has no `node_modules` and no `.dev.vars`. Run `npm ci` and copy `.dev.vars` from the main checkout before any script, test or dev server.
 - `exports.default` is untyped in integration tests: `wrangler types` ran before `main` existed. Rerun `npm run types`.
 - `biome migrate` can rewrite `"recommended": true` to `"preset": "none"`, which turns off every lint rule. Keep `"preset": "recommended"`.
 - npm blocks dependency install scripts by default (`npm install-scripts ls`). The `esbuild` and `workerd` binaries work without them. Approve one only if a tool fails to start.
