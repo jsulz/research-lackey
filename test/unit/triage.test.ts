@@ -169,9 +169,9 @@ describe("plainText", () => {
   });
 
   it("treats custom elements named like script or style as ordinary tags", () => {
-    expect(plainText("<script-example>Release notes</script-example><p>Major improvement</p>")).toBe(
-      "Release notes Major improvement",
-    );
+    expect(
+      plainText("<script-example>Release notes</script-example><p>Major improvement</p>"),
+    ).toBe("Release notes Major improvement");
   });
 
   it("drops comments", () => {
