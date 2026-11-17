@@ -1,6 +1,7 @@
 import type {
   FinalStatus,
   Item,
+  PublicReport,
   ReportFinding,
   ReportRecord,
   Run,
@@ -56,6 +57,70 @@ export class D1RunStore implements RunStore {
         last_run_status: RunStatus | null;
       }>();
     return results;
+  }
+
+  async listPublicReports(limit: number): Promise<PublicReport[]> {
+    const { results: rows } = await this.db
+      .prepare(
+        `SELECT rp.id, rp.summary, rp.finding_count, t.id AS topic_id, t.name AS topic_name,
+                r.id AS run_id, r.started_at, r.ended_at, r.duration_ms,
+                (SELECT coalesce(sum(cost_usd), 0) FROM run_steps WHERE run_id = r.id) AS cost_usd
+         FROM reports rp
+         JOIN runs r ON r.id = rp.run_id
+         JOIN topics t ON t.id = rp.topic_id
+         WHERE rp.public = 1
+           AND r.status = 'completed_with_report'
+           AND r.started_at IS NOT NULL AND r.ended_at IS NOT NULL AND r.duration_ms IS NOT NULL
+         ORDER BY rp.published_at DESC, rp.id DESC
+         LIMIT ?`,
+      )
+      .bind(limit)
+      .all<{
+        id: string;
+        summary: string;
+        finding_count: number;
+        topic_id: string;
+        topic_name: string;
+        run_id: string;
+        started_at: string;
+        ended_at: string;
+        duration_ms: number;
+        cost_usd: number;
+      }>();
+    if (rows.length === 0) return [];
+    const runIds = rows.map((r) => r.run_id);
+    const { results: tokenRows } = await this.db
+      .prepare(
+        `SELECT run_id, model,
+                sum(input_tokens + cache_read_tokens + cache_write_tokens) AS input,
+                sum(output_tokens) AS output
+         FROM run_steps
+         WHERE model IS NOT NULL AND run_id IN (${runIds.map(() => "?").join(", ")})
+         GROUP BY run_id, model
+         ORDER BY run_id, model`,
+      )
+      .bind(...runIds)
+      .all<{ run_id: string; model: string; input: number; output: number }>();
+    const tokens = new Map<string, PublicReport["tokens"]>();
+    for (const t of tokenRows) {
+      const list = tokens.get(t.run_id) ?? [];
+      list.push({ model: t.model, input: t.input, output: t.output });
+      tokens.set(t.run_id, list);
+    }
+    return rows.map((r) => ({
+      id: r.id,
+      topic: { id: r.topic_id, name: r.topic_name },
+      run: {
+        id: r.run_id,
+        started_at: r.started_at,
+        ended_at: r.ended_at,
+        duration_ms: r.duration_ms,
+      },
+      tokens: tokens.get(r.run_id) ?? [],
+      cost_usd: r.cost_usd,
+      finding_count: r.finding_count,
+      summary: r.summary,
+    }));
   }
 
   async dueTopicsInput(): Promise<TopicSchedule[]> {
