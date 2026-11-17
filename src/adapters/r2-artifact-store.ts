@@ -42,6 +42,11 @@ export class R2ArtifactStore implements ArtifactStore {
     return key;
   }
 
+  async getReport(key: string): Promise<ReportDocument | null> {
+    const object = await this.bucket.get(key);
+    return object ? object.json<ReportDocument>() : null;
+  }
+
   async getStepArtifact(runId: string, step: StepName): Promise<StepArtifact | null> {
     const object = await this.bucket.get(stepKey(runId, step));
     return object ? object.json<StepArtifact>() : null;

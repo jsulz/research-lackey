@@ -35,6 +35,26 @@ export interface PublicReport {
   summary: string;
 }
 
+/** One Key development as the public API shows it: no Item content, only links. */
+export interface PublicFinding {
+  finding_id: string;
+  title: string;
+  what_is_new: string;
+  why_it_matters: string;
+  /** One or more. URLs are the Items' original URLs. */
+  sources: { title: string; url: string }[];
+}
+
+/** `GET /api/reports/:id`: every `GET /api/reports` field plus the Report's four sections. */
+export interface PublicReportDetail extends PublicReport {
+  sections: {
+    summary: string;
+    key_developments: PublicFinding[];
+    implications: string;
+    worth_watching: string[];
+  };
+}
+
 /** A final status: the Run has ended. */
 export type FinalStatus = Exclude<RunStatus, "queued" | "running">;
 
@@ -203,6 +223,11 @@ export interface RunStore {
    * A Run that failed after publishing keeps its Report row, but it is never listed.
    */
   listPublicReports(limit: number): Promise<PublicReport[]>;
+  /**
+   * One Report under the same rule as `listPublicReports`, with the R2 key of its document,
+   * or null when no listed Report has that ID.
+   */
+  getPublicReport(id: string): Promise<(PublicReport & { r2_key: string }) | null>;
   /** Every Topic with its schedule and whether it has an active Run, ordered by ID. */
   dueTopicsInput(): Promise<TopicSchedule[]>;
   /**
@@ -282,6 +307,8 @@ export interface ArtifactStore {
   getItemContent(contentKey: string): Promise<string | null>;
   /** Writes `reports/<id>.json` and `reports/<id>.md` and returns the JSON key. */
   putReport(reportId: string, doc: ReportDocument, markdown: string): Promise<string>;
+  /** The Report document at `key`, or null when the key has no object. */
+  getReport(key: string): Promise<ReportDocument | null>;
 }
 
 /**

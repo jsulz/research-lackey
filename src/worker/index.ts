@@ -1,7 +1,9 @@
 import { D1RunStore } from "../adapters/d1-run-store";
 import { JsonLogger, parseLogLevel } from "../adapters/json-logger";
+import { R2ArtifactStore } from "../adapters/r2-artifact-store";
 import { WorkflowRunStarter } from "../adapters/workflow-run-starter";
-import type { Logger, RunStore } from "../core/ports";
+import type { ArtifactStore, Logger, RunStore } from "../core/ports";
+import { publicReportDetail } from "../core/report";
 import { runScheduler } from "../core/scheduler";
 
 /** How many Reports the homepage lists. A starting value. */
@@ -14,16 +16,43 @@ function json(body: unknown, status = 200): Response {
   });
 }
 
+const NOT_FOUND = { error: "not_found" };
+
+/** The Report ID in `/api/reports/<id>`: one URI-decoded path segment, else null. */
+function reportIdFromPath(pathname: string): string | null {
+  const match = /^\/api\/reports\/([^/]+)$/.exec(pathname);
+  if (!match?.[1]) return null;
+  try {
+    return decodeURIComponent(match[1]);
+  } catch {
+    return null;
+  }
+}
+
 /** Routes `/api/*`. Everything else is served by Static Assets before the Worker runs. */
-export async function handleApi(request: Request, store: RunStore): Promise<Response> {
+export async function handleApi(
+  request: Request,
+  store: RunStore,
+  artifacts: ArtifactStore,
+): Promise<Response> {
   const url = new URL(request.url);
-  if (request.method === "GET" && url.pathname === "/api/topics") {
+  if (request.method !== "GET") return json(NOT_FOUND, 404);
+  if (url.pathname === "/api/topics") {
     return json(await store.listTopicsLastChecked());
   }
-  if (request.method === "GET" && url.pathname === "/api/reports") {
+  if (url.pathname === "/api/reports") {
     return json(await store.listPublicReports(REPORTS_LIMIT));
   }
-  return json({ error: "not_found" }, 404);
+  const id = reportIdFromPath(url.pathname);
+  if (id !== null) {
+    const row = await store.getPublicReport(id);
+    if (!row) return json(NOT_FOUND, 404);
+    const doc = await artifacts.getReport(row.r2_key);
+    // A listed Report without its document is corruption, not an unknown Report.
+    if (!doc) throw new Error(`Report ${id} has no document at ${row.r2_key}`);
+    return json(publicReportDetail(row, doc));
+  }
+  return json(NOT_FOUND, 404);
 }
 
 export default {
@@ -33,7 +62,11 @@ export default {
     const { pathname } = new URL(request.url);
     let response: Response;
     try {
-      response = await handleApi(request, new D1RunStore(env.DB));
+      response = await handleApi(
+        request,
+        new D1RunStore(env.DB),
+        new R2ArtifactStore(env.ARTIFACTS),
+      );
     } catch (err) {
       log.error("request failed", {
         method: request.method,

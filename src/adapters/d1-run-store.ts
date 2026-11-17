@@ -60,10 +60,29 @@ export class D1RunStore implements RunStore {
   }
 
   async listPublicReports(limit: number): Promise<PublicReport[]> {
+    const rows = await this.publicReports("ORDER BY rp.published_at DESC, rp.id DESC LIMIT ?", [
+      limit,
+    ]);
+    return rows.map(({ r2_key: _, ...report }) => report);
+  }
+
+  async getPublicReport(id: string): Promise<(PublicReport & { r2_key: string }) | null> {
+    const [row] = await this.publicReports("AND rp.id = ?", [id]);
+    return row ?? null;
+  }
+
+  /**
+   * Public Reports whose Run ended `completed_with_report`, with tokens per model and total
+   * cost. `tail` follows the shared WHERE clause: more conditions, ordering, a limit.
+   */
+  private async publicReports(
+    tail: string,
+    binds: unknown[],
+  ): Promise<(PublicReport & { r2_key: string })[]> {
     const { results: rows } = await this.db
       .prepare(
-        `SELECT rp.id, rp.summary, rp.finding_count, t.id AS topic_id, t.name AS topic_name,
-                r.id AS run_id, r.started_at, r.ended_at, r.duration_ms,
+        `SELECT rp.id, rp.summary, rp.finding_count, rp.r2_key, t.id AS topic_id,
+                t.name AS topic_name, r.id AS run_id, r.started_at, r.ended_at, r.duration_ms,
                 (SELECT coalesce(sum(cost_usd), 0) FROM run_steps WHERE run_id = r.id) AS cost_usd
          FROM reports rp
          JOIN runs r ON r.id = rp.run_id
@@ -71,14 +90,14 @@ export class D1RunStore implements RunStore {
          WHERE rp.public = 1
            AND r.status = 'completed_with_report'
            AND r.started_at IS NOT NULL AND r.ended_at IS NOT NULL AND r.duration_ms IS NOT NULL
-         ORDER BY rp.published_at DESC, rp.id DESC
-         LIMIT ?`,
+         ${tail}`,
       )
-      .bind(limit)
+      .bind(...binds)
       .all<{
         id: string;
         summary: string;
         finding_count: number;
+        r2_key: string;
         topic_id: string;
         topic_name: string;
         run_id: string;
@@ -120,6 +139,7 @@ export class D1RunStore implements RunStore {
       cost_usd: r.cost_usd,
       finding_count: r.finding_count,
       summary: r.summary,
+      r2_key: r.r2_key,
     }));
   }
 
