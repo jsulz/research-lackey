@@ -22,7 +22,7 @@ How to work in this repo: commands, environments, receipts, conventions, ship st
 | Environment | URL                        | Deployed by                   | Needs Jared for                                                                    |
 | ----------- | -------------------------- | ----------------------------- | ---------------------------------------------------------------------------------- |
 | local       | `http://localhost:8787`    | `npx wrangler dev`            | `.dev.vars` secrets (already present)                                              |
-| production  | `https://lackey.jsulz.com` | Ship steps below, after merge | `npx wrangler login` once; `npx wrangler secret put <NAME>` for each Worker secret: `CF_AIG_TOKEN`, `CF_ACCOUNT_ID`, `AI_GATEWAY_ID`, and `AI_GATEWAY_BYOK_ALIAS` when the stored key's alias isn't `default` |
+| production | `https://lackey.jsulz.com` | CI job `deploy`, on every merge to `main` | Once: the GitHub environment `production` holds secrets `CLOUDFLARE_API_TOKEN` (deploy token) and `CLOUDFLARE_ACCOUNT_ID`. Per Worker secret: `npx wrangler secret put <NAME>` for `CF_AIG_TOKEN`, `CF_ACCOUNT_ID`, `AI_GATEWAY_ID`, and `AI_GATEWAY_BYOK_ALIAS` when the stored key's alias isn't `default` |
 
 There are no preview deployments. Cloudflare preview versions share production D1 and R2 bindings.
 
@@ -50,11 +50,13 @@ There are no preview deployments. Cloudflare preview versions share production D
 
 ## Ship
 
-After merge to `main`, in order. Each step runs only after Jared approves it.
+Merging to `main` deploys. CI's `deploy` job runs after `check` passes on the merge commit: it applies remote D1 migrations (`wrangler d1 migrations apply research-lackey --remote`), then runs `npm run deploy`. Watch it with `gh run watch`.
 
-1. `npx wrangler d1 migrations apply research-lackey --remote` (only when the PR adds migrations)
-2. `npx wrangler deploy`
+1. Before merging, Jared approves the merge; it is also the deploy. A PR that adds a migration says so in its body.
+2. Watch the `deploy` job on the merge commit. If it fails, the previous version keeps serving; fix forward or redeploy by hand (`npx wrangler d1 migrations apply research-lackey --remote`, then `npm run deploy`, after `npx wrangler login`).
 3. The ticket's production Verify steps, with receipts saved to the run folder.
+
+The deploy token: in the Cloudflare dashboard, create an API token from the "Edit Cloudflare Workers" template, add Account > D1 > Edit, and limit it to this account and the zone `jsulz.com`. A missing permission fails the `deploy` job with a Cloudflare API error naming the request.
 
 ## Gotchas
 
