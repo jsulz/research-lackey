@@ -56,12 +56,12 @@ function ReportList({ state }: { state: Load<PublicReport> }) {
     <ul className="rows reports">
       {state.rows.map((r) => (
         <li key={r.id}>
-          <div className="row-head">
+          <a className="row-head row-link" href={`/reports/${encodeURIComponent(r.id)}`}>
             <span className="row-name">{r.topic.name}</span>
             <time dateTime={r.run.started_at} className="muted">
               {formatUtc(r.run.started_at)}
             </time>
-          </div>
+          </a>
           <p className="report-summary">{r.summary}</p>
           <p className="muted report-meta">
             {formatDuration(r.run.duration_ms)} · {formatTokens(r.tokens)} ·{" "}
