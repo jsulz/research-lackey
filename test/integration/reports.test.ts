@@ -2,15 +2,16 @@ import { introspectWorkflowInstance } from "cloudflare:test";
 import { env } from "cloudflare:workers";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import synthesisPromptFile from "../../prompts/synthesis.md";
+import triagePromptFile from "../../prompts/triage.md";
 import { D1RunStore } from "../../src/adapters/d1-run-store";
 import { CONFIG } from "../../src/core/config";
 import { sha256Hex } from "../../src/core/hashing";
 import type { ModelRequest, ReportDocument, Run } from "../../src/core/ports";
 import { deleteRuns, deleteTestTopics } from "./cleanup";
-import { calls, resetScript, script } from "./scripted-model-client";
+import { calls, callsFor, resetScript, script } from "./scripted-model-client";
 
 // A test Topic with one Source on the vLLM blog fixture: 50 entries, first poll passes the newest
-// 10 onward, and Synthesis takes the newest K = 5 of those.
+// 10 onward, Triage scores them evenly by default, so Synthesis takes the newest K = 5.
 const TOPIC = "test-reports";
 const SOURCE = "test-reports-vllm";
 const store = new D1RunStore(env.DB);
@@ -168,8 +169,8 @@ describe("Synthesis and publish", () => {
   it("sends the newest K new Items to the configured model with structured output and Run metadata", async () => {
     answerWith([["I1"]]);
     await runTopic("rpt-request");
-    expect(calls).toHaveLength(1);
-    const req = calls[0];
+    expect(callsFor("synthesis")).toHaveLength(1);
+    const req = callsFor("synthesis")[0];
     expect(req).toMatchObject({
       task: "synthesis",
       model: CONFIG.tasks.synthesis.model,
@@ -233,7 +234,7 @@ describe("Run cost and config", () => {
       "SELECT step, model, input_tokens, output_tokens, cache_read_tokens, cache_write_tokens, cost_usd, artifact_key FROM run_steps WHERE run_id = ? ORDER BY rowid",
       run.id,
     );
-    expect(steps.map((s) => s.step)).toEqual(["fetch", "dedupe", "synthesis", "publish"]);
+    expect(steps.map((s) => s.step)).toEqual(["fetch", "dedupe", "triage", "synthesis", "publish"]);
     const synthesis = steps.find((s) => s.step === "synthesis");
     expect(synthesis).toMatchObject({
       model: "claude-haiku-5-5",
@@ -245,7 +246,7 @@ describe("Run cost and config", () => {
     });
     // 2,000 x $0.10 + 3,000 x $0.50 + 1,000 x $0.01, per million tokens = $0.00171.
     expect(synthesis?.cost_usd).toBeCloseTo(0.00171, 10);
-    for (const s of steps.filter((s) => s.step !== "synthesis")) {
+    for (const s of steps.filter((s) => s.step !== "synthesis" && s.step !== "triage")) {
       expect(s).toMatchObject({
         model: null,
         cost_usd: 0,
@@ -254,12 +255,13 @@ describe("Run cost and config", () => {
     }
   });
 
-  it("stores one hash per prompt file: sha256 of the Synthesis prompt", async () => {
+  it("stores one hash per prompt file: sha256 of the Triage and Synthesis prompts", async () => {
     const run = await runTopic("rpt-hashes");
     const row = await env.DB.prepare("SELECT prompt_hashes FROM runs WHERE id = ?")
       .bind(run.id)
       .first<{ prompt_hashes: string }>();
     expect(JSON.parse(row?.prompt_hashes ?? "null")).toEqual({
+      triage: await sha256Hex(triagePromptFile),
       synthesis: await sha256Hex(synthesisPromptFile),
     });
   });

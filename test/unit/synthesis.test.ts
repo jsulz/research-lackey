@@ -15,19 +15,14 @@ function item(id: string, published_at: string | null, summary: string | null = 
 }
 
 describe("selectForSynthesis", () => {
-  it("takes the newest K Items across Sources and gives them refs I1..In in that order", () => {
+  it("takes the first K Items in the given (Triage rank) order and gives them refs I1..Ik", () => {
     const picked = selectForSynthesis(
-      [
-        item("old", "2026-11-01T00:00:00Z"),
-        item("newest", "2026-11-15T00:00:00Z"),
-        item("undated", null),
-        item("mid", "2026-11-10T00:00:00Z"),
-      ],
+      [item("top", "2026-11-01T00:00:00Z"), item("second", null), item("third", null)],
       2,
     );
     expect(picked.map((p) => [p.ref, p.item.item_key])).toEqual([
-      ["I1", "newest"],
-      ["I2", "mid"],
+      ["I1", "top"],
+      ["I2", "second"],
     ]);
   });
 

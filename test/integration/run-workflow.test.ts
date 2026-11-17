@@ -94,7 +94,7 @@ describe("RunWorkflow", () => {
     expect(row?.config_snapshot).toBe(canonicalJson(CONFIG));
     expect(row?.config_hash).toBe(await sha256Hex(canonicalJson(CONFIG)));
     // One hash per prompt file; reports.test.ts checks the value.
-    expect(Object.keys(JSON.parse(row?.prompt_hashes ?? "null"))).toEqual(["synthesis"]);
+    expect(Object.keys(JSON.parse(row?.prompt_hashes ?? "null"))).toEqual(["synthesis", "triage"]);
   });
 
   it("creates the Run as manual when the Workflow starts with no Run row", async () => {
