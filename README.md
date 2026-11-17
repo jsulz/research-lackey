@@ -10,8 +10,14 @@ Scheduled research Runs on Cloudflare Workers. A Worker serves a React homepage 
 
    ```
    LOG_LEVEL=debug
+   APP_ENV=dev
+   CF_ACCOUNT_ID=<Cloudflare account ID>
+   AI_GATEWAY_ID=<AI Gateway ID>
    CF_AIG_TOKEN=<AI Gateway token>
+   AI_GATEWAY_BYOK_ALIAS=<alias of the stored Anthropic key; omit if it is "default">
    ```
+
+   Runs call Claude through AI Gateway, which stores the Anthropic key. `APP_ENV=dev` tags local calls `env=dev` in the gateway logs; production is `prod`. A Run whose new Items reach Synthesis makes one real, billed model call.
 
 4. `npm run dev`, then open `http://localhost:8787`.
 
@@ -35,6 +41,7 @@ The Worker writes one JSON line per log call, with `level`, `msg` and fields. `L
 
 - Production uses `info`, set in `wrangler.jsonc`. Request lines are not logged at `info`.
 - Locally, `LOG_LEVEL=debug` in `.dev.vars` logs one `request` line per API call with method, path, status and duration.
+- At `debug`, model calls also log the prompt and response, truncated. Token counts and the gateway log ID are logged at `info`.
 - Production logs: `npx wrangler tail --format json`.
 
 ## Database

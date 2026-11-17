@@ -9,7 +9,9 @@
       "type": "Text",
       "globs": ["**/fixtures/feeds/*.xml", "**/fixtures/feeds/*.json"],
       "fallthrough": true
-    }
+    },
+    // Prompt files (JSU-29). Each Run stores a hash of each prompt's text.
+    { "type": "Text", "globs": ["**/prompts/*.md"], "fallthrough": true }
   ],
   "assets": {
     "directory": "./dist/client",
@@ -27,8 +29,12 @@
   "triggers": { "crons": ["*/15 * * * *"] },
   "workflows": [{ "name": "research-run", "binding": "RUN_WORKFLOW", "class_name": "RunWorkflow" }],
   "r2_buckets": [{ "binding": "ARTIFACTS", "bucket_name": "research-lackey" }],
+  // Secrets, never committed: CF_AIG_TOKEN, CF_ACCOUNT_ID, AI_GATEWAY_ID, and optionally
+  // AI_GATEWAY_BYOK_ALIAS (.dev.vars locally).
   "vars": {
-    "LOG_LEVEL": "info"
+    "LOG_LEVEL": "info",
+    // Sent as `env` in AI Gateway metadata. `.dev.vars` sets "dev" locally.
+    "APP_ENV": "prod"
   },
   "routes": [{ "pattern": "lackey.jsulz.com", "custom_domain": true }],
   "observability": { "enabled": true }

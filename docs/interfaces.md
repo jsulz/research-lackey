@@ -85,6 +85,13 @@ export interface RawItem {
   publishedAt?: string;
 }
 
+/** A Topic as Synthesis needs it. */
+export interface Topic {
+  id: string;
+  name: string;
+  research_goal: string;
+}
+
 /** A `feed` Source of a Topic. In T1 every feed reads a bundled fixture file. */
 export interface Source {
   id: string;
@@ -111,6 +118,41 @@ export interface Item {
   content_key: string;
 }
 
+/** An Item a Finding cites, with what a reader needs to follow the link. */
+export interface ReportItemLink {
+  source_id: string;
+  item_key: string;
+  title: string;
+  url: string;
+}
+
+/** One key development of a Report. Its ID is stable: `fnd_<run_id>_<position>`. */
+export interface ReportFinding {
+  id: string;
+  /** 1-based order within the Report. */
+  position: number;
+  title: string;
+  what_is_new: string;
+  why_it_matters: string;
+  items: ReportItemLink[];
+}
+
+/** The Report document stored in R2 as `reports/<id>.json`, with its Markdown beside it. */
+export interface ReportDocument {
+  /** `rpt_<run_id>`. */
+  id: string;
+  run_id: string;
+  topic: { id: string; name: string };
+  /** ISO 8601 UTC. */
+  generated_at: string;
+  /** The model that wrote it, as Anthropic reported it. */
+  model: string;
+  summary: string;
+  findings: ReportFinding[];
+  implications: string;
+  worth_watching: string[];
+}
+
 /** What each Run stores about the settings that produced it. */
 export interface RunConfigRecord {
   /** The effective config as canonical JSON (object keys sorted). */
@@ -119,6 +161,28 @@ export interface RunConfigRecord {
   config_hash: string;
   /** SHA-256 of each prompt file's text, by prompt name. */
   prompt_hashes: Record<string, string>;
+}
+
+/** The D1 row of a published Report. Findings are saved with it. */
+export interface ReportRecord {
+  id: string;
+  run_id: string;
+  topic_id: string;
+  /** ISO 8601 UTC. */
+  published_at: string;
+  /** False for Replay Reports, which the public API never lists. */
+  public: boolean;
+  /** R2 key of the Report's JSON document. */
+  r2_key: string;
+  summary: string;
+  finding_count: number;
+}
+
+/** Model usage and cost recorded for a stage that called a model. */
+export interface StepUsage {
+  model: string;
+  usage: ModelUsage;
+  cost_usd: number;
 }
 
 /** All D1 access goes through this interface. */
@@ -153,6 +217,7 @@ export interface RunStore {
    */
   failRun(run: RunRef | string, stage: string, reason: string, at: Date): Promise<void>;
   getRun(runId: string): Promise<Run | null>;
+  getTopic(topicId: string): Promise<Topic | null>;
   /** The Topic's `feed` Sources, ordered by ID. */
   listFeedSources(topicId: string): Promise<Source[]>;
   /**
@@ -167,6 +232,15 @@ export interface RunStore {
    * that recorded it did not complete, so a failed Run's Items are recorded again by the next Run.
    */
   recordItems(runId: string, items: Item[]): Promise<void>;
+  /** Records the stage's Step artifact key in `run_steps`, keeping any usage already recorded. */
+  recordStepArtifact(runId: string, step: StepName, artifactKey: string): Promise<void>;
+  /** Records the stage's model, tokens and cost in `run_steps`, replacing an earlier attempt's. */
+  recordStepUsage(runId: string, step: StepName, usage: StepUsage): Promise<void>;
+  /**
+   * Saves the Report row, its Findings and each Finding's links to Items, in one transaction.
+   * Saving the same Report again replaces its Findings, so a retried publish is safe.
+   */
+  saveReport(report: ReportRecord, findings: ReportFinding[]): Promise<void>;
 }
 
 /** The recorded input and output of one stage within a Run. */
@@ -190,6 +264,10 @@ export interface ArtifactStore {
     runId: string,
     markdown: string,
   ): Promise<string>;
+  /** An Item's content Markdown, or null when the key has no object. */
+  getItemContent(contentKey: string): Promise<string | null>;
+  /** Writes `reports/<id>.json` and `reports/<id>.md` and returns the JSON key. */
+  putReport(reportId: string, doc: ReportDocument, markdown: string): Promise<string>;
 }
 
 /**

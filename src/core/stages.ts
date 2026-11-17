@@ -1,13 +1,43 @@
 import type { RunConfig } from "./config";
+import { stageCost } from "./cost";
 import { itemKey, itemMarkdown, newestFirst } from "./items";
-import type { ArtifactStore, FeedFormat, Item, RawItem, RunStore, SourceFetcher } from "./ports";
+import type {
+  ArtifactStore,
+  Clock,
+  FeedFormat,
+  Item,
+  ModelCallMetadata,
+  ModelClient,
+  ModelUsage,
+  RawItem,
+  ReportDocument,
+  ReportFinding,
+  ReportItemLink,
+  RunStore,
+  SourceFetcher,
+} from "./ports";
+import {
+  findingId,
+  reportId,
+  reportJsonSchema,
+  reportMarkdown,
+  type SynthesisReport,
+  validateReport,
+} from "./report";
 import type { Stage } from "./run-pipeline";
+import { capText, selectForSynthesis, synthesisPrompt } from "./synthesis";
 
 export interface StageDeps {
   store: RunStore;
   artifacts: ArtifactStore;
   fetcher: SourceFetcher;
   config: RunConfig;
+  model: ModelClient;
+  /** Prompt file texts by name. */
+  prompts: { synthesis: string };
+  /** Sent as `env` in model call metadata. */
+  model_env: ModelCallMetadata["env"];
+  clock: Clock;
 }
 
 /** One Source's entries, as the `fetch` stage passes them to `dedupe`. */
@@ -35,6 +65,29 @@ export interface DedupeOutput {
   /** Items passed onward: every new Item, except only the newest N on a Source's first poll. */
   passed: number;
   items: PassedItem[];
+}
+
+/** An Item sent to Synthesis, as recorded in its Step artifact. */
+export interface SynthesisItemRef extends ReportItemLink {
+  ref: string;
+}
+
+/** What `synthesis` returns. `report` is null when there were no new Items to read. */
+export interface SynthesisOutput {
+  skipped?: string;
+  topic: { id: string; name: string };
+  items: SynthesisItemRef[];
+  model: string | null;
+  usage: ModelUsage | null;
+  cost_usd: number;
+  report: SynthesisReport | null;
+}
+
+/** What `publish` returns. */
+export interface PublishOutput {
+  published: boolean;
+  report_id: string | null;
+  finding_count: number;
 }
 
 /** The production stage list, in order. */
@@ -114,6 +167,135 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
         }
         return { recorded, passed: items.length, items };
       },
+    },
+    {
+      name: "synthesis",
+      // Sends the newest K new Items to the Synthesis model and validates its Report. Invalid
+      // output, a refusal or a cut-off answer throws, so the step retries and then fails the Run.
+      run: async (input, { run }): Promise<SynthesisOutput> => {
+        const { items } = input as DedupeOutput;
+        const topic = await deps.store.getTopic(run.topic_id);
+        if (!topic) throw new Error(`Topic ${run.topic_id} not found`);
+        const topicRef = { id: topic.id, name: topic.name };
+        if (items.length === 0) {
+          return {
+            skipped: "no new Items",
+            topic: topicRef,
+            items: [],
+            model: null,
+            usage: null,
+            cost_usd: 0,
+            report: null,
+          };
+        }
+
+        const task = deps.config.tasks.synthesis;
+        const price = deps.config.prices[task.model];
+        // Checked before the call: a call whose cost can't be recorded isn't made.
+        if (!price) throw new Error(`No price for model ${task.model} in the config price table`);
+
+        const picked = selectForSynthesis(items, deps.config.synthesis_k);
+        const withText = [];
+        for (const p of picked) {
+          const text = p.item.summary ?? (await deps.artifacts.getItemContent(p.item.content_key));
+          withText.push({ ...p, text: capText(text ?? "", deps.config.item_text_cap) });
+        }
+        const refs = picked.map((p) => p.ref);
+        const response = await deps.model.call({
+          task: "synthesis",
+          model: task.model,
+          system: deps.prompts.synthesis,
+          prompt: synthesisPrompt(topic, withText),
+          effort: task.effort,
+          max_tokens: task.max_tokens,
+          json_schema: reportJsonSchema(refs),
+          metadata: {
+            run_id: run.id,
+            topic_id: run.topic_id,
+            step: "synthesis",
+            env: deps.model_env,
+          },
+        });
+        const checked = validateReport(response.json, refs);
+        if (!checked.ok) {
+          throw new Error(`Synthesis output failed Report validation: ${checked.reason}`);
+        }
+
+        const cost_usd = stageCost(response.usage, price);
+        await deps.store.recordStepUsage(run.id, "synthesis", {
+          model: response.model,
+          usage: response.usage,
+          cost_usd,
+        });
+        return {
+          topic: topicRef,
+          items: picked.map(({ ref, item }) => ({
+            ref,
+            source_id: item.source_id,
+            item_key: item.item_key,
+            title: item.title,
+            url: item.url,
+          })),
+          model: response.model,
+          usage: response.usage,
+          cost_usd,
+          report: checked.report,
+        };
+      },
+    },
+    {
+      name: "publish",
+      // Writes the Report to R2 and its Findings to D1. Zero Findings publishes nothing.
+      // Safe to retry: the Report and Finding IDs derive from the Run ID.
+      run: async (input, { run }): Promise<PublishOutput> => {
+        const synthesis = input as SynthesisOutput;
+        const report = synthesis.report;
+        if (!report || report.key_developments.length === 0) {
+          return { published: false, report_id: null, finding_count: 0 };
+        }
+        const id = reportId(run.id);
+        const byRef = new Map(synthesis.items.map(({ ref, ...link }) => [ref, link]));
+        const findings: ReportFinding[] = report.key_developments.map((f, i) => ({
+          id: findingId(id, i + 1),
+          position: i + 1,
+          title: f.title,
+          what_is_new: f.what_is_new,
+          why_it_matters: f.why_it_matters,
+          items: f.sources.map((ref) => {
+            const link = byRef.get(ref);
+            if (!link) throw new Error(`Finding ${i + 1} cites unknown Item ${ref}`);
+            return link;
+          }),
+        }));
+        const doc: ReportDocument = {
+          id,
+          run_id: run.id,
+          topic: synthesis.topic,
+          generated_at: deps.clock.now().toISOString(),
+          model: synthesis.model ?? "",
+          summary: report.summary,
+          findings,
+          implications: report.implications,
+          worth_watching: report.worth_watching,
+        };
+        const r2Key = await deps.artifacts.putReport(id, doc, reportMarkdown(doc));
+        await deps.store.saveReport(
+          {
+            id,
+            run_id: run.id,
+            topic_id: run.topic_id,
+            published_at: doc.generated_at,
+            public: run.kind !== "replay",
+            r2_key: r2Key,
+            summary: report.summary,
+            finding_count: findings.length,
+          },
+          findings,
+        );
+        return { published: true, report_id: id, finding_count: findings.length };
+      },
+      outcome: (output) =>
+        (output as PublishOutput).published ? "completed_with_report" : "completed_no_new_findings",
     },
   ];
 }

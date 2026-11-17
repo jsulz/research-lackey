@@ -1,4 +1,4 @@
-import type { ArtifactStore, StepArtifact, StepName } from "../core/ports";
+import type { ArtifactStore, ReportDocument, StepArtifact, StepName } from "../core/ports";
 
 /** ArtifactStore backed by R2. Step artifacts are JSON at `runs/<run_id>/steps/<stage>.json`. */
 export class R2ArtifactStore implements ArtifactStore {
@@ -21,6 +21,22 @@ export class R2ArtifactStore implements ArtifactStore {
     // Item keys contain "/", ":" and "//" (URLs, GitHub tag URIs), so the key segment is encoded.
     const key = `items/${sourceId}/${encodeURIComponent(itemKey)}/${runId}.md`;
     await this.bucket.put(key, markdown, {
+      httpMetadata: { contentType: "text/markdown; charset=utf-8" },
+    });
+    return key;
+  }
+
+  async getItemContent(contentKey: string): Promise<string | null> {
+    const object = await this.bucket.get(contentKey);
+    return object ? object.text() : null;
+  }
+
+  async putReport(reportId: string, doc: ReportDocument, markdown: string): Promise<string> {
+    const key = `reports/${reportId}.json`;
+    await this.bucket.put(key, JSON.stringify(doc), {
+      httpMetadata: { contentType: "application/json" },
+    });
+    await this.bucket.put(`reports/${reportId}.md`, markdown, {
       httpMetadata: { contentType: "text/markdown; charset=utf-8" },
     });
     return key;

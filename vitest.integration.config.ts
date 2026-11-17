@@ -12,6 +12,16 @@ export default defineConfig(async () => {
         miniflare: { bindings: { TEST_MIGRATIONS: migrations } },
       }),
     ],
+    // The Workflow runs in the test isolate, so swapping the model client factory module here
+    // gives it a scripted client that tests control. No real model call is ever made.
+    resolve: {
+      alias: [
+        {
+          find: /^\.\/model-client-factory$/,
+          replacement: path.join(import.meta.dirname, "test/integration/scripted-model-client.ts"),
+        },
+      ],
+    },
     test: {
       include: ["test/integration/**/*.test.ts"],
       setupFiles: ["./test/integration/apply-migrations.ts"],

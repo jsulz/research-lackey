@@ -22,7 +22,7 @@ How to work in this repo: commands, environments, receipts, conventions, ship st
 | Environment | URL                        | Deployed by                   | Needs Jared for                                                                    |
 | ----------- | -------------------------- | ----------------------------- | ---------------------------------------------------------------------------------- |
 | local       | `http://localhost:8787`    | `npx wrangler dev`            | `.dev.vars` secrets (already present)                                              |
-| production  | `https://lackey.jsulz.com` | Ship steps below, after merge | `npx wrangler login` once; `npx wrangler secret put <NAME>` for each Worker secret |
+| production  | `https://lackey.jsulz.com` | Ship steps below, after merge | `npx wrangler login` once; `npx wrangler secret put <NAME>` for each Worker secret: `CF_AIG_TOKEN`, `CF_ACCOUNT_ID`, `AI_GATEWAY_ID`, and `AI_GATEWAY_BYOK_ALIAS` when the stored key's alias isn't `default` |
 
 There are no preview deployments. Cloudflare preview versions share production D1 and R2 bindings.
 
@@ -37,7 +37,7 @@ There are no preview deployments. Cloudflare preview versions share production D
 | D1 or R2 state              | `npx wrangler d1 execute ...` and `npx wrangler r2 object get research-lackey/<key> --pipe` (add `--remote` for production) |
 | CI run | `gh run list --commit <sha>`, then `gh run view <id>` (add `--log-failed` for failures). Cite the run URL |
 | deployed smoke              | The ticket's production Verify step against `https://lackey.jsulz.com`                                                      |
-| AI Gateway log              | Screenshot of the gateway's Logs view, filtered by metadata                                                                 |
+| AI Gateway log              | Screenshot of the gateway's Logs view, filtered by metadata; or the entry from the Cloudflare API, `GET /accounts/<account>/ai-gateway/gateways/<gateway>/logs/<log id>` (append `/response` for the body). The log ID is in the `model call` log line. Needs a token with AI Gateway Read, kept in `.dev.vars` as `CF_API_TOKEN` and never deployed |
 
 ## Conventions
 
@@ -65,3 +65,6 @@ After merge to `main`, in order. Each step runs only after Jared approves it.
 - A git worktree has no `.dev.vars` (gitignored). Copy it in before `npm run types`, or the generated `Env` drops its secrets and narrows `LOG_LEVEL` to `"info"`.
 - Integration tests read `.dev.vars` ("Using secrets defined in .dev.vars"). Tests must never log `env` values.
 - `npx wrangler r2 object get research-lackey/<content_key> --remote` fails with "The specified key does not exist" for Item content keys. The keys contain `%` (the Item identity is URI-encoded, for example `items/arxiv-serving/arxiv%3A2611.17097/<run_id>.md`), and Wrangler does not escape the key in the remote API URL, so `%3A` arrives as `:`. Escape each `%` as `%25`: `.../arxiv%253A2611.17097/<run_id>.md`. `--local` reads take the key as stored.
+- Integration tests never call a model: `vitest.integration.config.ts` aliases `./model-client-factory` to `test/integration/scripted-model-client.ts`. The Workflow runs in the test isolate, so a test scripts answers with `script(...)` and reads requests from `calls`. Keep the factory's import specifier exactly `./model-client-factory`, or the alias stops matching and tests would build the real client.
+- A local Run only calls the model when it has new Items. After earlier local Runs, every fixture Item is seen; reset local state (delete rows from `finding_items`, `findings`, `reports`, `run_steps`, `items`, `runs`, in that order) before a Run meant to call the model.
+- A model call that fails with `402 Insufficient unified billing credits` reached the gateway, which found no stored Anthropic key to use and fell through to Unified Billing. The gateway uses the key aliased `default` unless `cf-aig-byok-alias` names another; set `AI_GATEWAY_BYOK_ALIAS` to the stored key's alias.

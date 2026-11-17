@@ -23,10 +23,15 @@ const RUN: RunRef = {
 
 /** In-memory RunStore that records every status the Run passes through. */
 class FakeRunStore
-  implements Pick<RunStore, "markRunning" | "completeRun" | "failRun" | "recordRunConfig">
+  implements
+    Pick<
+      RunStore,
+      "markRunning" | "completeRun" | "failRun" | "recordRunConfig" | "recordStepArtifact"
+    >
 {
   statuses: string[] = ["queued"];
   configs: { runId: string; record: RunConfigRecord }[] = [];
+  stepRows: [string, string][] = [];
   failure: { stage: string; reason: string } | null = null;
   topicBusy = false;
   async markRunning(_run: RunRef): Promise<"running" | "topic_busy"> {
@@ -36,6 +41,9 @@ class FakeRunStore
   }
   async recordRunConfig(runId: string, record: RunConfigRecord): Promise<void> {
     this.configs.push({ runId, record });
+  }
+  async recordStepArtifact(_runId: string, step: StepName, key: string): Promise<void> {
+    this.stepRows.push([step, key]);
   }
   async completeRun(_id: string, status: FinalStatus): Promise<void> {
     this.statuses.push(status);
@@ -83,7 +91,7 @@ function setup(stages: Stage[], retries = 2) {
     runPipeline({
       run: RUN,
       stages,
-      store: store as unknown as RunStore,
+      store,
       artifacts,
       step: retryingSteps(retries),
       runConfig: { config: { b: 2, a: 1 }, prompts: { synthesis: "abc" } },
@@ -132,6 +140,31 @@ describe("runPipeline", () => {
       input: { seen: { topic_id: "ai-infra" }, items: ["a"] },
       output: { items: [] },
     });
+  });
+
+  it("records each stage's artifact key as a run_steps row", async () => {
+    const { store, run } = setup([
+      { name: "fetch", run: async () => ({}) },
+      { name: "dedupe", run: async () => ({}) },
+    ]);
+    await run();
+    expect(store.stepRows).toEqual([
+      ["fetch", "runs/manual-ai-infra-1/steps/fetch.json"],
+      ["dedupe", "runs/manual-ai-infra-1/steps/dedupe.json"],
+    ]);
+  });
+
+  it("ends with the final status a stage's outcome reports", async () => {
+    const { store, run } = setup([
+      { name: "fetch", run: async () => ({}) },
+      {
+        name: "publish",
+        run: async () => ({ published: true }),
+        outcome: () => "completed_with_report",
+      },
+    ]);
+    await expect(run()).resolves.toBe("completed_with_report");
+    expect(store.statuses.at(-1)).toBe("completed_with_report");
   });
 
   it("retries a stage that fails once, and the Run completes", async () => {

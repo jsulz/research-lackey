@@ -14,13 +14,18 @@ import type {
 export interface Stage {
   name: StepName;
   run(input: unknown, ctx: { run: RunRef; log: Logger }): Promise<unknown>;
+  /** The Run's final status implied by this stage's output, when the stage decides it. */
+  outcome?(output: unknown): FinalStatus;
 }
 
 export interface PipelineDeps {
   run: RunRef;
   /** The ordered stage list. Production passes `buildStages(...)`; tests pass trivial stages. */
   stages: readonly Stage[];
-  store: RunStore;
+  store: Pick<
+    RunStore,
+    "markRunning" | "recordRunConfig" | "recordStepArtifact" | "completeRun" | "failRun"
+  >;
   /** Only Step artifacts: stages write their own data through their own dependencies. */
   artifacts: Pick<ArtifactStore, "putStepArtifact" | "getStepArtifact">;
   step: StepRunner;
@@ -37,9 +42,9 @@ const MAX_REASON = 1000;
  * Runs one Run through its stages and records its final status.
  *
  * Steps, in order: `start` (Run becomes `running` and records its config snapshot and hashes),
- * one step per stage (runs the stage and
- * writes its Step artifact), `complete`. Each stage step returns only its artifact key, so
- * step results stay small. When a step exhausts its retries, a `fail` step records the
+ * one step per stage (runs the stage, writes its Step artifact and records it in `run_steps`),
+ * `complete`. Each stage step returns only its artifact key and outcome, so step results stay
+ * small. The final status is the last outcome a stage reports, else `completed_no_new_findings`. When a step exhausts its retries, a `fail` step records the
  * failing stage and reason, and the error is rethrown so the Workflow instance errors too.
  * When the Topic already has an active Run, the Run is recorded `failed` at `start` and no
  * stage runs.
@@ -65,19 +70,23 @@ export async function runPipeline(deps: PipelineDeps): Promise<FinalStatus> {
     }
 
     let previous: StepName | null = null;
+    // A Run that publishes nothing ends with no new Findings; `publish` decides otherwise.
+    let status: FinalStatus = "completed_no_new_findings";
     for (const stage of stages) {
       current = stage.name;
       const prior: StepName | null = previous;
-      await step.do(stage.name, async () => {
+      const result = await step.do(stage.name, async () => {
         const input = prior === null ? { topic_id: run.topic_id } : await priorOutput(prior);
         const output = await stage.run(input, { run, log });
-        return artifacts.putStepArtifact(run.id, stage.name, { input, output });
+        const key = await artifacts.putStepArtifact(run.id, stage.name, { input, output });
+        await store.recordStepArtifact(run.id, stage.name, key);
+        // Small and serializable: the step result is cached and replayed by the Workflow.
+        return { artifact_key: key, outcome: stage.outcome?.(output) ?? null };
       });
+      if (result.outcome) status = result.outcome;
       previous = stage.name;
     }
 
-    // No stage publishes a Report yet, so every successful Run ends with no new Findings.
-    const status: FinalStatus = "completed_no_new_findings";
     current = "complete";
     await step.do("complete", () => store.completeRun(run.id, status, clock.now()));
     log.info("run completed", { run_id: run.id, status });
