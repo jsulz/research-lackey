@@ -46,28 +46,34 @@ const NAMED_ENTITIES: Record<string, string> = {
 };
 
 /**
- * Feed HTML as plain text: drops `svg`, `script` and `style` elements (to the end when one is
- * unclosed) and every tag, decodes entities once, and collapses whitespace. A `<` that doesn't
+ * Feed HTML as plain text: drops closed `svg` elements, `script` and `style` elements (to the end
+ * when one is unclosed) and every tag, decodes entities once, and collapses whitespace. A `<` that doesn't
  * start a tag (`batches < 32`) is kept. Unknown entities stay as written. GitHub release notes,
  * for example, spend about half of their first characters on markup.
  */
 export function plainText(html: string): string {
-  return html
-    .replace(/<(svg|script|style)\b[\s\S]*?(?:<\/\1\s*>|$)/gi, " ")
-    .replace(/<\/?[a-z!?][^>]*>/gi, " ")
-    .replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, name: string) => {
-      if (name[0] === "#") {
-        const code =
-          name[1] === "x" || name[1] === "X"
-            ? Number.parseInt(name.slice(2), 16)
-            : Number.parseInt(name.slice(1), 10);
-        return Number.isFinite(code) && code <= 0x10ffff ? String.fromCodePoint(code) : match;
-      }
-      const key = name.toLowerCase();
-      return Object.hasOwn(NAMED_ENTITIES, key) ? (NAMED_ENTITIES[key] as string) : match;
-    })
-    .replace(/\s+/g, " ")
-    .trim();
+  return (
+    html
+      // An svg is dropped only when closed: it can self-close, and its drawing is in attributes,
+      // which the tag pass removes anyway. Script and style can't self-close, so an unclosed one
+      // runs to the end.
+      .replace(/<svg\b(?:[^>]*[^/>])?>[\s\S]*?<\/svg\s*>/gi, " ")
+      .replace(/<(script|style)\b[\s\S]*?(?:<\/\1\s*>|$)/gi, " ")
+      .replace(/<\/?[a-z!?][^>]*>/gi, " ")
+      .replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, name: string) => {
+        if (name[0] === "#") {
+          const code =
+            name[1] === "x" || name[1] === "X"
+              ? Number.parseInt(name.slice(2), 16)
+              : Number.parseInt(name.slice(1), 10);
+          return Number.isFinite(code) && code <= 0x10ffff ? String.fromCodePoint(code) : match;
+        }
+        const key = name.toLowerCase();
+        return Object.hasOwn(NAMED_ENTITIES, key) ? (NAMED_ENTITIES[key] as string) : match;
+      })
+      .replace(/\s+/g, " ")
+      .trim()
+  );
 }
 
 export interface TriageTextLimits {

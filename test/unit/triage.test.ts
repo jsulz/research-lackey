@@ -153,6 +153,18 @@ describe("plainText", () => {
     expect(plainText("<p>Release</p><script>var x = 1; tracking()")).toBe("Release");
   });
 
+  it("keeps the content after a self-closing or unclosed svg", () => {
+    expect(plainText("<svg/><p>Major serving improvement.</p>")).toBe("Major serving improvement.");
+    expect(plainText("<svg><title>icon</title></svg>after")).toBe("after");
+    expect(plainText('<svg viewBox="0 0 1 1"><path d="M0"/><p>Still here.</p>')).toBe(
+      "Still here.",
+    );
+  });
+
+  it("drops an unclosed style element to the end", () => {
+    expect(plainText("<p>Notes</p><style>p { color: red }")).toBe("Notes");
+  });
+
   it("decodes common typographic entities and leaves unknown names, including Object properties, as written", () => {
     expect(
       plainText("a&mdash;b &le; c&hellip; &rsquo;d&rsquo; &constructor; &toString; &bogus;"),
