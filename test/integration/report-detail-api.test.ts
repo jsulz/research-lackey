@@ -51,12 +51,16 @@ function document(run: string) {
   };
 }
 
+type Doc = ReturnType<typeof document>;
+
 interface Seed {
   run: string;
   status?: string;
   public?: 0 | 1;
   /** False leaves the R2 document out. */
   withDocument?: boolean;
+  /** Changes the document before it is stored. */
+  edit?: (doc: ReturnType<typeof document>) => unknown;
 }
 
 async function seed(s: Seed): Promise<void> {
@@ -77,7 +81,8 @@ async function seed(s: Seed): Promise<void> {
     ).bind(`rpt_${s.run}`, s.run, s.public ?? 1, key),
   ]);
   if (s.withDocument !== false) {
-    await env.ARTIFACTS.put(key, JSON.stringify(document(s.run)));
+    const doc = document(s.run);
+    await env.ARTIFACTS.put(key, JSON.stringify(s.edit ? s.edit(doc) : doc));
     keys.push(key);
   }
 }
@@ -171,6 +176,44 @@ describe("GET /api/reports/:id", () => {
   it("returns 500 internal when a listed Report has no document in R2", async () => {
     await seed({ run: "run-lost", withDocument: false });
     const res = await getReport("rpt_run-lost");
+    expect(res.status).toBe(500);
+    expect(res.body).toEqual({ error: "internal" });
+  });
+
+  it.each([
+    [
+      "an object in worth_watching",
+      (d: Doc) => ({ ...d, worth_watching: [{ content: "EXTRACTED SOURCE TEXT" }] }),
+    ],
+    [
+      "an object as the summary",
+      (d: Doc) => ({ ...d, summary: { content: "EXTRACTED SOURCE TEXT" } }),
+    ],
+    ["a missing implications", (d: Doc) => ({ ...d, implications: undefined })],
+    [
+      "a Finding title that is not a string",
+      (d: Doc) => ({ ...d, findings: [{ ...d.findings[0], title: ["EXTRACTED SOURCE TEXT"] }] }),
+    ],
+    [
+      "a Finding with no sources",
+      (d: Doc) => ({ ...d, findings: [{ ...d.findings[0], items: [] }] }),
+    ],
+    [
+      "a source URL that is not a string",
+      (d: Doc) => ({
+        ...d,
+        findings: [
+          { ...d.findings[0], items: [{ title: "t", url: { content: "EXTRACTED SOURCE TEXT" } }] },
+        ],
+      }),
+    ],
+    [
+      "findings that are not an array",
+      (d: Doc) => ({ ...d, findings: { content: "EXTRACTED SOURCE TEXT" } }),
+    ],
+  ])("returns 500 internal, passing nothing on, for a document with %s", async (_, edit) => {
+    await seed({ run: "run-bad", edit });
+    const res = await getReport("rpt_run-bad");
     expect(res.status).toBe(500);
     expect(res.body).toEqual({ error: "internal" });
   });

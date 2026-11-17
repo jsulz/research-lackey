@@ -134,10 +134,13 @@ export function reportMarkdown(doc: ReportDocument): string {
 
 /**
  * The public view of a Report: its list row plus the four sections from its document. Every
- * field is copied by name, so nothing else in the row or document (such as an R2 key or
- * extracted source text) can reach a public page (ADR-0006).
+ * field is copied by name and the document's values are checked to be text, so nothing else
+ * in the row or document (such as an R2 key or extracted source text) can reach a public page
+ * (ADR-0006). Throws when the document does not have that shape.
  */
 export function publicReportDetail(row: PublicReport, doc: ReportDocument): PublicReportDetail {
+  const problem = publicDocumentProblem(doc);
+  if (problem) throw new Error(`Report ${row.id} document is invalid: ${problem}`);
   return {
     id: row.id,
     topic: { id: row.topic.id, name: row.topic.name },
@@ -164,6 +167,35 @@ export function publicReportDetail(row: PublicReport, doc: ReportDocument): Publ
       worth_watching: [...doc.worth_watching],
     },
   };
+}
+
+/** Why the document cannot be shown publicly, or null when every shown value is text. */
+function publicDocumentProblem(doc: unknown): string | null {
+  if (!isObject(doc)) return "not an object";
+  if (typeof doc.summary !== "string") return "summary is not a string";
+  if (typeof doc.implications !== "string") return "implications is not a string";
+  if (!Array.isArray(doc.worth_watching) || !doc.worth_watching.every(isString)) {
+    return "worth_watching is not an array of strings";
+  }
+  if (!Array.isArray(doc.findings)) return "findings is not an array";
+  for (const [i, f] of doc.findings.entries()) {
+    const at = `findings[${i}]`;
+    if (!isObject(f)) return `${at} is not an object`;
+    for (const field of ["id", "title", "what_is_new", "why_it_matters"] as const) {
+      if (!isString(f[field])) return `${at}.${field} is not a string`;
+    }
+    if (!Array.isArray(f.items) || f.items.length === 0) return `${at}.items is empty`;
+    for (const item of f.items) {
+      if (!isObject(item) || !isString(item.title) || !isString(item.url)) {
+        return `${at}.items has an entry without a string title and URL`;
+      }
+    }
+  }
+  return null;
+}
+
+function isString(v: unknown): v is string {
+  return typeof v === "string";
 }
 
 function isObject(v: unknown): v is Record<string, unknown> {
