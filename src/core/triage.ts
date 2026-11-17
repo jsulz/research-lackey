@@ -18,6 +18,7 @@ export function contentBody(markdown: string): string {
   return at === -1 ? "" : markdown.slice(at + CONTENT_HEADING.length).trim();
 }
 
+/** Named entities decoded by `plainText`: XML's five, plus the typographic ones common in feeds. */
 const NAMED_ENTITIES: Record<string, string> = {
   amp: "&",
   lt: "<",
@@ -25,17 +26,35 @@ const NAMED_ENTITIES: Record<string, string> = {
   quot: '"',
   apos: "'",
   nbsp: " ",
+  mdash: "\u2014",
+  ndash: "\u2013",
+  hellip: "\u2026",
+  lsquo: "\u2018",
+  rsquo: "\u2019",
+  ldquo: "\u201c",
+  rdquo: "\u201d",
+  le: "\u2264",
+  ge: "\u2265",
+  times: "\u00d7",
+  middot: "\u00b7",
+  bull: "\u2022",
+  rarr: "\u2192",
+  larr: "\u2190",
+  copy: "\u00a9",
+  reg: "\u00ae",
+  trade: "\u2122",
 };
 
 /**
- * Feed HTML as plain text: drops `svg`, `script` and `style` elements and every tag, decodes
- * entities once, and collapses whitespace. GitHub release notes, for example, spend about half
- * of their first characters on markup.
+ * Feed HTML as plain text: drops `svg`, `script` and `style` elements (to the end when one is
+ * unclosed) and every tag, decodes entities once, and collapses whitespace. A `<` that doesn't
+ * start a tag (`batches < 32`) is kept. Unknown entities stay as written. GitHub release notes,
+ * for example, spend about half of their first characters on markup.
  */
 export function plainText(html: string): string {
   return html
-    .replace(/<(svg|script|style)\b[\s\S]*?<\/\1\s*>/gi, " ")
-    .replace(/<[^>]*>/g, " ")
+    .replace(/<(svg|script|style)\b[\s\S]*?(?:<\/\1\s*>|$)/gi, " ")
+    .replace(/<\/?[a-z!?][^>]*>/gi, " ")
     .replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, name: string) => {
       if (name[0] === "#") {
         const code =
@@ -44,7 +63,8 @@ export function plainText(html: string): string {
             : Number.parseInt(name.slice(1), 10);
         return Number.isFinite(code) && code <= 0x10ffff ? String.fromCodePoint(code) : match;
       }
-      return NAMED_ENTITIES[name.toLowerCase()] ?? match;
+      const key = name.toLowerCase();
+      return Object.hasOwn(NAMED_ENTITIES, key) ? (NAMED_ENTITIES[key] as string) : match;
     })
     .replace(/\s+/g, " ")
     .trim();
@@ -164,7 +184,16 @@ export function rankTopK<T extends { item: PassedItem; score: number }>(
     .slice(0, k);
 }
 
-/** The user message for Triage: the Topic, then each Item's ref, Source and triage text. */
+/** Escapes anything in feed text that would open or close an item block (`</item>`, `<ITEM`). */
+function inertItemTags(text: string): string {
+  return text.replace(/<(?=\s*\/?\s*item\b)/gi, "&lt;");
+}
+
+/**
+ * The user message for Triage: the Topic, then each Item's ref, Source and triage text. Feed
+ * text can't open or close an item block, so it stays inside the block the system prompt marks
+ * as material, not instructions.
+ */
 export function triagePrompt(
   topic: { name: string; research_goal: string },
   items: readonly { ref: string; item: PassedItem; text: string }[],
@@ -176,7 +205,13 @@ export function triagePrompt(
     `Items to score (${items.length}):`,
   ];
   for (const { ref, item, text } of items) {
-    lines.push("", `<item ref="${ref}">`, `Source: ${item.source_id}`, text, "</item>");
+    lines.push(
+      "",
+      `<item ref="${ref}">`,
+      `Source: ${inertItemTags(item.source_id)}`,
+      inertItemTags(text),
+      "</item>",
+    );
   }
   return lines.join("\n");
 }
