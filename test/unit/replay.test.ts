@@ -90,6 +90,15 @@ describe("parseRunConfig", () => {
         return c;
       },
     ],
+    [
+      "a price large enough to overflow a stage's cost",
+      (c) => {
+        const prices = c.prices as Record<string, { standard: { input: number } }>;
+        const haiku = prices["claude-haiku-5-5"];
+        if (haiku) haiku.standard.input = 1e308;
+        return c;
+      },
+    ],
   ];
   it.each(cases)("rejects %s", (_label, change) => {
     expect(parseRunConfig(change(copy()))).toMatchObject({ ok: false });

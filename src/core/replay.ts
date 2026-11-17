@@ -27,6 +27,11 @@ const LIMITS = [
   "item_text_cap",
 ] as const;
 const TIER_FIELDS = ["input", "output", "cache_read", "cache_write_5m", "cache_write_1h"] as const;
+/**
+ * Highest accepted price, USD per million tokens: far above any Claude price, and low enough that
+ * a stage's cost (tokens times price) stays finite.
+ */
+const MAX_PRICE = 10_000;
 
 function isObject(v: unknown): v is Record<string, unknown> {
   return typeof v === "object" && v !== null && !Array.isArray(v);
@@ -58,8 +63,8 @@ function tier(v: unknown, path: string): Parsed<PriceTier> {
   const out: Partial<PriceTier> = {};
   for (const f of TIER_FIELDS) {
     const n = v[f];
-    if (typeof n !== "number" || !Number.isFinite(n) || n < 0) {
-      return { ok: false, reason: `${path}.${f} must be a non-negative number` };
+    if (typeof n !== "number" || !Number.isFinite(n) || n < 0 || n > MAX_PRICE) {
+      return { ok: false, reason: `${path}.${f} must be a number from 0 to ${MAX_PRICE}` };
     }
     out[f] = n;
   }
