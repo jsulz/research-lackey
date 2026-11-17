@@ -4,6 +4,9 @@ import { WorkflowRunStarter } from "../adapters/workflow-run-starter";
 import type { Logger, RunStore } from "../core/ports";
 import { runScheduler } from "../core/scheduler";
 
+/** How many Reports the homepage lists. A starting value. */
+const REPORTS_LIMIT = 20;
+
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
@@ -16,6 +19,9 @@ export async function handleApi(request: Request, store: RunStore): Promise<Resp
   const url = new URL(request.url);
   if (request.method === "GET" && url.pathname === "/api/topics") {
     return json(await store.listTopicsLastChecked());
+  }
+  if (request.method === "GET" && url.pathname === "/api/reports") {
+    return json(await store.listPublicReports(REPORTS_LIMIT));
   }
   return json({ error: "not_found" }, 404);
 }

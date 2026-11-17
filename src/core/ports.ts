@@ -19,6 +19,22 @@ export interface TopicLastChecked {
   last_run_status: RunStatus | null;
 }
 
+/** One row of `GET /api/reports`: a public Report with its Run's times, tokens and cost. */
+export interface PublicReport {
+  id: string;
+  topic: { id: string; name: string };
+  run: { id: string; started_at: string; ended_at: string; duration_ms: number };
+  /**
+   * One entry per model the Run used, ordered by model. `input` counts every prompt token:
+   * uncached input, cache reads and cache writes.
+   */
+  tokens: { model: string; input: number; output: number }[];
+  /** Sum of the Run's Step costs. */
+  cost_usd: number;
+  finding_count: number;
+  summary: string;
+}
+
 /** A final status: the Run has ended. */
 export type FinalStatus = Exclude<RunStatus, "queued" | "running">;
 
@@ -182,6 +198,11 @@ export interface StepUsage {
 export interface RunStore {
   /** Every Topic, ordered by name, with its last-checked fields. */
   listTopicsLastChecked(): Promise<TopicLastChecked[]>;
+  /**
+   * Public Reports whose Run ended `completed_with_report`, newest first, at most `limit`.
+   * A Run that failed after publishing keeps its Report row, but it is never listed.
+   */
+  listPublicReports(limit: number): Promise<PublicReport[]>;
   /** Every Topic with its schedule and whether it has an active Run, ordered by ID. */
   dueTopicsInput(): Promise<TopicSchedule[]>;
   /**
