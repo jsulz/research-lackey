@@ -1,4 +1,4 @@
-import type { ReportDocument } from "./ports";
+import type { PublicReport, PublicReportDetail, ReportDocument } from "./ports";
 
 /** One key development as Synthesis returns it. `sources` are the refs of the Items it cites. */
 export interface SynthesisFinding {
@@ -130,6 +130,40 @@ export function reportMarkdown(doc: ReportDocument): string {
   for (const w of doc.worth_watching) lines.push(`- ${w}`);
   lines.push("");
   return lines.join("\n");
+}
+
+/**
+ * The public view of a Report: its list row plus the four sections from its document. Every
+ * field is copied by name, so nothing else in the row or document (such as an R2 key or
+ * extracted source text) can reach a public page (ADR-0006).
+ */
+export function publicReportDetail(row: PublicReport, doc: ReportDocument): PublicReportDetail {
+  return {
+    id: row.id,
+    topic: { id: row.topic.id, name: row.topic.name },
+    run: {
+      id: row.run.id,
+      started_at: row.run.started_at,
+      ended_at: row.run.ended_at,
+      duration_ms: row.run.duration_ms,
+    },
+    tokens: row.tokens.map((t) => ({ model: t.model, input: t.input, output: t.output })),
+    cost_usd: row.cost_usd,
+    finding_count: row.finding_count,
+    summary: row.summary,
+    sections: {
+      summary: doc.summary,
+      key_developments: doc.findings.map((f) => ({
+        finding_id: f.id,
+        title: f.title,
+        what_is_new: f.what_is_new,
+        why_it_matters: f.why_it_matters,
+        sources: f.items.map((item) => ({ title: item.title, url: item.url })),
+      })),
+      implications: doc.implications,
+      worth_watching: [...doc.worth_watching],
+    },
+  };
 }
 
 function isObject(v: unknown): v is Record<string, unknown> {
