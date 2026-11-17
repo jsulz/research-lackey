@@ -45,35 +45,97 @@ const NAMED_ENTITIES: Record<string, string> = {
   trade: "\u2122",
 };
 
+/** Elements whose content is not text: skipped from the opening tag to the matching closing tag. */
+const SKIPPED_ELEMENTS = new Set(["svg", "script", "style"]);
+
 /**
- * Feed HTML as plain text: drops closed `svg` elements, `script` and `style` elements (to the end
- * when one is unclosed) and every tag, decodes entities once, and collapses whitespace. A `<` that doesn't
- * start a tag (`batches < 32`) is kept. Unknown entities stay as written. GitHub release notes,
- * for example, spend about half of their first characters on markup.
+ * Feed HTML as plain text, in one linear pass. Tags and comments become spaces; quoted attribute
+ * values may contain `>`. The content of `svg`, `script` and `style` elements is dropped up to
+ * the matching closing tag: an unclosed `script` or `style` runs to the end, while a self-closing
+ * or unclosed `svg` drops only its own tag (its drawing is in attributes). A `<` that doesn't
+ * start a tag (`batches < 32`) is kept. Then entities are decoded once (unknown ones stay as
+ * written) and whitespace collapses. GitHub release notes, for example, spend about half of
+ * their first characters on markup.
  */
 export function plainText(html: string): string {
-  return (
-    html
-      // An svg is dropped only when closed: it can self-close, and its drawing is in attributes,
-      // which the tag pass removes anyway. Script and style can't self-close, so an unclosed one
-      // runs to the end.
-      .replace(/<svg\b(?:[^>]*[^/>])?>[\s\S]*?<\/svg\s*>/gi, " ")
-      .replace(/<(script|style)\b[\s\S]*?(?:<\/\1\s*>|$)/gi, " ")
-      .replace(/<\/?[a-z!?][^>]*>/gi, " ")
-      .replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, name: string) => {
-        if (name[0] === "#") {
-          const code =
-            name[1] === "x" || name[1] === "X"
-              ? Number.parseInt(name.slice(2), 16)
-              : Number.parseInt(name.slice(1), 10);
-          return Number.isFinite(code) && code <= 0x10ffff ? String.fromCodePoint(code) : match;
-        }
-        const key = name.toLowerCase();
-        return Object.hasOwn(NAMED_ENTITIES, key) ? (NAMED_ENTITIES[key] as string) : match;
-      })
-      .replace(/\s+/g, " ")
-      .trim()
-  );
+  return decodeEntities(stripTags(html)).replace(/\s+/g, " ").trim();
+}
+
+function stripTags(html: string): string {
+  const out: string[] = [];
+  /** Skipped elements found to have no closing tag after some position: not searched again. */
+  const unclosed = new Set<string>();
+  let i = 0;
+  while (i < html.length) {
+    const lt = html.indexOf("<", i);
+    if (lt === -1) {
+      out.push(html.slice(i));
+      break;
+    }
+    out.push(html.slice(i, lt));
+    if (html.startsWith("<!--", lt)) {
+      const close = html.indexOf("-->", lt + 4);
+      out.push(" ");
+      i = close === -1 ? html.length : close + 3;
+      continue;
+    }
+    if (!/[a-zA-Z/!?]/.test(html[lt + 1] ?? "")) {
+      out.push("<");
+      i = lt + 1;
+      continue;
+    }
+    const end = tagEnd(html, lt + 1);
+    const tag = html.slice(lt + 1, end);
+    i = end + 1;
+    out.push(" ");
+    const name = /^([a-zA-Z][a-zA-Z0-9:-]*)/.exec(tag)?.[1]?.toLowerCase();
+    if (!name || !SKIPPED_ELEMENTS.has(name) || /\/\s*$/.test(tag)) continue;
+    if (unclosed.has(name)) {
+      if (name !== "svg") i = html.length;
+      continue;
+    }
+    const closing = new RegExp(`</${name}[\\s>]`, "gi");
+    closing.lastIndex = i;
+    const found = closing.exec(html);
+    if (found) {
+      i = tagEnd(html, found.index + 1) + 1;
+    } else {
+      unclosed.add(name);
+      if (name !== "svg") i = html.length;
+    }
+  }
+  return out.join("");
+}
+
+/** The index of the `>` that ends the tag whose name starts at `from`, skipping quoted values. */
+function tagEnd(html: string, from: number): number {
+  let i = from;
+  while (i < html.length) {
+    const ch = html[i];
+    if (ch === ">") return i;
+    if (ch === '"' || ch === "'") {
+      const close = html.indexOf(ch, i + 1);
+      if (close === -1) return html.length;
+      i = close + 1;
+    } else {
+      i++;
+    }
+  }
+  return html.length;
+}
+
+function decodeEntities(text: string): string {
+  return text.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, name: string) => {
+    if (name[0] === "#") {
+      const code =
+        name[1] === "x" || name[1] === "X"
+          ? Number.parseInt(name.slice(2), 16)
+          : Number.parseInt(name.slice(1), 10);
+      return Number.isFinite(code) && code <= 0x10ffff ? String.fromCodePoint(code) : match;
+    }
+    const key = name.toLowerCase();
+    return Object.hasOwn(NAMED_ENTITIES, key) ? (NAMED_ENTITIES[key] as string) : match;
+  });
 }
 
 export interface TriageTextLimits {

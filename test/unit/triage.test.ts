@@ -161,6 +161,30 @@ describe("plainText", () => {
     );
   });
 
+  it("reads a quoted > inside an attribute as part of the tag", () => {
+    expect(plainText('<svg aria-label="x > y"/><p>Major improvement.</p><svg></svg>after')).toBe(
+      "Major improvement. after",
+    );
+    expect(plainText("<a title='a>b'>link</a> text")).toBe("link text");
+  });
+
+  it("treats custom elements named like script or style as ordinary tags", () => {
+    expect(plainText("<script-example>Release notes</script-example><p>Major improvement</p>")).toBe(
+      "Release notes Major improvement",
+    );
+  });
+
+  it("drops comments", () => {
+    expect(plainText("a<!-- <p>hidden</p> -->b")).toBe("a b");
+  });
+
+  it("runs in linear time on repeated unclosed elements", () => {
+    const html = "<svg><p>x</p>".repeat(20_000);
+    const started = performance.now();
+    expect(plainText(html).startsWith("x x")).toBe(true);
+    expect(performance.now() - started).toBeLessThan(100);
+  });
+
   it("drops an unclosed style element to the end", () => {
     expect(plainText("<p>Notes</p><style>p { color: red }")).toBe("Notes");
   });
