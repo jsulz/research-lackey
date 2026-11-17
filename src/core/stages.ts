@@ -26,6 +26,14 @@ import {
 } from "./report";
 import type { Stage } from "./run-pipeline";
 import { capText, selectForSynthesis, synthesisPrompt } from "./synthesis";
+import {
+  rankTopK,
+  selectForTriage,
+  triageJsonSchema,
+  triagePrompt,
+  triageText,
+  validateScores,
+} from "./triage";
 
 export interface StageDeps {
   store: RunStore;
@@ -34,7 +42,7 @@ export interface StageDeps {
   config: RunConfig;
   model: ModelClient;
   /** Prompt file texts by name. */
-  prompts: { synthesis: string };
+  prompts: { triage: string; synthesis: string };
   /** Sent as `env` in model call metadata. */
   model_env: ModelCallMetadata["env"];
   clock: Clock;
@@ -65,6 +73,35 @@ export interface DedupeOutput {
   /** Items passed onward: every new Item, except only the newest N on a Source's first poll. */
   passed: number;
   items: PassedItem[];
+}
+
+/** One Item as Triage scored it. */
+export interface ScoredItem {
+  ref: string;
+  source_id: string;
+  item_key: string;
+  title: string;
+  score: number;
+  reason: string;
+}
+
+/**
+ * What `triage` returns. `scored` holds every score, so a Replay from `synthesis` can reuse it;
+ * `selected` is the top K, highest score first, which is what Synthesis reads.
+ */
+export interface TriageOutput {
+  skipped?: string;
+  /** New Items `dedupe` passed on. */
+  new_items: number;
+  /** Items scored: one per Item identity, at most `triage_limit`. */
+  triaged: number;
+  /** Distinct Items over the limit, recorded as seen but not scored. */
+  not_triaged: number;
+  scored: ScoredItem[];
+  selected: PassedItem[];
+  model: string | null;
+  usage: ModelUsage | null;
+  cost_usd: number;
 }
 
 /** An Item sent to Synthesis, as recorded in its Step artifact. */
@@ -169,11 +206,93 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
       },
     },
     {
-      name: "synthesis",
-      // Sends the newest K new Items to the Synthesis model and validates its Report. Invalid
-      // output, a refusal or a cut-off answer throws, so the step retries and then fails the Run.
-      run: async (input, { run }): Promise<SynthesisOutput> => {
+      name: "triage",
+      // Scores up to `triage_limit` new Items for relevance to the Research goal and passes the
+      // top K on. Invalid output, a refusal or a cut-off answer throws, so the step retries and
+      // then fails the Run.
+      run: async (input, { run }): Promise<TriageOutput> => {
         const { items } = input as DedupeOutput;
+        const empty = { new_items: items.length, scored: [], selected: [], cost_usd: 0 };
+        if (items.length === 0) {
+          return {
+            skipped: "no new Items",
+            ...empty,
+            triaged: 0,
+            not_triaged: 0,
+            model: null,
+            usage: null,
+          };
+        }
+        const topic = await deps.store.getTopic(run.topic_id);
+        if (!topic) throw new Error(`Topic ${run.topic_id} not found`);
+
+        const task = deps.config.tasks.triage;
+        const price = deps.config.prices[task.model];
+        // Checked before the call: a call whose cost can't be recorded isn't made.
+        if (!price) throw new Error(`No price for model ${task.model} in the config price table`);
+
+        const picked = selectForTriage(items, deps.config.triage_limit);
+        const distinct = new Set(items.map((i) => i.item_key)).size;
+        const entries = [];
+        for (const [i, item] of picked.entries()) {
+          // Content is read only for Items with no summary.
+          const markdown =
+            item.summary === null ? await deps.artifacts.getItemContent(item.content_key) : null;
+          const text = triageText(item, markdown, {
+            summary_cap: deps.config.item_text_cap,
+            content_chars: deps.config.triage_content_chars,
+          });
+          entries.push({ ref: `I${i + 1}`, item, text });
+        }
+        const refs = entries.map((e) => e.ref);
+        const response = await deps.model.call({
+          task: "triage",
+          model: task.model,
+          system: deps.prompts.triage,
+          prompt: triagePrompt(topic, entries),
+          effort: task.effort,
+          max_tokens: task.max_tokens,
+          json_schema: triageJsonSchema(refs),
+          metadata: { run_id: run.id, topic_id: run.topic_id, step: "triage", env: deps.model_env },
+        });
+        const checked = validateScores(response.json, refs);
+        if (!checked.ok) throw new Error(`Triage output failed validation: ${checked.reason}`);
+
+        const cost_usd = stageCost(response.usage, price);
+        await deps.store.recordStepUsage(run.id, "triage", {
+          model: response.model,
+          usage: response.usage,
+          cost_usd,
+        });
+        const scored = entries.map(({ ref, item }) => {
+          const { score, reason } = checked.scores.get(ref) ?? { score: 0, reason: "" };
+          return { ref, item, score, reason };
+        });
+        return {
+          new_items: items.length,
+          triaged: picked.length,
+          not_triaged: distinct - picked.length,
+          scored: scored.map(({ ref, item, score, reason }) => ({
+            ref,
+            source_id: item.source_id,
+            item_key: item.item_key,
+            title: item.title,
+            score,
+            reason,
+          })),
+          selected: rankTopK(scored, deps.config.synthesis_k).map((s) => s.item),
+          model: response.model,
+          usage: response.usage,
+          cost_usd,
+        };
+      },
+    },
+    {
+      name: "synthesis",
+      // Sends Triage's top K to the Synthesis model and validates its Report. Invalid output, a
+      // refusal or a cut-off answer throws, so the step retries and then fails the Run.
+      run: async (input, { run }): Promise<SynthesisOutput> => {
+        const { selected: items } = input as TriageOutput;
         const topic = await deps.store.getTopic(run.topic_id);
         if (!topic) throw new Error(`Topic ${run.topic_id} not found`);
         const topicRef = { id: topic.id, name: topic.name };

@@ -1,18 +1,15 @@
-import { newestFirst } from "./items";
 import type { PassedItem } from "./stages";
 
 /** An Item chosen for Synthesis, with the short ref the model cites it by. */
 export interface SynthesisItem {
-  /** `I1`, `I2`, ... in newest-first order. */
+  /** `I1`, `I2`, ... in Triage rank order: `I1` scored highest. */
   ref: string;
   item: PassedItem;
 }
 
-/** The newest `k` Items across all Sources. Until Triage exists (JSU-31), this is the whole selection. */
-export function selectForSynthesis(items: readonly PassedItem[], k: number): SynthesisItem[] {
-  return newestFirst(items)
-    .slice(0, k)
-    .map((item, i) => ({ ref: `I${i + 1}`, item }));
+/** The first `k` of Triage's selection, already in rank order, with refs `I1`..`Ik`. */
+export function selectForSynthesis(ranked: readonly PassedItem[], k: number): SynthesisItem[] {
+  return ranked.slice(0, k).map((item, i) => ({ ref: `I${i + 1}`, item }));
 }
 
 /** Cuts text longer than `cap` characters and marks the cut, so one Item can't dominate a prompt. */

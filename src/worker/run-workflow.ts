@@ -1,6 +1,7 @@
 import { WorkflowEntrypoint, type WorkflowEvent, type WorkflowStep } from "cloudflare:workers";
 import { NonRetryableError } from "cloudflare:workflows";
 import synthesisPrompt from "../../prompts/synthesis.md";
+import triagePrompt from "../../prompts/triage.md";
 import { D1RunStore } from "../adapters/d1-run-store";
 import { FixtureSourceFetcher } from "../adapters/fixture-source-fetcher";
 import { JsonLogger, parseLogLevel } from "../adapters/json-logger";
@@ -13,7 +14,7 @@ import { buildStages } from "../core/stages";
 import { createModelClient } from "./model-client-factory";
 
 /** Prompt file texts, bundled by Wrangler's `Text` rule. Each Run stores a hash of each. */
-const PROMPTS = { synthesis: synthesisPrompt };
+const PROMPTS = { triage: triagePrompt, synthesis: synthesisPrompt };
 
 /** `APP_ENV` as model call metadata: "dev" only when set so; production is the default. */
 function modelEnv(value: string | undefined): ModelCallMetadata["env"] {
