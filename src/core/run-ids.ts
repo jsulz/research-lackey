@@ -1,4 +1,6 @@
-import type { RunRef } from "./ports";
+import type { RunConfig } from "./config";
+import type { ReplayStage, RunRef } from "./ports";
+import { isReplayStage, parseRunConfig } from "./replay.ts";
 
 // Run IDs double as Workflow instance IDs, which allow only letters, digits, `-` and `_`,
 // up to 100 characters. Times use ISO 8601 basic format (no `:` or `.`).
@@ -41,22 +43,52 @@ export function manualRunId(topicId: string, now: Date): string {
   return `manual-${topicId}-${basicSeconds(now)}`;
 }
 
-/** Parameters a Run's Workflow instance is created with. The Run ID is the instance ID. */
-export interface RunParams {
+/** ID of a Replay started by `npm run replay`, with the source Run's Topic. */
+export function replayRunId(topicId: string, now: Date): string {
+  return `replay-${topicId}-${basicSeconds(now)}`;
+}
+
+const RUN_ID = /^[A-Za-z0-9_-]{1,100}$/;
+
+/** True for a string that can be a Run ID (a Workflow instance ID). */
+export function isValidRunId(id: string): boolean {
+  return RUN_ID.test(id);
+}
+
+/** Parameters a scheduled or manual Run's Workflow instance is created with. */
+export interface NewRunParams {
   topic_id: string;
   kind: "scheduled" | "manual";
   scheduled_slot: string | null;
 }
 
-/** Validates Workflow parameters into a RunRef, or returns the reason they are invalid. */
+/**
+ * Parameters a Replay's Workflow instance is created with. Its Topic is the source Run's;
+ * `config` is the full alternate config.
+ */
+export interface ReplayParams {
+  kind: "replay";
+  source_run_id: string;
+  from_stage: ReplayStage;
+  config: RunConfig;
+}
+
+/** Parameters a Run's Workflow instance is created with. The Run ID is the instance ID. */
+export type RunParams = NewRunParams | ReplayParams;
+
+/**
+ * Validates Workflow parameters: into a RunRef for a scheduled or manual Run, into the Replay's
+ * parameters for a Replay, or into the reason they are invalid.
+ */
 export function parseRunParams(
   runId: string,
   payload: unknown,
-): { ok: true; run: RunRef } | { ok: false; reason: string } {
+): { ok: true; run: RunRef } | { ok: true; replay: ReplayParams } | { ok: false; reason: string } {
   const p = (typeof payload === "object" && payload !== null ? payload : {}) as Record<
     string,
     unknown
   >;
+  if (p.kind === "replay") return parseReplayParams(p);
   if (typeof p.topic_id !== "string" || !isValidTopicId(p.topic_id)) {
     return { ok: false, reason: `invalid topic_id: ${JSON.stringify(p.topic_id)}` };
   }
@@ -73,5 +105,27 @@ export function parseRunParams(
   return {
     ok: true,
     run: { id: runId, topic_id: p.topic_id, kind: p.kind, scheduled_slot: slot },
+  };
+}
+
+function parseReplayParams(
+  p: Record<string, unknown>,
+): { ok: true; replay: ReplayParams } | { ok: false; reason: string } {
+  if (typeof p.source_run_id !== "string" || !isValidRunId(p.source_run_id)) {
+    return { ok: false, reason: `invalid source_run_id: ${JSON.stringify(p.source_run_id)}` };
+  }
+  if (!isReplayStage(p.from_stage)) {
+    return { ok: false, reason: `invalid from_stage: ${JSON.stringify(p.from_stage)}` };
+  }
+  const config = parseRunConfig(p.config);
+  if (!config.ok) return { ok: false, reason: `invalid config: ${config.reason}` };
+  return {
+    ok: true,
+    replay: {
+      kind: "replay",
+      source_run_id: p.source_run_id,
+      from_stage: p.from_stage,
+      config: config.config,
+    },
   };
 }

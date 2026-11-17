@@ -65,11 +65,14 @@ export interface PublicReportDetail extends PublicReport {
 /** A final status: the Run has ended. */
 export type FinalStatus = Exclude<RunStatus, "queued" | "running">;
 
-/** How a Run was started. `replay` arrives with Replays. */
+/** How a Run was started. A `replay` reruns another Run from a chosen stage. */
 export type RunKind = "scheduled" | "manual" | "replay";
 
 /** Pipeline stages, in order. Stored in `run_steps.step` and used in Step artifact keys. */
 export type StepName = "fetch" | "dedupe" | "triage" | "synthesis" | "publish";
+
+/** The stages a Replay can start from. Stored in `runs.from_stage`. */
+export type ReplayStage = "triage" | "synthesis";
 
 /** Identity of a Run. `id` is also its Workflow instance ID. */
 export interface RunRef {
@@ -78,6 +81,8 @@ export interface RunRef {
   kind: RunKind;
   /** Extended ISO 8601 UTC, for example `2026-11-16T12:00:00Z`. Required for `scheduled`. */
   scheduled_slot: string | null;
+  /** For a `replay`: the Run it reruns and the stage it starts from. */
+  replay?: { source_run_id: string; from_stage: ReplayStage };
 }
 
 /** A Topic's schedule preset. Times are `HH:MM` UTC; `weekday` is 0-6, Sunday to Saturday. */
