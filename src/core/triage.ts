@@ -45,14 +45,15 @@ const NAMED_ENTITIES: Record<string, string> = {
   trade: "\u2122",
 };
 
-/** Elements whose content is not text: skipped from the opening tag to the matching closing tag. */
+/** Elements whose content is not text: skipped from the opening tag to the next closing tag. */
 const SKIPPED_ELEMENTS = new Set(["svg", "script", "style"]);
 
 /**
  * Feed HTML as plain text, in one linear pass. Tags and comments become spaces; quoted attribute
  * values may contain `>`. The content of `svg`, `script` and `style` elements is dropped up to
- * the matching closing tag: an unclosed `script` or `style` runs to the end, while a self-closing
- * or unclosed `svg` drops only its own tag (its drawing is in attributes). A `<` that doesn't
+ * the first closing tag of the same name (nesting is not tracked): an unclosed `script` or
+ * `style` runs to the end, while a self-closing or unclosed `svg` drops only its own tag (its
+ * drawing is in attributes). A `<` that doesn't
  * start a tag (`batches < 32`) is kept. Then entities are decoded once (unknown ones stay as
  * written) and whitespace collapses. GitHub release notes, for example, spend about half of
  * their first characters on markup.
