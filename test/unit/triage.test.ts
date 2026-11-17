@@ -174,6 +174,11 @@ describe("plainText", () => {
     ).toBe("Release notes Major improvement");
   });
 
+  it("does not treat <script/> or <style/> as self-closing", () => {
+    expect(plainText("<script/>tracking()</script><p>Actual notes</p>")).toBe("Actual notes");
+    expect(plainText("<p>Notes</p><style/>p { color: red }")).toBe("Notes");
+  });
+
   it("drops comments", () => {
     expect(plainText("a<!-- <p>hidden</p> -->b")).toBe("a b");
   });

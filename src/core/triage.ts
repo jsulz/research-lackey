@@ -89,7 +89,9 @@ function stripTags(html: string): string {
     i = end + 1;
     out.push(" ");
     const name = /^([a-zA-Z][a-zA-Z0-9:-]*)/.exec(tag)?.[1]?.toLowerCase();
-    if (!name || !SKIPPED_ELEMENTS.has(name) || /\/\s*$/.test(tag)) continue;
+    if (!name || !SKIPPED_ELEMENTS.has(name)) continue;
+    // Only svg can self-close; in HTML, `<script/>` and `<style/>` still open the element.
+    if (name === "svg" && /\/\s*$/.test(tag)) continue;
     if (unclosed.has(name)) {
       if (name !== "svg") i = html.length;
       continue;
