@@ -5,7 +5,7 @@ Scheduled research Runs on Cloudflare Workers. A Worker serves a React homepage 
 ## Setup
 
 1. Install Node (version in `.nvmrc`), then `npm ci`.
-2. `npx wrangler login` once, for deploys and remote D1 commands.
+2. `npx wrangler login` once, for remote D1 commands and manual deploys. Merging to `main` deploys through CI.
 3. Create `.dev.vars` (gitignored) for local settings and secrets:
 
    ```
@@ -33,7 +33,7 @@ Scheduled research Runs on Cloudflare Workers. A Worker serves a React homepage 
 | `npm run types` | Regenerate `worker-configuration.d.ts` after changing `wrangler.jsonc` |
 | `npm run run:local -- --topic <id>` | Start a manual Run against `npm run dev` and print its Run ID (`--port` if not 8787) |
 | `npm run screenshot -- <url> <out.png>` | Screenshot a page with Playwright (`--wait <selector>`, `--map <host>=<ip>`) |
-| `npm run deploy` | Build and deploy to production |
+| `npm run deploy` | Build and deploy to production by hand (CI does this on every merge to `main`) |
 
 ## Log levels
 
