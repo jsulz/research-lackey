@@ -67,6 +67,53 @@
       .report-summary {
         margin: 0.35rem 0;
       }
+      a {
+        color: inherit;
+      }
+      .row-link {
+        text-decoration: none;
+      }
+      .row-link .row-name {
+        text-decoration: underline;
+        text-decoration-color: var(--muted);
+        text-underline-offset: 0.2em;
+      }
+      .row-link:hover .row-name,
+      .row-link:focus-visible .row-name {
+        text-decoration-color: currentColor;
+      }
+      .home-link {
+        margin: 0 0 1.5rem;
+        font-weight: 600;
+      }
+      .report-header {
+        margin-bottom: 2rem;
+      }
+      .report-header h1 {
+        margin: 0 0 0.35rem;
+      }
+      article section + section {
+        margin-top: 2rem;
+      }
+      .finding {
+        padding: 0.75rem 0;
+        border-top: 1px solid var(--rule);
+      }
+      .finding h3 {
+        font-size: 1rem;
+        margin: 0 0 0.35rem;
+      }
+      .finding p {
+        margin: 0.35rem 0;
+      }
+      .label {
+        font-weight: 600;
+      }
+      .sources {
+        margin: 0.35rem 0 0;
+        padding-left: 1.25rem;
+        overflow-wrap: anywhere;
+      }
       .report-meta {
         margin: 0;
         font-size: 0.875rem;

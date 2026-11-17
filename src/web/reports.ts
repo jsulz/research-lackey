@@ -38,11 +38,12 @@ export async function fetchReports(fetchFn: typeof fetch = fetch): Promise<Publi
   return body;
 }
 
-function isObject(v: unknown): v is Record<string, unknown> {
+export function isObject(v: unknown): v is Record<string, unknown> {
   return typeof v === "object" && v !== null;
 }
 
-function isReportRow(row: unknown): row is PublicReport {
+/** True when `row` has every `GET /api/reports` field with the right type. */
+export function isReportRow(row: unknown): row is PublicReport {
   if (!isObject(row)) return false;
   const { topic, run, tokens } = row;
   return (
