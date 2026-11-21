@@ -264,7 +264,8 @@ export async function copyFromProd(
     );
   }
 
-  const contentKeys = [...new Set(wanted.map((r) => r.content_key))];
+  // Every key an artifact names: the copied artifacts must not point at an object left behind.
+  const contentKeys = [...new Set(listed.map((r) => r.content_key))];
   const contents = await mapLimit(contentKeys, CONCURRENCY, async (key, i) => ({
     key,
     file: await download(key, `content-${i}.md`),

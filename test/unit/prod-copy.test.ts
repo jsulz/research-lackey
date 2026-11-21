@@ -194,6 +194,23 @@ describe("copyFromProd", () => {
     expect(count(f.localDb, "items")).toBe(3);
   });
 
+  it("copies every content object an artifact names, even two for one Item", async () => {
+    const f = fake();
+    const other = contentKey("vllm-blog", "https://vllm.ai/blog/a", OLDER_RUN);
+    f.prodR2.set(other, "older content");
+    f.prodR2.set(
+      `runs/${RUN}/steps/triage.json`,
+      JSON.stringify({ output: { selected: [{ ...passed[1], content_key: other }] } }),
+    );
+
+    await copy(f);
+
+    expect(f.localR2.get(other)?.body).toBe("older content");
+    expect(f.localR2.get(passed[1]?.content_key as string)?.body).toBe(
+      "content of https://vllm.ai/blog/a",
+    );
+  });
+
   it("inserts the Topic and its Sources when local D1 lacks them", async () => {
     const f = fake();
     f.localDb.exec("DELETE FROM sources; DELETE FROM topics;");
