@@ -106,6 +106,15 @@ export interface TopicSchedule {
   has_active_run: boolean;
 }
 
+/** A `scheduled` or `manual` Run that is `queued` or `running`: one that blocks its Topic. */
+export interface ActiveRun {
+  id: string;
+  topic_id: string;
+  status: "queued" | "running";
+  /** ISO 8601 UTC, second precision. */
+  created_at: string;
+}
+
 /** The file format of a `feed` Source. Stored in `sources.format`. */
 export type FeedFormat = "rss2" | "atom" | "hf_daily_papers";
 
@@ -264,6 +273,8 @@ export interface RunStore {
   getPublicReport(id: string): Promise<(PublicReport & { r2_key: string }) | null>;
   /** Every Topic with its schedule and whether it has an active Run, ordered by ID. */
   dueTopicsInput(): Promise<TopicSchedule[]>;
+  /** Every `scheduled` or `manual` Run that is `queued` or `running`, ordered by ID. */
+  activeRuns(): Promise<ActiveRun[]>;
   /**
    * Inserts the Run as `queued`. Returns false, inserting nothing, when a Run with that ID
    * already exists, the Run's scheduled slot already has a Run, or (for a scheduled or manual
@@ -369,11 +380,23 @@ export interface StepRunner {
 }
 
 /**
- * Starts the Workflow instance for a Run, using the Run ID as the instance ID. Resolves
- * `already_started` when an instance with that ID exists; throws on any other failure.
+ * Where a Run's Workflow instance stands. `ended` covers errored, terminated and complete
+ * instances, with the platform's status and error text; anything still able to make progress,
+ * or in an unrecognized status, is `active`.
+ */
+export type InstanceState =
+  | { state: "active" }
+  | { state: "ended"; status: string; error: string | null }
+  | { state: "missing" };
+
+/**
+ * Starts and inspects the Workflow instance for a Run, using the Run ID as the instance ID.
+ * `start` resolves `already_started` when an instance with that ID exists; throws on any other
+ * failure. `instanceState` throws on any failure other than a missing instance.
  */
 export interface WorkflowStarter {
   start(run: RunRef): Promise<"started" | "already_started">;
+  instanceState(runId: string): Promise<InstanceState>;
 }
 
 export type LogLevel = "debug" | "info" | "warn" | "error";

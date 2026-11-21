@@ -1,4 +1,5 @@
 import type {
+  ActiveRun,
   FinalStatus,
   Item,
   Poll,
@@ -172,6 +173,17 @@ export class D1RunStore implements RunStore {
       schedule: toSchedule(t),
       has_active_run: t.has_active_run === 1,
     }));
+  }
+
+  async activeRuns(): Promise<ActiveRun[]> {
+    const { results } = await this.db
+      .prepare(
+        `SELECT id, topic_id, status, created_at FROM runs
+         WHERE kind IN ('scheduled', 'manual') AND status IN ('queued', 'running')
+         ORDER BY id`,
+      )
+      .all<ActiveRun>();
+    return results;
   }
 
   async createQueuedRun(run: RunRef): Promise<boolean> {
