@@ -38,11 +38,14 @@ export interface RunConfig {
   triage_content_chars: number;
   /** How many Items, highest Triage score first, Synthesis reads. */
   synthesis_k: number;
-  /** For an Item with no summary, how many characters of its content, as text, Synthesis reads. */
+  /** How many characters of each Item's content, as text, Synthesis reads. Content is preferred to the summary. */
   synthesis_content_chars: number;
-  /** Longest summary, in characters, sent to a model per Item, by Triage and Synthesis. */
+  /**
+   * Longest summary, in characters, sent to a model per Item: by Triage, and by Synthesis for an
+   * Item whose content has no text.
+   */
   item_text_cap: number;
-  /** Which model runs each task. T2 moves Synthesis to Sonnet by editing this table. */
+  /** Which model runs each task. */
   tasks: Record<TaskName, TaskConfig>;
   /** Price table per model ID. Update it when Anthropic changes prices (ADR-0004). */
   prices: Record<string, ModelPrice>;
@@ -50,15 +53,17 @@ export interface RunConfig {
 
 export const CONFIG: RunConfig = {
   first_poll_cap: 10,
-  triage_limit: 50,
-  triage_content_chars: 1_500,
-  synthesis_k: 5,
+  triage_limit: 100,
+  triage_content_chars: 3_000,
+  synthesis_k: 8,
   synthesis_content_chars: 16_000,
   item_text_cap: 4_000,
   tasks: {
     // Scoring is classification: low effort keeps thinking tokens down.
     triage: { model: "claude-haiku-5-5", effort: "low", max_tokens: 8_000 },
-    synthesis: { model: "claude-haiku-5-5", effort: "medium", max_tokens: 16_000 },
+    // Synthesis is where a stronger model earns its cost. High effort is the quality-first start;
+    // max_tokens covers its thinking plus the Report, so the Report isn't cut off.
+    synthesis: { model: "claude-sonnet-5-5", effort: "high", max_tokens: 32_000 },
   },
   prices: {
     // Anthropic list prices, checked 2026-11-16.
@@ -79,6 +84,17 @@ export const CONFIG: RunConfig = {
           cache_write_5m: 0.625,
           cache_write_1h: 1,
         },
+      },
+    },
+    // Anthropic list prices, checked 2026-11-21. Cache reads are 0.05x input. The full context
+    // window bills at standard rates: no long-context tier.
+    "claude-sonnet-5-5": {
+      standard: {
+        input: 2,
+        output: 10,
+        cache_read: 0.1,
+        cache_write_5m: 2.5,
+        cache_write_1h: 4,
       },
     },
   },

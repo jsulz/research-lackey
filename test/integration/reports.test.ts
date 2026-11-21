@@ -236,16 +236,17 @@ describe("Run cost and config", () => {
     );
     expect(steps.map((s) => s.step)).toEqual(["fetch", "dedupe", "triage", "synthesis", "publish"]);
     const synthesis = steps.find((s) => s.step === "synthesis");
+    // The scripted client answers with the requested model, so this is the model Synthesis asked for.
     expect(synthesis).toMatchObject({
-      model: "claude-haiku-5-5",
+      model: "claude-sonnet-5-5",
       input_tokens: 2_000,
       output_tokens: 3_000,
       cache_read_tokens: 1_000,
       cache_write_tokens: 0,
       artifact_key: "runs/rpt-cost/steps/synthesis.json",
     });
-    // 2,000 x $0.10 + 3,000 x $0.50 + 1,000 x $0.01, per million tokens = $0.00171.
-    expect(synthesis?.cost_usd).toBeCloseTo(0.00171, 10);
+    // Sonnet: 2,000 x $2 + 3,000 x $10 + 1,000 x $0.10, per million tokens = $0.0341.
+    expect(synthesis?.cost_usd).toBeCloseTo(0.0341, 10);
     for (const s of steps.filter((s) => s.step !== "synthesis" && s.step !== "triage")) {
       expect(s).toMatchObject({
         model: null,

@@ -161,24 +161,18 @@ describe("synthesisPrompt", () => {
 
 describe("synthesisText", () => {
   const LIMITS = { summary_cap: 10, content_chars: 40 };
-  const md = (content?: string) =>
+  const md = (content?: string, summary?: string) =>
     itemMarkdown({
       externalId: "1",
       url: "https://example.com/1",
       title: "v1.0",
       publishedAt: "2026-11-15T00:00:00Z",
+      summary,
       content,
     });
 
   it("starts from 16,000 content characters", () => {
     expect(CONFIG.synthesis_content_chars).toBe(16_000);
-  });
-
-  it("is the summary, capped at the summary cap, when the Item has one", () => {
-    expect(synthesisText({ summary: "short" }, null, LIMITS)).toBe("short");
-    expect(synthesisText({ summary: "x".repeat(20) }, md("<p>ignored</p>"), LIMITS)).toBe(
-      `${"x".repeat(10)}\n[truncated]`,
-    );
   });
 
   it("is the content as plain text, without the stored header, tags or entities, when there is no summary", () => {
@@ -190,9 +184,56 @@ describe("synthesisText", () => {
     expect(text).toBe("v1.0 Faster KV & more.");
   });
 
-  it("caps the plain text at the content cap and marks the cut", () => {
-    const text = synthesisText({ summary: null }, md(`<p>${"y".repeat(100)}</p>`), LIMITS);
-    expect(text).toBe(`${"y".repeat(40)}\n[truncated]`);
+  it("is the content, not the summary, when the Item has both", () => {
+    const summary = "A teaser.";
+    const text = synthesisText(
+      { summary },
+      md("<p>The <em>full</em> article.</p>", summary),
+      LIMITS,
+    );
+    expect(text).toBe("The full article.");
+  });
+
+  it("caps the plain text at the content cap and marks the cut, with or without a summary", () => {
+    const long = `<p>${"y".repeat(100)}</p>`;
+    const cut = `${"y".repeat(40)}\n[truncated]`;
+    expect(synthesisText({ summary: null }, md(long), LIMITS)).toBe(cut);
+    expect(synthesisText({ summary: "s" }, md(long, "s"), LIMITS)).toBe(cut);
+  });
+
+  it("is the summary, capped at the summary cap, when the Item has no content", () => {
+    expect(synthesisText({ summary: "short" }, md(undefined, "short"), LIMITS)).toBe("short");
+    expect(synthesisText({ summary: "x".repeat(20) }, md(undefined, "x".repeat(20)), LIMITS)).toBe(
+      `${"x".repeat(10)}\n[truncated]`,
+    );
+  });
+
+  it("is the summary when the content has no text, or the Markdown is missing", () => {
+    expect(
+      synthesisText(
+        { summary: "s" },
+        md('<img src="a.png"/> <svg><text>x</text></svg>', "s"),
+        LIMITS,
+      ),
+    ).toBe("s");
+    expect(synthesisText({ summary: "s" }, md("   ", "s"), LIMITS)).toBe("s");
+    expect(synthesisText({ summary: "s" }, null, LIMITS)).toBe("s");
+  });
+
+  it("finds the real content when the summary contains a content heading", () => {
+    const summary = "Intro.\n## Content\n\nFake content from the summary.";
+    const text = synthesisText({ summary }, md("<p>Real content.</p>", summary), LIMITS);
+    expect(text).toBe("Real content.");
+  });
+
+  it("keeps a summary heading that appears inside the content", () => {
+    const content = "<p>Before.</p>\n## Summary\n\n<p>After.</p>";
+    const text = synthesisText({ summary: "s" }, md(content, "s"), {
+      ...LIMITS,
+      content_chars: 100,
+    });
+    expect(text).toContain("Before.");
+    expect(text).toContain("After.");
   });
 
   it("is empty when there is no summary and no content", () => {

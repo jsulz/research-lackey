@@ -77,23 +77,28 @@ function scoreWith(scoreOf: (ref: string, i: number, all: string[]) => number, u
 }
 
 describe("Triage", () => {
-  it("scores at most the configured limit of distinct new Items, newest first, from title plus summary or content text", async () => {
-    // Six first polls pass 10 Items each. `vllm-blog-plus-one` repeats the vLLM blog's entries
-    // under another Source, so the copies collapse; the rest still exceed the limit of 50.
+  it("scores at most the configured limit of distinct new Items, newest first, from title plus summary or content text, and records how many the limit dropped", async () => {
+    // Modal's blog has 157 entries. A completed earlier Run recorded one Item for its Source, so
+    // this is not a first poll and every entry passes; with vLLM's 10 releases that is well over
+    // the limit of 100.
     await seedTopic([
-      ["atom", "arxiv-serving.atom.xml"],
-      ["hf_daily_papers", "hf-daily-papers-2026-11-13.json"],
       ["atom", "modal-blog.atom.xml"],
-      ["rss2", "vllm-blog.rss.xml"],
-      ["rss2", "vllm-blog-plus-one.rss.xml"],
       ["atom", "vllm-releases-2026-11-17.atom.xml"],
+    ]);
+    await env.DB.batch([
+      env.DB.prepare(
+        "INSERT INTO runs (id, topic_id, kind, status) VALUES ('tri-limit-prior', ?, 'manual', 'completed_no_new_findings')",
+      ).bind(TOPIC),
+      env.DB.prepare(
+        `INSERT INTO items (source_id, item_key, url, title, first_seen_run_id)
+         VALUES (?, 'prior', 'https://example.com/prior', 'Prior', 'tri-limit-prior')`,
+      ).bind(`${TOPIC}-0`),
     ]);
     await runTopic("tri-limit");
 
     const dedupe = await stepOutput<DedupeOutput>("tri-limit", "dedupe");
     const distinct = new Set(dedupe.items.map((i) => i.item_key)).size;
-    expect(dedupe.passed).toBe(60);
-    expect(distinct).toBeLessThan(60);
+    expect(CONFIG.triage_limit).toBe(100);
     expect(distinct).toBeGreaterThan(CONFIG.triage_limit);
 
     const triageCalls = callsFor("triage");
@@ -116,10 +121,11 @@ describe("Triage", () => {
 
     const triage = await stepOutput<TriageOutput>("tri-limit", "triage");
     expect(triage).toMatchObject({
-      new_items: 60,
+      new_items: dedupe.passed,
       triaged: CONFIG.triage_limit,
       not_triaged: distinct - CONFIG.triage_limit,
     });
+    expect(triage.not_triaged).toBeGreaterThan(0);
     expect(triage.scored).toHaveLength(CONFIG.triage_limit);
     expect(new Set(triage.scored.map((s) => s.item_key)).size).toBe(CONFIG.triage_limit);
   });
@@ -188,6 +194,39 @@ describe("Synthesis text", () => {
   });
 });
 
+describe("Synthesis reads content first", () => {
+  it("sends an Item's content as plain text, not its summary, capped at the content cap", async () => {
+    await seedTopic([["atom", "summary-and-content.atom.xml"]]);
+    await runTopic("syn-content");
+
+    const dedupe = await stepOutput<DedupeOutput>("syn-content", "dedupe");
+    expect(dedupe.items.map((i) => i.summary)).toEqual([
+      "Teaser for the short post.",
+      "Teaser for the long post.",
+    ]);
+
+    const prompt = callsFor("synthesis")[0]?.prompt ?? "";
+    const bodies = new Map(
+      [
+        ...prompt.matchAll(
+          /<item ref="I\d+">\n[\s\S]*?\nTitle: ([^\n]*)\nURL: [^\n]*\n\n([\s\S]*?)\n<\/item>/g,
+        ),
+      ].map((m) => [m[1], m[2] ?? ""]),
+    );
+    expect(bodies.size).toBe(2);
+    expect(prompt).not.toContain("Teaser for");
+
+    expect(bodies.get("Short post")).toBe(
+      "Short post The full article explains chunked prefill & why it lowers tail latency.",
+    );
+    const long = bodies.get("Long post") ?? "";
+    expect(long).toMatch(/^Paged attention keeps the KV cache/);
+    expect(long).not.toMatch(/<\/?[a-z][^>]*>/i);
+    expect(long.endsWith("\n[truncated]")).toBe(true);
+    expect(long.length).toBe(CONFIG.synthesis_content_chars + "\n[truncated]".length);
+  });
+});
+
 describe("Cost per stage", () => {
   it("records triage and synthesis tokens and cost separately; the Reports API sums both per model", async () => {
     await seedTopic([["rss2", "vllm-blog.rss.xml"]]);
@@ -206,10 +245,11 @@ describe("Cost per stage", () => {
     const run = await runTopic("tri-cost");
     expect(run.status).toBe("completed_with_report");
 
-    const price = CONFIG.prices["claude-haiku-5-5"];
-    if (!price) throw new Error("no Haiku price");
-    const triageCost = stageCost(triageUsage, price);
-    const synthesisCost = stageCost(synthesisUsage, price);
+    const haiku = CONFIG.prices["claude-haiku-5-5"];
+    const sonnet = CONFIG.prices["claude-sonnet-5-5"];
+    if (!haiku || !sonnet) throw new Error("no Haiku or Sonnet price");
+    const triageCost = stageCost(triageUsage, haiku);
+    const synthesisCost = stageCost(synthesisUsage, sonnet);
     const { results: steps } = await env.DB.prepare(
       "SELECT step, model, input_tokens, output_tokens, cost_usd FROM run_steps WHERE run_id = ? AND model IS NOT NULL ORDER BY rowid",
     )
@@ -223,13 +263,14 @@ describe("Cost per stage", () => {
       }>();
     expect(steps.map(({ cost_usd: _c, ...s }) => s)).toEqual([
       { step: "triage", model: "claude-haiku-5-5", input_tokens: 15_000, output_tokens: 2_500 },
-      { step: "synthesis", model: "claude-haiku-5-5", input_tokens: 3_000, output_tokens: 1_200 },
+      { step: "synthesis", model: "claude-sonnet-5-5", input_tokens: 3_000, output_tokens: 1_200 },
     ]);
-    // 15,000 x $0.10 + 2,500 x $0.50 per million = $0.00275; 3,000 x $0.10 + 1,200 x $0.50 = $0.0009.
+    // Haiku: 15,000 x $0.10 + 2,500 x $0.50 per million = $0.00275.
+    // Sonnet: 3,000 x $2 + 1,200 x $10 per million = $0.018.
     expect(steps[0]?.cost_usd).toBeCloseTo(0.00275, 10);
-    expect(steps[1]?.cost_usd).toBeCloseTo(0.0009, 10);
+    expect(steps[1]?.cost_usd).toBeCloseTo(0.018, 10);
     expect(triageCost).toBeCloseTo(0.00275, 10);
-    expect(synthesisCost).toBeCloseTo(0.0009, 10);
+    expect(synthesisCost).toBeCloseTo(0.018, 10);
 
     const res = await exports.default.fetch("https://lackey.test/api/reports");
     const reports = (await res.json()) as {
@@ -238,7 +279,10 @@ describe("Cost per stage", () => {
       cost_usd: number;
     }[];
     const report = reports.find((r) => r.run.id === "tri-cost");
-    expect(report?.tokens).toEqual([{ model: "claude-haiku-5-5", input: 18_000, output: 3_700 }]);
-    expect(report?.cost_usd).toBeCloseTo(0.00365, 10);
+    expect(report?.tokens).toEqual([
+      { model: "claude-haiku-5-5", input: 15_000, output: 2_500 },
+      { model: "claude-sonnet-5-5", input: 3_000, output: 1_200 },
+    ]);
+    expect(report?.cost_usd).toBeCloseTo(0.02075, 10);
   });
 });
