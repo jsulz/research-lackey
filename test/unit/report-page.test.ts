@@ -1,4 +1,7 @@
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
+import { Report } from "../../src/web/ReportPage";
 import { fetchReport, type PublicReportDetail, route, safeHref } from "../../src/web/report";
 
 const DETAIL: PublicReportDetail = {
@@ -28,6 +31,7 @@ const DETAIL: PublicReportDetail = {
     implications: "Serving cost keeps falling.",
     worth_watching: ["Scheduler benchmarks"],
   },
+  attributions: [],
 };
 
 /** A fetch that answers every request with `status` and `body`, and records the URLs asked. */
@@ -100,6 +104,13 @@ describe("fetchReport", () => {
     const { cost_usd: _dropped, ...bad } = DETAIL;
     await expect(fetchReport("x", answering(200, bad).fn)).rejects.toThrow("unexpected shape");
   });
+
+  it("rejects a body whose attributions are missing or not strings", async () => {
+    const { attributions: _dropped, ...missing } = DETAIL;
+    await expect(fetchReport("x", answering(200, missing).fn)).rejects.toThrow("unexpected shape");
+    const bad = { ...DETAIL, attributions: [{ text: "x" }] };
+    await expect(fetchReport("x", answering(200, bad).fn)).rejects.toThrow("unexpected shape");
+  });
 });
 
 describe("safeHref", () => {
@@ -114,5 +125,44 @@ describe("safeHref", () => {
     expect(safeHref("data:text/html,hi")).toBeNull();
     expect(safeHref("/reports/x")).toBeNull();
     expect(safeHref("not a url")).toBeNull();
+  });
+});
+
+describe("Report view", () => {
+  const ARXIV = "Thank you to arXiv for use of its open access interoperability.";
+  const render = (report: PublicReportDetail) =>
+    renderToStaticMarkup(createElement(Report, { report }));
+
+  it("shows each attribution in a footer after the sections", () => {
+    const html = render({ ...DETAIL, attributions: [ARXIV] });
+    expect(html).toContain(`<footer class="report-attributions"><p>${ARXIV}</p></footer>`);
+    expect(html.indexOf("<footer")).toBeGreaterThan(html.indexOf("Worth watching"));
+  });
+
+  it("shows no footer when the Report has no attributions", () => {
+    expect(render(DETAIL)).not.toContain("<footer");
+  });
+
+  it("renders a source whose URL is not http or https as plain text, not a link", () => {
+    const finding = DETAIL.sections.key_developments[0];
+    if (!finding) throw new Error("fixture has no Finding");
+    const html = render({
+      ...DETAIL,
+      sections: {
+        ...DETAIL.sections,
+        key_developments: [
+          {
+            ...finding,
+            sources: [
+              { title: "Planted <b>link</b>", url: "javascript:alert(1)" },
+              { title: "Real", url: "https://vllm.ai/blog/post" },
+            ],
+          },
+        ],
+      },
+    });
+    expect(html).toContain("<li>Planted &lt;b&gt;link&lt;/b&gt;</li>");
+    expect(html).not.toContain("javascript:");
+    expect(html).toContain('<a href="https://vllm.ai/blog/post"');
   });
 });

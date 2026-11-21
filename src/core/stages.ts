@@ -22,6 +22,7 @@ import type {
 } from "./ports";
 import {
   findingId,
+  reportAttributions,
   reportId,
   reportJsonSchema,
   reportMarkdown,
@@ -480,6 +481,7 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
           findings,
           implications: report.implications,
           worth_watching: report.worth_watching,
+          attributions: reportAttributions(findings),
         };
         const r2Key = await deps.artifacts.putReport(id, doc, reportMarkdown(doc));
         await deps.store.saveReport(

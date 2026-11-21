@@ -1,5 +1,5 @@
 import { introspectWorkflowInstance } from "cloudflare:test";
-import { env } from "cloudflare:workers";
+import { env, exports } from "cloudflare:workers";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import synthesisPromptFile from "../../prompts/synthesis.md";
 import triagePromptFile from "../../prompts/triage.md";
@@ -7,6 +7,7 @@ import { D1RunStore } from "../../src/adapters/d1-run-store";
 import { CONFIG } from "../../src/core/config";
 import { sha256Hex } from "../../src/core/hashing";
 import type { ModelRequest, ReportDocument, Run } from "../../src/core/ports";
+import { ARXIV_ATTRIBUTION } from "../../src/core/report";
 import { deleteRuns, deleteTestTopics } from "./cleanup";
 import { calls, callsFor, resetScript, script } from "./scripted-model-client";
 
@@ -84,6 +85,13 @@ async function synthesisRefs(
     output: { items: { ref: string; source_id: string; item_key: string }[] };
   };
   return Object.fromEntries(artifact.output.items.map((i) => [i.ref, i]));
+}
+
+/** The Report as `GET /api/reports/:id` serves it. */
+async function publicReport(id: string): Promise<{ attributions: unknown }> {
+  const res = await exports.default.fetch(`https://lackey.test/api/reports/${id}`);
+  expect(res.status).toBe(200);
+  return res.json();
 }
 
 async function all<T>(sql: string, ...binds: unknown[]): Promise<T[]> {
@@ -164,6 +172,32 @@ describe("Synthesis and publish", () => {
     const md = await (await env.ARTIFACTS.get("reports/rpt_rpt-happy.md"))?.text();
     expect(md).toContain("# Report test topic");
     expect(md).toContain("### Finding 1");
+    expect(md).not.toContain("## Attributions");
+    expect(doc.attributions).toEqual([]);
+    expect((await publicReport("rpt_rpt-happy")).attributions).toEqual([]);
+  });
+
+  it("credits arXiv in the document, the Markdown and the public API when a Finding cites an arXiv Item", async () => {
+    await env.DB.batch([
+      env.DB.prepare("DELETE FROM sources WHERE id = ?").bind(SOURCE),
+      env.DB.prepare(
+        "INSERT INTO sources (id, topic_id, kind, format, fixture_ref) VALUES ('test-reports-arxiv', ?, 'feed', 'atom', 'arxiv-serving.atom.xml')",
+      ).bind(TOPIC),
+    ]);
+    answerWith([["I1"]]);
+    const run = await runTopic("rpt-arxiv");
+    expect(run.status).toBe("completed_with_report");
+    expect((await synthesisRefs(run.id)).I1?.item_key).toMatch(/^arxiv:/);
+
+    const doc = (await (
+      await env.ARTIFACTS.get("reports/rpt_rpt-arxiv.json")
+    )?.json()) as ReportDocument;
+    expect(doc.attributions).toEqual([ARXIV_ATTRIBUTION]);
+    const md = await (await env.ARTIFACTS.get("reports/rpt_rpt-arxiv.md"))?.text();
+    expect(md).toContain(`## Attributions\n\n${ARXIV_ATTRIBUTION}\n`);
+    expect((await publicReport("rpt_rpt-arxiv")).attributions).toEqual([
+      "Thank you to arXiv for use of its open access interoperability.",
+    ]);
   });
 
   it("sends the newest K new Items to the configured model with structured output and Run metadata", async () => {

@@ -53,6 +53,8 @@ export interface PublicReportDetail extends PublicReport {
     implications: string;
     worth_watching: string[];
   };
+  /** Credit lines the Report's Sources ask for, such as arXiv's. Empty when none. */
+  attributions: string[];
 }
 
 /** A final status: the Run has ended. */
@@ -210,6 +212,8 @@ export interface ReportDocument {
   findings: ReportFinding[];
   implications: string;
   worth_watching: string[];
+  /** Credit lines set at publish. Absent in documents published before JSU-46: none. */
+  attributions?: string[];
 }
 
 /** What each Run stores about the settings that produced it. */

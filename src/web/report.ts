@@ -51,6 +51,8 @@ function isReportDetail(body: unknown): body is PublicReportDetail {
   if (!isReportRow(body)) return false;
   const s: unknown = (body as unknown as Record<string, unknown>).sections;
   if (!isObject(s)) return false;
+  const attributions: unknown = (body as unknown as Record<string, unknown>).attributions;
+  if (!Array.isArray(attributions) || !attributions.every(isString)) return false;
   return (
     isString(s.summary) &&
     isString(s.implications) &&
