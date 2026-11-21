@@ -1,4 +1,4 @@
-import { capText, contentBody, plainText } from "./item-text";
+import { capText, contentBody, inertItemTags, plainText } from "./item-text";
 import type { PassedItem } from "./stages";
 
 /** An Item chosen for Synthesis, with the short ref the model cites it by. */
@@ -38,7 +38,11 @@ export function synthesisText(
 const TITLE_CAP = 300;
 const URL_CAP = 2_000;
 
-/** The user message for Synthesis: the Topic, then each Item's metadata and text. */
+/**
+ * The user message for Synthesis: the Topic, then each Item's metadata and text. Feed text can't
+ * open or close an item block, so it stays inside the block the system prompt marks as material,
+ * not instructions.
+ */
 export function synthesisPrompt(
   topic: { name: string; research_goal: string },
   items: readonly (SynthesisItem & { text: string })[],
@@ -53,12 +57,12 @@ export function synthesisPrompt(
     lines.push(
       "",
       `<item ref="${ref}">`,
-      `Source: ${item.source_id}`,
-      `Published: ${item.published_at ?? "unknown"}`,
-      `Title: ${capText(item.title, TITLE_CAP)}`,
-      `URL: ${capText(item.url, URL_CAP)}`,
+      `Source: ${inertItemTags(item.source_id)}`,
+      `Published: ${inertItemTags(item.published_at ?? "unknown")}`,
+      `Title: ${inertItemTags(capText(item.title, TITLE_CAP))}`,
+      `URL: ${inertItemTags(capText(item.url, URL_CAP))}`,
       "",
-      text,
+      inertItemTags(text),
       "</item>",
     );
   }
