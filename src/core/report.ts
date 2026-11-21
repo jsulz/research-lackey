@@ -1,4 +1,10 @@
-import type { PublicReport, PublicReportDetail, ReportDocument } from "./ports";
+import type {
+  PublicReport,
+  PublicReportDetail,
+  ReportDocument,
+  ReportFinding,
+  ReportItemLink,
+} from "./ports";
 
 /** One key development as Synthesis returns it. `sources` are the refs of the Items it cites. */
 export interface SynthesisFinding {
@@ -114,7 +120,57 @@ export function findingId(reportIdValue: string, position: number): string {
   return `fnd_${reportIdValue.replace(/^rpt_/, "")}_${position}`;
 }
 
-/** The Report as Markdown, stored beside its JSON document. */
+/** The attribution arXiv asks for when its content is used (T2 spec, user story 38). */
+export const ARXIV_ATTRIBUTION = "Thank you to arXiv for use of its open access interoperability.";
+
+/** The Report's attribution lines: arXiv's when any Finding cites an `arxiv:` Item. */
+export function reportAttributions(findings: readonly ReportFinding[]): string[] {
+  const citesArxiv = findings.some((f) => f.items.some((i) => i.item_key.startsWith("arxiv:")));
+  return citesArxiv ? [ARXIV_ATTRIBUTION] : [];
+}
+
+/**
+ * The URL, normalized, when it parses as absolute `http` or `https`; else null. Parsing (rather
+ * than matching the raw string) also rejects schemes split by tabs or newlines, which the URL
+ * parser removes.
+ */
+export function httpUrl(url: string): string | null {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "http:" || parsed.protocol === "https:" ? parsed.href : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Feed-controlled text made inert in Markdown: whitespace runs become one space, so it can't
+ * start a new line or block, and every ASCII punctuation character is backslash-escaped, so it
+ * can't open or close a link, emphasis, code span or HTML.
+ */
+function markdownText(text: string): string {
+  return text.replace(/\s+/g, " ").replace(/[!-/:-@[-`{-~]/g, "\\$&");
+}
+
+/**
+ * A normalized URL as a link destination: characters that could end or break it are encoded.
+ * `URL` serialization has already percent-encoded control characters in every component.
+ */
+function markdownUrl(href: string): string {
+  return href.replace(
+    /[ ()<>\\"']/g,
+    (c) => `%${c.charCodeAt(0).toString(16).toUpperCase().padStart(2, "0")}`,
+  );
+}
+
+/** One source line: a link when the URL is http or https, else the title as plain text. */
+function markdownSource(item: ReportItemLink): string {
+  const text = markdownText(item.title);
+  const href = httpUrl(item.url);
+  return href === null ? `- ${text}` : `- [${text}](${markdownUrl(href)})`;
+}
+
+/** The Report as Markdown, stored beside its JSON document. Item titles and URLs are escaped. */
 export function reportMarkdown(doc: ReportDocument): string {
   const lines = [`# ${doc.topic.name}`, "", `Generated ${doc.generated_at}`, "", "## Summary", ""];
   lines.push(doc.summary, "", "## Key developments", "");
@@ -122,13 +178,15 @@ export function reportMarkdown(doc: ReportDocument): string {
   for (const f of doc.findings) {
     lines.push(`### ${f.title}`, "", `**What is new:** ${f.what_is_new}`, "");
     lines.push(`**Why it matters:** ${f.why_it_matters}`, "", "Sources:");
-    for (const item of f.items) lines.push(`- [${item.title}](${item.url})`);
+    for (const item of f.items) lines.push(markdownSource(item));
     lines.push("");
   }
   lines.push("## Technical and competitive implications", "", doc.implications, "");
   lines.push("## Worth watching", "");
   for (const w of doc.worth_watching) lines.push(`- ${w}`);
   lines.push("");
+  const attributions = doc.attributions ?? [];
+  if (attributions.length > 0) lines.push("## Attributions", "", ...attributions, "");
   return lines.join("\n");
 }
 
@@ -166,6 +224,7 @@ export function publicReportDetail(row: PublicReport, doc: ReportDocument): Publ
       implications: doc.implications,
       worth_watching: [...doc.worth_watching],
     },
+    attributions: [...(doc.attributions ?? [])],
   };
 }
 
@@ -176,6 +235,13 @@ function publicDocumentProblem(doc: unknown): string | null {
   if (typeof doc.implications !== "string") return "implications is not a string";
   if (!Array.isArray(doc.worth_watching) || !doc.worth_watching.every(isString)) {
     return "worth_watching is not an array of strings";
+  }
+  // Absent in documents published before attributions existed; those show none.
+  if (
+    doc.attributions !== undefined &&
+    !(Array.isArray(doc.attributions) && doc.attributions.every(isString))
+  ) {
+    return "attributions is not an array of strings";
   }
   if (!Array.isArray(doc.findings)) return "findings is not an array";
   for (const [i, f] of doc.findings.entries()) {

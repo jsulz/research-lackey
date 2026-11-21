@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
+import type { ReportDocument } from "../../src/core/ports";
 import {
+  ARXIV_ATTRIBUTION,
   findingId,
+  publicReportDetail,
+  reportAttributions,
   reportId,
   reportJsonSchema,
   reportMarkdown,
@@ -162,7 +166,7 @@ describe("reportMarkdown", () => {
         "**Why it matters:** Lower latency per token.",
         "",
         "Sources:",
-        "- [v0.12.0](https://github.com/vllm-project/vllm/releases/tag/v0.12.0)",
+        "- [v0\\.12\\.0](https://github.com/vllm-project/vllm/releases/tag/v0.12.0)",
         "",
         "## Technical and competitive implications",
         "",
@@ -176,4 +180,168 @@ describe("reportMarkdown", () => {
       ].join("\n"),
     );
   });
+
+  it("escapes every ASCII punctuation character in feed-controlled link text", () => {
+    const lines = sourceLines(
+      reportMarkdown(
+        docWith([item("a](javascript:alert(1)) [b] \\ `c` *d* _e_ <script>&", URL_OK)]),
+      ),
+    );
+    expect(lines).toEqual([
+      "- [a\\]\\(javascript\\:alert\\(1\\)\\) \\[b\\] \\\\ \\`c\\` \\*d\\* \\_e\\_ \\<script\\>\\&](https://example.com/a)",
+    ]);
+  });
+
+  it("collapses whitespace in link text so a title can't break the line or the link", () => {
+    const lines = sourceLines(reportMarkdown(docWith([item("one\n\n## two\r\n\tthree", URL_OK)])));
+    expect(lines).toEqual(["- [one \\#\\# two three](https://example.com/a)"]);
+  });
+
+  it("keeps link text inside one link under adversarial repetition", () => {
+    const title = "]".repeat(10_000);
+    const [line] = sourceLines(reportMarkdown(docWith([item(title, URL_OK)])));
+    expect(line).toBe(`- [${"\\]".repeat(10_000)}](https://example.com/a)`);
+  });
+
+  it("percent-encodes characters that could end or break a link destination", () => {
+    const lines = sourceLines(
+      reportMarkdown(
+        docWith([
+          item("t", "https://example.com/a(b)c"),
+          item("t", "https://example.com/x?q=a b&r=\"'<>\\"),
+          item("t", "https://example.com/p) [x](javascript:alert(1)"),
+          item("t", "https://example.com/c\u0001d#f g"),
+        ]),
+      ),
+    );
+    expect(lines).toEqual([
+      "- [t](https://example.com/a%28b%29c)",
+      "- [t](https://example.com/x?q=a%20b&r=%22%27%3C%3E%5C)",
+      "- [t](https://example.com/p%29%20[x]%28javascript:alert%281%29)",
+      "- [t](https://example.com/c%01d#f%20g)",
+    ]);
+    for (const l of lines) expect(l.match(/\]\(/g)).toHaveLength(1);
+  });
+
+  it.each([
+    ["javascript:alert(1)"],
+    [" JavaScript:alert(1)"],
+    ["java\nscript:alert(1)"],
+    ["JAVA\tSCRIPT:alert(1)"],
+    ["data:text/html,<b>hi</b>"],
+    ["ftp://example.com/file"],
+    ["/relative/path"],
+    [""],
+    ["not a url"],
+  ])("renders a source whose URL %j is not http or https as plain text", (url) => {
+    const lines = sourceLines(reportMarkdown(docWith([item("Paper [1]", url)])));
+    expect(lines).toEqual(["- Paper \\[1\\]"]);
+  });
+
+  it("accepts http and https in any case, writing the normalized URL", () => {
+    const lines = sourceLines(
+      reportMarkdown(
+        docWith([item("a", "HTTPS://Example.com/A"), item("b", "  http://example.com/b  ")]),
+      ),
+    );
+    expect(lines).toEqual(["- [a](https://example.com/A)", "- [b](http://example.com/b)"]);
+  });
+
+  it("adds an Attributions section after Worth watching only when there are attributions", () => {
+    const withLine = reportMarkdown({
+      ...docWith([item("a", URL_OK)]),
+      attributions: [ARXIV_ATTRIBUTION],
+    });
+    expect(withLine.endsWith(`## Attributions\n\n${ARXIV_ATTRIBUTION}\n`)).toBe(true);
+    expect(reportMarkdown({ ...docWith([item("a", URL_OK)]), attributions: [] })).not.toContain(
+      "Attributions",
+    );
+    expect(reportMarkdown(docWith([item("a", URL_OK)]))).not.toContain("Attributions");
+  });
+});
+
+const URL_OK = "https://example.com/a";
+
+function item(title: string, url: string, item_key = "k") {
+  return { source_id: "s", item_key, title, url };
+}
+
+function docWith(items: ReturnType<typeof item>[]): ReportDocument {
+  return {
+    id: "rpt_x",
+    run_id: "x",
+    topic: { id: "ai-infra", name: "AI infrastructure platforms" },
+    generated_at: "2026-11-16T12:01:31Z",
+    model: "claude-haiku-5-5",
+    summary: "S",
+    findings: [
+      { id: "fnd_x_1", position: 1, title: "F", what_is_new: "N", why_it_matters: "W", items },
+    ],
+    implications: "I",
+    worth_watching: [],
+  };
+}
+
+/** The source lines of the first Finding. */
+function sourceLines(md: string): string[] {
+  const lines = md.split("\n");
+  const start = lines.indexOf("Sources:") + 1;
+  const end = lines.indexOf("", start);
+  return lines.slice(start, end);
+}
+
+describe("reportAttributions", () => {
+  it("credits arXiv when any Finding cites an Item whose key starts with arxiv:", () => {
+    const doc = docWith([
+      item("a", URL_OK, "https://blog/x"),
+      item("b", URL_OK, "arxiv:2611.17097"),
+    ]);
+    expect(reportAttributions(doc.findings)).toEqual([ARXIV_ATTRIBUTION]);
+  });
+
+  it("returns an empty list when no Finding cites an arXiv Item", () => {
+    const doc = docWith([
+      item("a", URL_OK, "https://arxiv.org/abs/1"),
+      item("b", URL_OK, "xarxiv:1"),
+    ]);
+    expect(reportAttributions(doc.findings)).toEqual([]);
+  });
+
+  it("has the arXiv line from the API contract", () => {
+    expect(ARXIV_ATTRIBUTION).toBe(
+      "Thank you to arXiv for use of its open access interoperability.",
+    );
+  });
+});
+
+describe("publicReportDetail attributions", () => {
+  const row = {
+    id: "rpt_x",
+    topic: { id: "ai-infra", name: "AI infrastructure platforms" },
+    run: { id: "x", started_at: "a", ended_at: "b", duration_ms: 1 },
+    tokens: [],
+    cost_usd: 0,
+    finding_count: 1,
+    summary: "S",
+  };
+
+  it("passes on the stored attributions", () => {
+    const doc = { ...docWith([item("a", URL_OK)]), attributions: [ARXIV_ATTRIBUTION] };
+    expect(publicReportDetail(row, doc).attributions).toEqual([ARXIV_ATTRIBUTION]);
+  });
+
+  it("returns an empty list for a document published before attributions existed", () => {
+    expect(publicReportDetail(row, docWith([item("a", URL_OK)])).attributions).toEqual([]);
+  });
+
+  it.each([[null], ["line"], [[1]], [[{ content: "x" }]]])(
+    "rejects a document whose attributions is %j",
+    (value) => {
+      const doc = {
+        ...docWith([item("a", URL_OK)]),
+        attributions: value,
+      } as unknown as ReportDocument;
+      expect(() => publicReportDetail(row, doc)).toThrow("attributions");
+    },
+  );
 });

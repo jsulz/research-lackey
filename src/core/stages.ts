@@ -23,6 +23,7 @@ import {
   findingId,
   reportId,
   reportJsonSchema,
+  reportAttributions,
   reportMarkdown,
   type SynthesisReport,
   validateReport,
@@ -477,6 +478,7 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
           findings,
           implications: report.implications,
           worth_watching: report.worth_watching,
+          attributions: reportAttributions(findings),
         };
         const r2Key = await deps.artifacts.putReport(id, doc, reportMarkdown(doc));
         await deps.store.saveReport(

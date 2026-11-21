@@ -131,7 +131,24 @@ describe("GET /api/reports/:id", () => {
         implications: "Serving cost keeps falling.",
         worth_watching: ["Scheduler benchmarks"],
       },
+      // The seeded document predates attributions, like Reports published before JSU-46.
+      attributions: [],
     });
+  });
+
+  it("returns the attributions publish stored, such as the arXiv line", async () => {
+    const line = "Thank you to arXiv for use of its open access interoperability.";
+    await seed({ run: "run-arxiv", edit: (d) => ({ ...d, attributions: [line] }) });
+    const res = await getReport("rpt_run-arxiv");
+    expect(res.status).toBe(200);
+    expect(res.body.attributions).toEqual([line]);
+  });
+
+  it("returns an empty attributions list when the document stores none", async () => {
+    await seed({ run: "run-none", edit: (d) => ({ ...d, attributions: [] }) });
+    const res = await getReport("rpt_run-none");
+    expect(res.status).toBe(200);
+    expect(res.body.attributions).toEqual([]);
   });
 
   it("passes on only contract fields, never extra document fields such as source text", async () => {
@@ -206,6 +223,11 @@ describe("GET /api/reports/:id", () => {
           { ...d.findings[0], items: [{ title: "t", url: { content: "EXTRACTED SOURCE TEXT" } }] },
         ],
       }),
+    ],
+    ["attributions that are null", (d: Doc) => ({ ...d, attributions: null })],
+    [
+      "attributions holding an object",
+      (d: Doc) => ({ ...d, attributions: [{ content: "EXTRACTED SOURCE TEXT" }] }),
     ],
     [
       "findings that are not an array",
