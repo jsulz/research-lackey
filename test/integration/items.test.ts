@@ -56,6 +56,29 @@ async function itemCount(runId: string): Promise<number> {
   return row?.n ?? 0;
 }
 
+interface PollRow {
+  source_id: string;
+  outcome: string;
+  attempts: number;
+  items_read: number;
+  items_new: number | null;
+  items_filtered: number | null;
+  failure_reason: string | null;
+  duration_ms: number;
+}
+
+/** The Run's Poll rows, ordered by Source. */
+async function polls(runId: string): Promise<PollRow[]> {
+  const { results } = await env.DB.prepare(
+    `SELECT source_id, outcome, attempts, items_read, items_new, items_filtered, failure_reason,
+            duration_ms
+     FROM polls WHERE run_id = ? ORDER BY source_id`,
+  )
+    .bind(runId)
+    .all<PollRow>();
+  return results;
+}
+
 async function stepOutput<T>(runId: string, step: string): Promise<T> {
   const object = await env.ARTIFACTS.get(`runs/${runId}/steps/${step}.json`);
   if (!object) throw new Error(`No ${step} artifact for ${runId}`);
@@ -93,13 +116,85 @@ describe("Runs read fixture feeds and record deduplicated Items", () => {
     ]);
   });
 
-  it("ends the Run failed at stage fetch, with a reason, when a fixture is unreadable", async () => {
+  it("records one succeeded Poll per Source with its counts", async () => {
+    await addSource("t-vllm", "rss2", "vllm-blog.rss.xml");
+    await addSource("t-hf", "hf_daily_papers", "hf-daily-papers-2026-11-13.json");
+    const run = await runTopic("polls-succeeded");
+
+    expect(run.status).toBe("completed_no_new_findings");
+    const rows = await polls(run.id);
+    expect(rows).toEqual([
+      {
+        source_id: "t-hf",
+        outcome: "succeeded",
+        attempts: 1,
+        items_read: 34,
+        items_new: 34,
+        items_filtered: 0,
+        failure_reason: null,
+        duration_ms: expect.any(Number),
+      },
+      {
+        source_id: "t-vllm",
+        outcome: "succeeded",
+        attempts: 1,
+        items_read: 50,
+        items_new: 50,
+        items_filtered: 0,
+        failure_reason: null,
+        duration_ms: expect.any(Number),
+      },
+    ]);
+    for (const row of rows) expect(row.duration_ms).toBeGreaterThanOrEqual(0);
+
+    // A second Run reads the same entries and finds nothing new.
+    const second = await runTopic("polls-succeeded-again");
+    expect((await polls(second.id)).map((p) => [p.source_id, p.items_read, p.items_new])).toEqual([
+      ["t-hf", 34, 0],
+      ["t-vllm", 50, 0],
+    ]);
+  });
+
+  it("skips an unreadable Source and completes with the other Sources' Items", async () => {
     await addSource("t-vllm", "rss2", "vllm-blog.rss.xml");
     await addSource("t-missing", "atom", "missing.atom.xml");
-    const run = await runTopic("items-fetch-missing", { expect: "errored" });
+    const run = await runTopic("polls-one-failed");
+
+    expect(run).toMatchObject({ status: "completed_no_new_findings", failure_reason: null });
+    expect(await itemCount(run.id)).toBe(50);
+    expect(await dedupe(run.id)).toMatchObject({ recorded: 50, passed: 10 });
+    const rows = await polls(run.id);
+    expect(rows.find((p) => p.source_id === "t-missing")).toEqual({
+      source_id: "t-missing",
+      outcome: "failed",
+      attempts: 1,
+      items_read: 0,
+      items_new: null,
+      items_filtered: null,
+      failure_reason: "Fixture not found: missing.atom.xml",
+      duration_ms: expect.any(Number),
+    });
+    expect(rows.find((p) => p.source_id === "t-vllm")).toMatchObject({
+      outcome: "succeeded",
+      items_new: 50,
+    });
+  });
+
+  it("fails at fetch naming every Source when all fail, and records each failed Poll", async () => {
+    await addSource("t-missing", "atom", "missing.atom.xml");
+    await addSource("t-wrong", "atom", "vllm-blog.rss.xml");
+    const run = await runTopic("polls-all-failed", { expect: "errored" });
 
     expect(run).toMatchObject({ status: "failed", failed_stage: "fetch" });
-    expect(run.failure_reason).toContain("missing.atom.xml");
+    expect(run.failure_reason).toMatch(/^Every Source failed \(2\): /);
+    expect(run.failure_reason).toContain("t-missing: Fixture not found: missing.atom.xml");
+    expect(run.failure_reason).toContain("t-wrong: ");
+    const rows = await polls(run.id);
+    expect(rows.map((p) => [p.source_id, p.outcome, p.items_new])).toEqual([
+      ["t-missing", "failed", null],
+      ["t-wrong", "failed", null],
+    ]);
+    expect(rows.every((p) => p.failure_reason !== null)).toBe(true);
   });
 
   it("ends the Run failed at stage fetch when a fixture is not the format its Source declares", async () => {

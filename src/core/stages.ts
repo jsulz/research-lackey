@@ -1,6 +1,7 @@
 import type { RunConfig } from "./config";
 import { stageCost } from "./cost";
 import { itemKey, itemMarkdown, newestFirst } from "./items";
+import { allFailedReason, cut, MAX_FAILURE_REASON } from "./polls";
 import type {
   ArtifactStore,
   Clock,
@@ -9,6 +10,7 @@ import type {
   ModelCallMetadata,
   ModelClient,
   ModelUsage,
+  Poll,
   RawItem,
   ReportDocument,
   ReportFinding,
@@ -48,10 +50,15 @@ export interface StageDeps {
   clock: Clock;
 }
 
-/** One Source's entries, as the `fetch` stage passes them to `dedupe`. */
+/**
+ * One Source's Poll and entries, as the `fetch` stage passes them to `dedupe`. A failed Poll has
+ * no entries and is skipped.
+ */
 export interface FetchedSource {
   source_id: string;
   format: FeedFormat;
+  outcome: Poll["outcome"];
+  failure_reason: string | null;
   items: RawItem[];
 }
 
@@ -165,38 +172,77 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
   return [
     {
       name: "fetch",
-      // Reads every feed Source of the Topic. Any unreadable Source fails the stage, with its ID.
-      run: async (input) => {
+      // Polls every feed Source of the Topic and records each Poll. A Source that can't be read is
+      // skipped; the stage fails only when every Source failed, naming each with its reason.
+      run: async (input, { run, log }) => {
         const { topic_id } = input as { topic_id: string };
         const sources = await deps.store.listFeedSources(topic_id);
         const fetched: FetchedSource[] = [];
+        const polls: Poll[] = [];
         for (const source of sources) {
+          const started = deps.clock.now().getTime();
+          let items: RawItem[] = [];
+          let failure_reason: string | null = null;
           try {
-            fetched.push({
-              source_id: source.id,
-              format: source.format,
-              items: await deps.fetcher.fetch(source),
-            });
+            items = await deps.fetcher.fetch(source);
           } catch (err) {
-            const reason = err instanceof Error ? err.message : String(err);
-            throw new Error(`Source ${source.id}: ${reason}`);
+            const message = err instanceof Error ? err.message : String(err);
+            failure_reason = cut(message || "unknown error", MAX_FAILURE_REASON);
+            log.warn("poll failed", {
+              run_id: run.id,
+              source_id: source.id,
+              reason: failure_reason,
+            });
           }
+          const outcome = failure_reason === null ? "succeeded" : "failed";
+          polls.push({
+            source_id: source.id,
+            outcome,
+            // The fixture fetcher makes one attempt; the HTTP fetcher will report its retries.
+            attempts: 1,
+            items_read: items.length,
+            failure_reason,
+            duration_ms: Math.max(0, deps.clock.now().getTime() - started),
+          });
+          fetched.push({
+            source_id: source.id,
+            format: source.format,
+            outcome,
+            failure_reason,
+            items,
+          });
+        }
+        await deps.store.recordPolls(run.id, polls);
+        const failed = fetched.flatMap((f) =>
+          f.failure_reason === null
+            ? []
+            : [{ source_id: f.source_id, failure_reason: f.failure_reason }],
+        );
+        if (sources.length > 0 && failed.length === sources.length) {
+          throw new Error(allFailedReason(failed));
         }
         return { sources: fetched };
       },
     },
     {
       name: "dedupe",
-      // Records each Source's unseen Items (content to R2, rows to D1) and passes them onward.
+      // Records each read Source's unseen Items (content to R2, rows to D1), sets its Poll counts,
+      // and passes the Items onward.
       // Safe to retry: R2 keys are per Run, and rows recorded by this unfinished Run are taken over.
       run: async (input, { run }): Promise<DedupeOutput> => {
         const { sources } = input as { sources: FetchedSource[] };
         const items: PassedItem[] = [];
         let recorded = 0;
         for (const source of sources) {
+          if (source.outcome === "failed") continue;
           const firstPoll = await deps.store.isFirstPoll(source.source_id);
           const fresh = await recordNew(source, run.id);
           recorded += fresh.length;
+          // No filters yet, so nothing is filtered.
+          await deps.store.recordPollCounts(run.id, source.source_id, {
+            items_new: fresh.length,
+            items_filtered: 0,
+          });
           // A Source's first poll can hold its whole history: record it all, pass on the newest N.
           items.push(
             ...(firstPoll ? newestFirst(fresh).slice(0, deps.config.first_poll_cap) : fresh),

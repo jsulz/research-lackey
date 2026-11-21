@@ -147,6 +147,30 @@ export interface SourceFetcher {
   fetch(source: Source): Promise<RawItem[]>;
 }
 
+/**
+ * One Source's Poll in a Run, as `fetch` records it. `dedupe` adds the counts later with
+ * `recordPollCounts`.
+ */
+export interface Poll {
+  source_id: string;
+  outcome: "succeeded" | "failed";
+  /** Requests made to read the Source. */
+  attempts: number;
+  /** Entries parsed from the feed; 0 when the Poll failed. */
+  items_read: number;
+  /** Why the Poll failed; null when it succeeded. */
+  failure_reason: string | null;
+  duration_ms: number;
+}
+
+/** What `dedupe` counted for a succeeded Poll. */
+export interface PollCounts {
+  /** Items the Run recorded as first seen. */
+  items_new: number;
+  /** Items removed by the Source's filters. */
+  items_filtered: number;
+}
+
 /** An Item as recorded in D1: one row per Source and normalized identity. */
 export interface Item {
   source_id: string;
@@ -283,6 +307,13 @@ export interface RunStore {
    * that recorded it did not complete, so a failed Run's Items are recorded again by the next Run.
    */
   recordItems(runId: string, items: Item[]): Promise<void>;
+  /**
+   * Records the Run's Polls, one per Source. A Poll already recorded for the Run and Source is
+   * replaced, counts cleared, so a retried `fetch` step leaves only its own results.
+   */
+  recordPolls(runId: string, polls: Poll[]): Promise<void>;
+  /** Sets the counts `dedupe` made for the Run's Poll of the Source. */
+  recordPollCounts(runId: string, sourceId: string, counts: PollCounts): Promise<void>;
   /** Records the stage's Step artifact key in `run_steps`, keeping any usage already recorded. */
   recordStepArtifact(runId: string, step: StepName, artifactKey: string): Promise<void>;
   /** Records the stage's model, tokens and cost in `run_steps`, replacing an earlier attempt's. */
