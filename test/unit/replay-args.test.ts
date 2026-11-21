@@ -49,7 +49,10 @@ describe("parseReplayArgs", () => {
     ["--from fetch", ["--run", "r1", "--from", "fetch", "--config", "a.ts"]],
     ["a Run ID with a quote", ["--run", "r1'--", "--from", "triage", "--config", "a.ts"]],
     ["both --run and --from-prod", [...BASE, "--from-prod", "r2", "--config", "a.ts"]],
-    ["a --from-prod Run ID with a quote", ["--from-prod", "r1'--", "--from", "triage", "--config", "a.ts"]],
+    [
+      "a --from-prod Run ID with a quote",
+      ["--from-prod", "r1'--", "--from", "triage", "--config", "a.ts"],
+    ],
     ["a flag without a value", [...BASE, "--config"]],
     ["an unknown flag", [...BASE, "--config", "a.ts", "--remote", "x"]],
     ["a non-numeric port", [...BASE, "--config", "a.ts", "--port", "abc"]],
