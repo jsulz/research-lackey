@@ -340,6 +340,13 @@ export interface ArtifactStore {
     runId: string,
     markdown: string,
   ): Promise<string>;
+  /**
+   * Writes a Source's parsed entries from one Run's `fetch` as JSON and returns its key,
+   * `runs/<run_id>/raw/<encodeURIComponent(source_id)>.json`. Writing again replaces them.
+   */
+  putRawEntries(runId: string, sourceId: string, entries: RawItem[]): Promise<string>;
+  /** The entries `putRawEntries` wrote at `key`, or null when the key has no object. */
+  getRawEntries(key: string): Promise<RawItem[] | null>;
   /** An Item's content Markdown, or null when the key has no object. */
   getItemContent(contentKey: string): Promise<string | null>;
   /** Writes `reports/<id>.json` and `reports/<id>.md` and returns the JSON key. */

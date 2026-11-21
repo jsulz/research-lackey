@@ -52,15 +52,19 @@ export interface StageDeps {
 }
 
 /**
- * One Source's Poll and entries, as the `fetch` stage passes them to `dedupe`. A failed Poll has
- * no entries and is skipped.
+ * One Source's Poll, as the `fetch` stage passes it to `dedupe`. The entries stay in R2 under
+ * `entries_key`, so the stage output stays small however large the feeds are. A failed Poll has
+ * no entries (`entries_key` null) and is skipped.
  */
 export interface FetchedSource {
   source_id: string;
   format: FeedFormat;
   outcome: Poll["outcome"];
   failure_reason: string | null;
-  items: RawItem[];
+  /** Entries parsed from the feed; 0 when the Poll failed. */
+  items_read: number;
+  /** R2 key of the parsed entries (`ArtifactStore.putRawEntries`); null when the Poll failed. */
+  entries_key: string | null;
 }
 
 /** A new Item passed on to the next stage. Content stays in R2 under `content_key`. */
@@ -138,10 +142,14 @@ export interface PublishOutput {
 /** The production stage list, in order. */
 export function buildStages(deps: StageDeps): readonly Stage[] {
   /** Records the Source's unseen Items as first seen by the Run, and returns them. */
-  async function recordNew(source: FetchedSource, runId: string): Promise<PassedItem[]> {
+  async function recordNew(
+    source: FetchedSource,
+    entries: RawItem[],
+    runId: string,
+  ): Promise<PassedItem[]> {
     // One entry per identity; the first occurrence in feed order wins.
     const byKey = new Map<string, RawItem>();
-    for (const raw of source.items) {
+    for (const raw of entries) {
       const key = itemKey(source.format, raw);
       if (!byKey.has(key)) byKey.set(key, raw);
     }
@@ -173,13 +181,15 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
   return [
     {
       name: "fetch",
-      // Polls every feed Source of the Topic and records each Poll. A Source that can't be read is
-      // skipped; the stage fails only when every Source failed, naming each with its reason.
+      // Polls every feed Source of the Topic, records each Poll, then writes each read Source's
+      // entries to R2. A Source that can't be read is skipped; the stage fails only when every
+      // Source failed, naming each with its reason. The output holds only R2 keys and counts.
       run: async (input, { run, log }) => {
         const { topic_id } = input as { topic_id: string };
         const sources = await deps.store.listFeedSources(topic_id);
         const fetched: FetchedSource[] = [];
         const polls: Poll[] = [];
+        const entries = new Map<string, RawItem[]>();
         for (const source of sources) {
           const started = deps.clock.now().getTime();
           let items: RawItem[] = [];
@@ -210,9 +220,12 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
             format: source.format,
             outcome,
             failure_reason,
-            items,
+            items_read: items.length,
+            entries_key: null,
           });
+          if (outcome === "succeeded") entries.set(source.id, items);
         }
+        // Polls first: a raw-entry write that fails every retry still leaves the Polls recorded.
         await deps.store.recordPolls(run.id, polls);
         const failed = fetched.flatMap((f) =>
           f.failure_reason === null
@@ -222,13 +235,18 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
         if (sources.length > 0 && failed.length === sources.length) {
           throw new Error(allFailedReason(failed));
         }
+        for (const f of fetched) {
+          const read = entries.get(f.source_id);
+          // A retried step writes the same key again.
+          if (read) f.entries_key = await deps.artifacts.putRawEntries(run.id, f.source_id, read);
+        }
         return { sources: fetched };
       },
     },
     {
       name: "dedupe",
-      // Records each read Source's unseen Items (content to R2, rows to D1), sets its Poll counts,
-      // and passes the Items onward.
+      // Reads each read Source's entries from R2, records its unseen Items (content to R2, rows to
+      // D1), sets its Poll counts, and passes the Items onward.
       // Safe to retry: R2 keys are per Run, and rows recorded by this unfinished Run are taken over.
       run: async (input, { run }): Promise<DedupeOutput> => {
         const { sources } = input as { sources: FetchedSource[] };
@@ -237,8 +255,19 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
         let recorded = 0;
         for (const source of sources) {
           if (source.outcome === "failed") continue;
+          if (!source.entries_key) {
+            throw new Error(`Source ${source.source_id} succeeded but has no raw entries key`);
+          }
+          const entries = await deps.artifacts.getRawEntries(source.entries_key);
+          if (entries === null) throw new Error(`Raw entries missing: ${source.entries_key}`);
+          if (!Array.isArray(entries) || entries.length !== source.items_read) {
+            const found = Array.isArray(entries) ? entries.length : "not a list";
+            throw new Error(
+              `Raw entries for Source ${source.source_id}: expected ${source.items_read}, found ${found}`,
+            );
+          }
           const firstPoll = await deps.store.isFirstPoll(source.source_id);
-          const fresh = await recordNew(source, run.id);
+          const fresh = await recordNew(source, entries, run.id);
           recorded += fresh.length;
           // No filters yet, so nothing is filtered.
           counts.push({ source_id: source.source_id, items_new: fresh.length, items_filtered: 0 });

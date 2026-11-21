@@ -19,7 +19,8 @@ function source(id: string): FetchedSource {
     format: "rss2",
     outcome: "succeeded",
     failure_reason: null,
-    items: [{ externalId: `${id}-1`, url: `https://example.com/${id}`, title: id }],
+    items_read: 1,
+    entries_key: `raw/${id}`,
   };
 }
 
@@ -35,6 +36,10 @@ function dedupeWith(failFor: string) {
     },
   } as unknown as RunStore;
   const artifacts = {
+    getRawEntries: async (key: string) => {
+      const id = key.slice("raw/".length);
+      return [{ externalId: `${id}-1`, url: `https://example.com/${id}`, title: id }];
+    },
     putItemContent: async (sourceId: string) => {
       if (sourceId === failFor) throw new Error("R2 unavailable");
       return `items/${sourceId}`;
@@ -63,7 +68,7 @@ describe("dedupe Poll counts", () => {
     const d = dedupeWith("none");
     await d.run([
       source("a"),
-      { ...source("b"), outcome: "failed", failure_reason: "x", items: [] },
+      { ...source("b"), outcome: "failed", failure_reason: "x", items_read: 0, entries_key: null },
       source("c"),
     ]);
 
@@ -80,5 +85,67 @@ describe("dedupe Poll counts", () => {
 
     await expect(d.run([source("a"), source("b")])).rejects.toThrow("R2 unavailable");
     expect(d.counts).toEqual([]);
+  });
+});
+
+describe("dedupe reads each read Source's raw entries", () => {
+  it("fails when a succeeded Source has no entries key, rather than skipping it", async () => {
+    const d = dedupeWith("none");
+
+    await expect(d.run([{ ...source("a"), entries_key: null }])).rejects.toThrow(
+      "Source a succeeded but has no raw entries key",
+    );
+  });
+
+  it("fails when the stored entries don't match the count fetch read", async () => {
+    const d = dedupeWith("none");
+
+    await expect(d.run([{ ...source("a"), items_read: 2 }])).rejects.toThrow(
+      "Raw entries for Source a: expected 2, found 1",
+    );
+    expect(d.counts).toEqual([]);
+  });
+});
+
+describe("fetch Polls and raw entries", () => {
+  it("records every Poll before writing raw entries, so a failed write keeps the Polls", async () => {
+    const recorded: unknown[] = [];
+    const store = {
+      listFeedSources: async () => [
+        { id: "a", topic_id: "t", format: "rss2", fixture_ref: "a" },
+        { id: "b", topic_id: "t", format: "rss2", fixture_ref: "b" },
+      ],
+      recordPolls: async (_run: string, polls: unknown[]) => {
+        recorded.push(polls);
+      },
+    } as unknown as RunStore;
+    const artifacts = {
+      putRawEntries: async (_run: string, sourceId: string) => {
+        if (sourceId === "b") throw new Error("R2 unavailable");
+        return `raw/${sourceId}`;
+      },
+    } as unknown as ArtifactStore;
+    const stages = buildStages({
+      store,
+      artifacts,
+      fetcher: { fetch: async (s) => [{ externalId: s.id, url: "https://e.com", title: s.id }] },
+      config: CONFIG,
+      model: {} as ModelClient,
+      prompts: { triage: "", synthesis: "" },
+      model_env: "dev",
+      clock: { now: () => new Date(0) },
+    });
+    const fetch = stages.find((s) => s.name === "fetch");
+    if (!fetch) throw new Error("no fetch stage");
+
+    await expect(fetch.run({ topic_id: "t" }, { run: RUN, log: LOG })).rejects.toThrow(
+      "R2 unavailable",
+    );
+    expect(recorded).toEqual([
+      [
+        expect.objectContaining({ source_id: "a", outcome: "succeeded", items_read: 1 }),
+        expect.objectContaining({ source_id: "b", outcome: "succeeded", items_read: 1 }),
+      ],
+    ]);
   });
 });

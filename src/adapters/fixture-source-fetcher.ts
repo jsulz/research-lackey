@@ -27,11 +27,36 @@ const FIXTURES: Record<string, unknown> = {
   "vllm-releases-2026-11-17.atom.xml": vllmReleases20261117,
 };
 
+/**
+ * Test-only: an Atom feed of 12 entries with 100,000 characters of content each, about 1.2 MB of
+ * entries, shaped like a GitHub releases feed. Built on demand so no megabyte file is committed.
+ */
+function oversizedFeed(): string {
+  const entries = Array.from({ length: 12 }, (_, i) => {
+    const n = i + 1;
+    const body = `Release ${n} notes. `.padEnd(100_000, "lorem ipsum ");
+    return `<entry><id>tag:example.com,2026:oversized/${n}</id><title>Oversized ${n}</title>
+<link rel="alternate" href="https://example.com/oversized/${n}"/>
+<updated>2026-11-${String(n).padStart(2, "0")}T00:00:00Z</updated>
+<content type="html">${body}</content></entry>`;
+  });
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><id>tag:example.com,2026:oversized</id>
+<title>Oversized fixture</title><updated>2026-11-12T00:00:00Z</updated>${entries.join("\n")}</feed>`;
+}
+
+/** Fixtures generated in code, by `sources.fixture_ref`. Test-only. */
+const GENERATED: Record<string, () => string> = {
+  "oversized.atom.xml": oversizedFeed,
+};
+
 /** SourceFetcher that reads bundled fixture files. No network. */
 export class FixtureSourceFetcher implements SourceFetcher {
   async fetch(source: Source): Promise<RawItem[]> {
     const ref = source.fixture_ref;
     if (ref === null) throw new Error(`Source ${source.id} has no fixture`);
+    const generate = Object.hasOwn(GENERATED, ref) ? GENERATED[ref] : undefined;
+    if (generate) return parseFeed(source.format, generate());
     if (!Object.hasOwn(FIXTURES, ref)) throw new Error(`Fixture not found: ${ref}`);
     const fixture = FIXTURES[ref];
     const text = typeof fixture === "string" ? fixture : JSON.stringify(fixture);
