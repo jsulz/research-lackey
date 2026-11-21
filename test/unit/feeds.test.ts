@@ -266,6 +266,13 @@ describe("parseFeed, Atom elements with a namespace prefix", () => {
     ]);
   });
 
+  it("reads an unqualified feed that declares an Atom prefix it does not use, as before", () => {
+    const text = `<feed xmlns:a="${ATOM_NS}"><entry><id>urn:x:1</id><title>Unqualified</title></entry></feed>`;
+    expect(parseFeed("atom", text)).toEqual([
+      expect.objectContaining({ externalId: "urn:x:1", title: "Unqualified" }),
+    ]);
+  });
+
   it("leaves a prefix bound to another namespace alone", () => {
     const text = `<x:feed xmlns:x="http://example.com/not-atom"><x:entry><x:id>1</x:id></x:entry></x:feed>`;
     expect(() => parseFeed("atom", text)).toThrow(/no feed element/);

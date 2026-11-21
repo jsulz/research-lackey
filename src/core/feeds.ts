@@ -120,12 +120,15 @@ function atomCanonicalNames(doc: Node): ((tag: string) => string) | undefined {
   );
   if (prefixes.size === 0) return undefined;
   const unprefixedIsAtom = idOf(root["@_xmlns"]) === ATOM_NS;
-  return (tag) => {
+  const canonical = (tag: string): string => {
     if (tag.startsWith(ATOM_MARK) || tag.startsWith("?") || tag.startsWith("!")) return tag;
     const colon = tag.indexOf(":");
     if (colon === -1) return unprefixedIsAtom ? `${ATOM_MARK}${tag}` : tag;
     return prefixes.has(tag.slice(0, colon)) ? `${ATOM_MARK}${tag.slice(colon + 1)}` : tag;
   };
+  // A root outside the Atom namespace (an unqualified `<feed>` that only declares an Atom
+  // prefix) keeps the unqualified reading.
+  return canonical(rootKey ?? "").startsWith(ATOM_MARK) ? canonical : undefined;
 }
 
 /**
