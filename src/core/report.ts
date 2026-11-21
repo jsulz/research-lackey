@@ -154,8 +154,9 @@ function markdownText(text: string): string {
 
 /**
  * A normalized URL as a link destination: characters that could end or break it are
- * percent-encoded, and `&` is backslash-escaped so renderers don't decode `&copy;` and the like
- * (percent-encoding it would change the query). `URL` serialization has already percent-encoded
+ * percent-encoded, and `&` is written `&amp;`: renderers decode entity references in
+ * destinations (cmark-gfm even before backslash escapes), so `&copy;` would otherwise change the
+ * query, and percent-encoding `&` would change it too. `URL` serialization has already percent-encoded
  * control characters in every component.
  */
 function markdownUrl(href: string): string {
@@ -164,14 +165,27 @@ function markdownUrl(href: string): string {
       /[ ()<>\\"']/g,
       (c) => `%${c.charCodeAt(0).toString(16).toUpperCase().padStart(2, "0")}`,
     )
-    .replaceAll("&", "\\&");
+    .replaceAll("&", "&amp;");
 }
 
-/** One source line: a link when the URL is http or https, else the title as plain text. */
+/**
+ * Feed-controlled text as a code span: GFM autolinks email-shaped text whatever its escapes,
+ * but never inside a code span. The fence is one backtick longer than the longest run in the
+ * text, and the padding spaces keep a leading or trailing backtick inside the span.
+ */
+function markdownCode(text: string): string {
+  const flat = text.replace(/\s+/g, " ");
+  let longest = 0;
+  for (const run of flat.match(/`+/g) ?? []) longest = Math.max(longest, run.length);
+  const fence = "`".repeat(longest + 1);
+  return `${fence} ${flat} ${fence}`;
+}
+
+/** One source line: a link when the URL is http or https, else the title as a code span. */
 function markdownSource(item: ReportItemLink): string {
-  const text = markdownText(item.title);
   const href = httpUrl(item.url);
-  return href === null ? `- ${text}` : `- [${text}](${markdownUrl(href)})`;
+  if (href === null) return `- ${markdownCode(item.title)}`;
+  return `- [${markdownText(item.title)}](${markdownUrl(href)})`;
 }
 
 /** The Report as Markdown, stored beside its JSON document. Item titles and URLs are escaped. */

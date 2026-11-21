@@ -217,11 +217,11 @@ describe("reportMarkdown", () => {
     );
     expect(lines).toEqual([
       "- [t](https://example.com/a%28b%29c)",
-      "- [t](https://example.com/x?q=a%20b\\&r=%22%27%3C%3E%5C)",
+      "- [t](https://example.com/x?q=a%20b&amp;r=%22%27%3C%3E%5C)",
       "- [t](https://example.com/p%29%20[x]%28javascript:alert%281%29)",
       "- [t](https://example.com/c%01d#f%20g)",
-      // Backslash-escaped so renderers keep the literal text instead of decoding entities.
-      "- [t](https://example.com/search?q=a\\&copy;b\\&amp;c)",
+      // Renderers decode entities in destinations, so `&` is written as `&amp;`.
+      "- [t](https://example.com/search?q=a&amp;copy;b&amp;amp;c)",
     ]);
     for (const l of lines) expect(l.match(/\]\(/g)).toHaveLength(1);
   });
@@ -238,7 +238,40 @@ describe("reportMarkdown", () => {
     ["not a url"],
   ])("renders a source whose URL %j is not http or https as plain text", (url) => {
     const lines = sourceLines(reportMarkdown(docWith([item("Paper [1]", url)])));
-    expect(lines).toEqual(["- Paper \\[1\\]"]);
+    expect(lines).toEqual(["- ` Paper [1] `"]);
+  });
+
+  it("writes a plain-text title as a code span, so GFM can't autolink it", () => {
+    const lines = sourceLines(
+      reportMarkdown(
+        docWith([
+          item("papers@example.com", "mailto:papers@example.com"),
+          item("mailto:a@b.com <b>x</b>", "javascript:x"),
+          item("a`b``c", "javascript:x"),
+          item("`edge`", "javascript:x"),
+          item("multi\nline  title", "javascript:x"),
+        ]),
+      ),
+    );
+    expect(lines).toEqual([
+      "- ` papers@example.com `",
+      "- ` mailto:a@b.com <b>x</b> `",
+      "- ``` a`b``c ```",
+      "- `` `edge` ``",
+      "- ` multi line title `",
+    ]);
+  });
+
+  it("keeps a plain-text title in one code span under adversarial repetition", () => {
+    const [line] = sourceLines(reportMarkdown(docWith([item("`".repeat(10_000), "javascript:x")])));
+    expect(line).toBe(`- ${"`".repeat(10_001)} ${"`".repeat(10_000)} ${"`".repeat(10_001)}`);
+  });
+
+  it("handles a plain-text title with very many backtick runs", () => {
+    const [line] = sourceLines(
+      reportMarkdown(docWith([item("`a".repeat(200_000), "javascript:x")])),
+    );
+    expect(line?.startsWith("- `` `a`a")).toBe(true);
   });
 
   it("accepts http and https in any case, writing the normalized URL", () => {
