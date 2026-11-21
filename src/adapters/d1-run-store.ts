@@ -1,4 +1,5 @@
 import type {
+  ActiveRun,
   FinalStatus,
   Item,
   Poll,
@@ -195,6 +196,17 @@ export class D1RunStore implements RunStore {
     }));
   }
 
+  async activeRuns(): Promise<ActiveRun[]> {
+    const { results } = await this.db
+      .prepare(
+        `SELECT id, topic_id, status, created_at FROM runs
+         WHERE kind IN ('scheduled', 'manual') AND status IN ('queued', 'running')
+         ORDER BY id`,
+      )
+      .all<ActiveRun>();
+    return results;
+  }
+
   async createQueuedRun(run: RunRef): Promise<boolean> {
     // DO NOTHING covers the primary key, the one-Run-per-slot index and the
     // one-active-Run-per-Topic index.
@@ -209,19 +221,20 @@ export class D1RunStore implements RunStore {
     return meta.changes === 1;
   }
 
-  async markRunning(run: RunRef, at: Date): Promise<"running" | "topic_busy"> {
-    // Manual Runs have no row until here. A retried step keeps the first start time.
+  async markRunning(run: RunRef, at: Date): Promise<"running" | "topic_busy" | "ended"> {
+    // Manual Runs have no row until here. A retried step keeps the first start time. No change
+    // means the row exists with a final status, which the update's WHERE never overwrites.
     try {
-      await this.markRunningRow(run, at);
-      return "running";
+      return (await this.markRunningRow(run, at)) ? "running" : "ended";
     } catch (err) {
       if (err instanceof Error && err.message.includes(ONE_ACTIVE_PER_TOPIC)) return "topic_busy";
       throw err;
     }
   }
 
-  private async markRunningRow(run: RunRef, at: Date): Promise<void> {
-    await this.db
+  /** Whether the row was inserted or set running. */
+  private async markRunningRow(run: RunRef, at: Date): Promise<boolean> {
+    const { meta } = await this.db
       .prepare(
         `INSERT INTO runs
            (id, topic_id, kind, scheduled_slot, source_run_id, from_stage, status, started_at)
@@ -233,6 +246,7 @@ export class D1RunStore implements RunStore {
       )
       .bind(...runColumns(run), at.toISOString())
       .run();
+    return meta.changes === 1;
   }
 
   async recordRunConfig(runId: string, record: RunConfigRecord): Promise<void> {
@@ -270,6 +284,26 @@ export class D1RunStore implements RunStore {
       )
       .bind(...runColumns(run), stage, reason, ended)
       .run();
+  }
+
+  async failStuckRun(
+    runId: string,
+    from: ActiveRun["status"],
+    stage: string,
+    reason: string,
+    at: Date,
+  ): Promise<boolean> {
+    const ended = at.toISOString();
+    const { meta } = await this.db
+      .prepare(
+        `UPDATE runs SET
+           status = 'failed', failed_stage = ?, failure_reason = ?, ended_at = ?,
+           duration_ms = ${DURATION_MS("?", "started_at")}
+         WHERE id = ? AND status = ?`,
+      )
+      .bind(stage, reason, ended, ended, runId, from)
+      .run();
+    return meta.changes === 1;
   }
 
   async getRun(runId: string): Promise<Run | null> {

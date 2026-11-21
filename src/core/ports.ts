@@ -106,6 +106,15 @@ export interface TopicSchedule {
   has_active_run: boolean;
 }
 
+/** A `scheduled` or `manual` Run that is `queued` or `running`: one that blocks its Topic. */
+export interface ActiveRun {
+  id: string;
+  topic_id: string;
+  status: "queued" | "running";
+  /** ISO 8601 UTC, second precision. */
+  created_at: string;
+}
+
 /** The file format of a `feed` Source. Stored in `sources.format`. */
 export type FeedFormat = "rss2" | "atom" | "hf_daily_papers";
 
@@ -276,6 +285,8 @@ export interface RunStore {
   getPublicReport(id: string): Promise<(PublicReport & { r2_key: string }) | null>;
   /** Every Topic with its schedule and whether it has an active Run, ordered by ID. */
   dueTopicsInput(): Promise<TopicSchedule[]>;
+  /** Every `scheduled` or `manual` Run that is `queued` or `running`, ordered by ID. */
+  activeRuns(): Promise<ActiveRun[]>;
   /**
    * Inserts the Run as `queued`. Returns false, inserting nothing, when a Run with that ID
    * already exists, the Run's scheduled slot already has a Run, or (for a scheduled or manual
@@ -285,9 +296,10 @@ export interface RunStore {
   /**
    * Sets the Run `running`, inserting it first when it does not exist (manual Runs). Never
    * changes a final status. Returns `topic_busy`, changing nothing, when inserting it would
-   * give the Topic a second active scheduled or manual Run.
+   * give the Topic a second active scheduled or manual Run, and `ended`, changing nothing, when
+   * the Run already has a final status (for example, failed as stuck before its instance began).
    */
-  markRunning(run: RunRef, at: Date): Promise<"running" | "topic_busy">;
+  markRunning(run: RunRef, at: Date): Promise<"running" | "topic_busy" | "ended">;
   /**
    * Stores the Run's config snapshot, config hash and prompt hashes. Called when the Run starts
    * running, so a Run that ran no stage (rejected at `start`, failed at `schedule`) has none.
@@ -301,6 +313,17 @@ export interface RunStore {
    * Given only an ID, it updates an existing Run. Never changes a final status.
    */
   failRun(run: RunRef | string, stage: string, reason: string, at: Date): Promise<void>;
+  /**
+   * Ends the Run as `failed` only while its status is still `from`, the status it was read in.
+   * Returns whether it changed the Run.
+   */
+  failStuckRun(
+    runId: string,
+    from: ActiveRun["status"],
+    stage: string,
+    reason: string,
+    at: Date,
+  ): Promise<boolean>;
   getRun(runId: string): Promise<Run | null>;
   getTopic(topicId: string): Promise<Topic | null>;
   /** The Topic's `feed` Sources, ordered by ID. */
@@ -381,11 +404,23 @@ export interface StepRunner {
 }
 
 /**
- * Starts the Workflow instance for a Run, using the Run ID as the instance ID. Resolves
- * `already_started` when an instance with that ID exists; throws on any other failure.
+ * Where a Run's Workflow instance stands. `ended` covers errored, terminated and complete
+ * instances, with the platform's status and error text; anything still able to make progress,
+ * or in an unrecognized status, is `active`.
+ */
+export type InstanceState =
+  | { state: "active" }
+  | { state: "ended"; status: string; error: string | null }
+  | { state: "missing" };
+
+/**
+ * Starts and inspects the Workflow instance for a Run, using the Run ID as the instance ID.
+ * `start` resolves `already_started` when an instance with that ID exists; throws on any other
+ * failure. `instanceState` throws on any failure other than a missing instance.
  */
 export interface WorkflowStarter {
   start(run: RunRef): Promise<"started" | "already_started">;
+  instanceState(runId: string): Promise<InstanceState>;
 }
 
 export type LogLevel = "debug" | "info" | "warn" | "error";
