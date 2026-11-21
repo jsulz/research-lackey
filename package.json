@@ -15,7 +15,8 @@
     "docs:interfaces": "node scripts/docs-interfaces.ts",
     "screenshot": "node scripts/screenshot.ts",
     "run:local": "node scripts/run-local.ts",
-    "replay": "node scripts/replay.ts"
+    "replay": "node scripts/replay.ts",
+    "review-stub": "node scripts/review-stub.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.8",
