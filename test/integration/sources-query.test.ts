@@ -74,11 +74,10 @@ describe("SOURCES_SQL", () => {
       ),
     );
     expect(rows.filter((r) => r.source_id === "q-new")).toEqual([
-      { source_id: "q-new", run_id: null, outcome: null, items_new: null, created_at: null },
+      { source_id: "q-new", outcome: null, items_new: null, created_at: null },
     ]);
     expect(rows[0]).toEqual({
       source_id: "q-busy",
-      run_id: `manual-${TOPIC}-20261112T120000Z`,
       outcome: "succeeded",
       items_new: 12,
       created_at: "2026-11-12T12:00:44Z",
@@ -115,6 +114,29 @@ describe("SOURCES_SQL", () => {
         regularly_failing: false,
       },
     ]);
+  });
+
+  it("orders Polls written in the same second by write order, not by Run ID", async () => {
+    await addSource("q-tie");
+    const at = "2026-11-22T12:00:44Z";
+    // The scheduled Run's ID sorts after the manual Run's, but its Poll was written first.
+    for (const [run, kind, slot, outcome] of [
+      [`topic-${TOPIC}-20261122T1200Z`, "scheduled", "2026-11-22T12:00:00Z", "failed"],
+      [`manual-${TOPIC}-20261122T120044Z`, "manual", null, "succeeded"],
+    ] as const) {
+      await env.DB.batch([
+        env.DB.prepare(
+          "INSERT INTO runs (id, topic_id, kind, scheduled_slot, status) VALUES (?, ?, ?, ?, 'failed')",
+        ).bind(run, TOPIC, kind, slot),
+        env.DB.prepare(
+          `INSERT INTO polls (run_id, source_id, outcome, attempts, items_read, failure_reason,
+             duration_ms, created_at)
+           VALUES (?, 'q-tie', ?, 1, 0, ?, 0, ?)`,
+        ).bind(run, outcome, outcome === "failed" ? "HTTP 500" : null, at),
+      ]);
+    }
+
+    expect((await queryRows()).map((r) => r.outcome)).toEqual(["succeeded", "failed"]);
   });
 
   it("includes the seed Sources, one row each when they have no Polls", async () => {

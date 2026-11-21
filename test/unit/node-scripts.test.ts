@@ -12,7 +12,11 @@ describe("Node entry points load", () => {
     ["scripts/review-stub.ts", [], "usage: npm run review-stub"],
     ["scripts/sources.ts", ["--no-such-flag"], "usage: npm run sources"],
   ])("%s prints its usage", (script, args, usage) => {
-    const result = spawnSync(process.execPath, [script, ...args], { encoding: "utf8" });
+    // An empty PATH: no script can start `npx`, so none can reach Wrangler or the network.
+    const result = spawnSync(process.execPath, [script, ...args], {
+      encoding: "utf8",
+      env: { ...process.env, PATH: "" },
+    });
 
     expect(result.stderr).not.toContain("ERR_MODULE_NOT_FOUND");
     expect(result.stderr).toContain(usage);

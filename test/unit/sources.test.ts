@@ -20,7 +20,6 @@ function poll(
   const dd = String(day).padStart(2, "0");
   return {
     source_id,
-    run_id: `topic-ai-infra-202611${dd}T1200Z`,
     outcome,
     items_new,
     created_at: `2026-11-${dd}T12:00:44Z`,
@@ -29,7 +28,7 @@ function poll(
 
 /** The row the query returns for a Source that has no Poll. */
 function unpolled(source_id: string): PollRow {
-  return { source_id, run_id: null, outcome: null, items_new: null, created_at: null };
+  return { source_id, outcome: null, items_new: null, created_at: null };
 }
 
 describe("formatSources", () => {
@@ -72,9 +71,9 @@ describe("sourceHealth", () => {
   });
 
   it("counts failures over the 10 most recent Polls only", () => {
-    // Days 1 to 12; days 1, 2 and 3 failed, and only day 3 is among the last 10.
+    // Days 12 down to 1; days 1, 2 and 3 failed, and only day 3 is among the last 10.
     const rows = Array.from({ length: 12 }, (_, i) =>
-      poll("a", i + 1, i < 3 ? "failed" : "succeeded"),
+      poll("a", 12 - i, 12 - i <= 3 ? "failed" : "succeeded"),
     );
 
     expect(sourceHealth(rows)).toEqual([
@@ -90,16 +89,33 @@ describe("sourceHealth", () => {
     ]);
   });
 
-  it("takes the newest Poll as the last one whatever order the rows arrive in", () => {
-    const rows = [poll("a", 20, "failed"), poll("a", 22, "succeeded", 4), poll("a", 21, "failed")];
+  it("takes a Source's first row as its last Poll, so the query decides ties in Poll time", () => {
+    // Two Polls written in the same second: the query puts the later write first.
+    const later = { ...poll("a", 22, "succeeded", 4) };
+    const earlier = { ...poll("a", 22, "failed") };
 
-    expect(sourceHealth(rows)[0]).toMatchObject({
+    expect(
+      sourceHealth([later, earlier, poll("a", 21, "failed"), poll("a", 20, "failed")])[0],
+    ).toMatchObject({
       last_outcome: "succeeded",
-      last_poll_at: "2026-11-22T12:00:44Z",
       items_new: 4,
-      failed: 2,
-      polls: 3,
+      failed: 3,
+      polls: 4,
+      regularly_failing: false,
     });
+  });
+
+  it("keeps each Source's own order when the Sources' rows are interleaved", () => {
+    const rows = [
+      poll("b", 22, "failed"),
+      poll("a", 22, "succeeded", 1),
+      poll("b", 21, "succeeded"),
+    ];
+
+    expect(sourceHealth(rows).map((h) => [h.source_id, h.last_outcome])).toEqual([
+      ["a", "succeeded"],
+      ["b", "failed"],
+    ]);
   });
 
   it("says so when there are no Sources", () => {
@@ -266,6 +282,15 @@ describe("sources", () => {
   it.each([
     ["text that is not JSON", "Proxy environment variables detected."],
     ["no statement result", "[]"],
+    ["a statement that did not succeed", JSON.stringify([{ success: false, results: [] }])],
+    [
+      "two statement results",
+      JSON.stringify([
+        { success: true, results: [] },
+        { success: true, results: [] },
+      ]),
+    ],
+    ["a result that is not a list", JSON.stringify({ success: true, results: [] })],
     ["a result without rows", JSON.stringify([{ success: true }])],
     ["a row without a Source ID", wranglerJson([{ ...poll("a", 22, "failed"), source_id: null }])],
     ["an unknown outcome", wranglerJson([{ ...poll("a", 22, "failed"), outcome: "skipped" }])],

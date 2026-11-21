@@ -9,7 +9,6 @@ export const FAILING_STREAK = 3;
 /** One row of `SOURCES_SQL`: a Source with one of its Polls, or with nulls when it has none. */
 export interface PollRow {
   source_id: string;
-  run_id: string | null;
   outcome: "succeeded" | "failed" | null;
   items_new: number | null;
   created_at: string | null;
@@ -36,12 +35,14 @@ export const USAGE = "usage: npm run sources [-- --local]";
 /**
  * Every Source with its `POLL_WINDOW` most recent Polls, newest first. A Source with no Poll
  * comes back once, with nulls. Read-only, and a constant: nothing is interpolated into it.
+ * Poll times have one-second resolution, so Polls written in the same second order by `rowid`:
+ * the later write is the newer Poll.
  */
-export const SOURCES_SQL = `SELECT s.id AS source_id, p.run_id, p.outcome, p.items_new, p.created_at
+export const SOURCES_SQL = `SELECT s.id AS source_id, p.outcome, p.items_new, p.created_at
 FROM sources s
 LEFT JOIN (
-  SELECT source_id, run_id, outcome, items_new, created_at,
-         ROW_NUMBER() OVER (PARTITION BY source_id ORDER BY created_at DESC, run_id DESC) AS rn
+  SELECT source_id, outcome, items_new, created_at,
+         ROW_NUMBER() OVER (PARTITION BY source_id ORDER BY created_at DESC, rowid DESC) AS rn
   FROM polls
 ) p ON p.source_id = s.id AND p.rn <= ${POLL_WINDOW}
 ORDER BY s.id, p.rn`;
@@ -85,27 +86,34 @@ export function wranglerArgs(target: SourcesTarget): string[] {
   ];
 }
 
-/** The rows in Wrangler's `d1 execute --json` output. Throws when it has another shape. */
+/**
+ * The rows in Wrangler's `d1 execute --json` output: exactly one statement result, marked
+ * successful. Throws when the output has any other shape.
+ */
 export function parsePollRows(stdout: string): PollRow[] {
   const parsed: unknown = JSON.parse(stdout);
-  const results = Array.isArray(parsed) && isRecord(parsed[0]) ? parsed[0].results : undefined;
-  if (!Array.isArray(results)) throw new Error("no statement result");
+  if (!Array.isArray(parsed) || parsed.length !== 1) throw new Error("not one statement result");
+  const [statement]: unknown[] = parsed;
+  if (!isRecord(statement) || statement.success !== true) {
+    throw new Error("the statement did not succeed");
+  }
+  const results = statement.results;
+  if (!Array.isArray(results)) throw new Error("no rows in the statement result");
   return results.map((row: unknown): PollRow => {
     if (!isRecord(row) || typeof row.source_id !== "string")
       throw new Error("row without a Source");
-    const { source_id, run_id, outcome, items_new, created_at } = row;
-    if (run_id === null && outcome === null && items_new === null && created_at === null) {
-      return { source_id, run_id, outcome, items_new, created_at };
+    const { source_id, outcome, items_new, created_at } = row;
+    if (outcome === null && items_new === null && created_at === null) {
+      return { source_id, outcome, items_new, created_at };
     }
     if (
-      typeof run_id !== "string" ||
       (outcome !== "succeeded" && outcome !== "failed") ||
       (items_new !== null && typeof items_new !== "number") ||
       typeof created_at !== "string"
     ) {
       throw new Error(`unexpected Poll row for Source ${source_id}`);
     }
-    return { source_id, run_id, outcome, items_new, created_at };
+    return { source_id, outcome, items_new, created_at };
   });
 }
 
@@ -136,7 +144,10 @@ export function sources(argv: readonly string[], exec: ExecFn): SourcesResult {
 
 type PolledRow = PollRow & { outcome: "succeeded" | "failed"; created_at: string };
 
-/** One record per Source, ordered by Source ID, from its most recent Polls. Row order is free. */
+/**
+ * One record per Source, ordered by Source ID. A Source's rows must arrive newest Poll first, as
+ * `SOURCES_SQL` returns them: the query alone decides which Poll is newer.
+ */
 export function sourceHealth(rows: readonly PollRow[]): SourceHealth[] {
   const bySource = new Map<string, PolledRow[]>();
   for (const row of rows) {
@@ -147,11 +158,7 @@ export function sourceHealth(rows: readonly PollRow[]): SourceHealth[] {
   return [...bySource.entries()]
     .sort(([a], [b]) => compare(a, b))
     .map(([source_id, all]) => {
-      const polls = all
-        .sort(
-          (a, b) => compare(b.created_at, a.created_at) || compare(b.run_id ?? "", a.run_id ?? ""),
-        )
-        .slice(0, POLL_WINDOW);
+      const polls = all.slice(0, POLL_WINDOW);
       const last = polls[0];
       const streak = polls.slice(0, FAILING_STREAK);
       return {
