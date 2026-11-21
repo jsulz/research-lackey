@@ -79,11 +79,14 @@ function scoreWith(scoreOf: (ref: string, i: number, all: string[]) => number, u
 describe("Triage", () => {
   it("scores at most the configured limit of distinct new Items, newest first, from title plus summary or content text, and records how many the limit dropped", async () => {
     // Modal's blog has 157 entries. A completed earlier Run recorded one Item for its Source, so
-    // this is not a first poll and every entry passes; with vLLM's 10 releases that is well over
-    // the limit of 100.
+    // this is not a first poll and every entry passes, well over the limit of 100.
+    // `vllm-blog-plus-one` repeats the vLLM blog's entries under another Source, so passed rows
+    // outnumber distinct Items and the dropped count must be counted by identity.
     await seedTopic([
       ["atom", "modal-blog.atom.xml"],
       ["atom", "vllm-releases-2026-11-17.atom.xml"],
+      ["rss2", "vllm-blog.rss.xml"],
+      ["rss2", "vllm-blog-plus-one.rss.xml"],
     ]);
     await env.DB.batch([
       env.DB.prepare(
@@ -100,6 +103,7 @@ describe("Triage", () => {
     const distinct = new Set(dedupe.items.map((i) => i.item_key)).size;
     expect(CONFIG.triage_limit).toBe(100);
     expect(distinct).toBeGreaterThan(CONFIG.triage_limit);
+    expect(distinct).toBeLessThan(dedupe.passed);
 
     const triageCalls = callsFor("triage");
     expect(triageCalls).toHaveLength(1);

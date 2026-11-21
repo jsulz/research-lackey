@@ -9,23 +9,13 @@ export function capText(text: string, cap: number): string {
 /** The heading `itemMarkdown` puts before an Item's content. */
 const CONTENT_HEADING = "\n## Content\n\n";
 
-/** The heading `itemMarkdown` puts before an Item's summary. */
-const SUMMARY_HEADING = "\n## Summary\n\n";
-
 /**
  * The content section of an Item's R2 Markdown (see `itemMarkdown`), without the title, URL,
- * date, summary and heading before it. Empty when there is none. Pass the Item's summary when it
- * has one: the search for the content heading starts after the stored summary, so a summary that
- * contains a content heading can't move the cut.
+ * date and heading before it. Used only for Items with no summary, so the first content heading
+ * is the real one. Empty when there is none.
  */
-export function contentBody(markdown: string, summary?: string | null): string {
-  let from = 0;
-  if (summary) {
-    const section = `${SUMMARY_HEADING}${summary}`;
-    const at = markdown.indexOf(section);
-    if (at !== -1) from = at + section.length;
-  }
-  const at = markdown.indexOf(CONTENT_HEADING, from);
+export function contentBody(markdown: string): string {
+  const at = markdown.indexOf(CONTENT_HEADING);
   return at === -1 ? "" : markdown.slice(at + CONTENT_HEADING.length).trim();
 }
 

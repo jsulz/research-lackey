@@ -1,4 +1,5 @@
-import { capText, contentBody, inertItemTags, plainText } from "./item-text";
+import { capText, inertItemTags, plainText } from "./item-text";
+import { type StoredItemHeader, storedContent } from "./items";
 import type { PassedItem } from "./stages";
 
 /** An Item chosen for Synthesis, with the short ref the model cites it by. */
@@ -26,11 +27,11 @@ export interface SynthesisTextLimits {
  * `markdown` is the Item's R2 Markdown.
  */
 export function synthesisText(
-  item: { summary: string | null },
+  item: StoredItemHeader,
   markdown: string | null,
   limits: SynthesisTextLimits,
 ): string {
-  const content = markdown === null ? "" : plainText(contentBody(markdown, item.summary));
+  const content = markdown === null ? "" : plainText(storedContent(markdown, item));
   if (content.trim() !== "") return capText(content, limits.content_chars);
   return item.summary === null ? "" : capText(item.summary, limits.summary_cap);
 }
