@@ -1,4 +1,5 @@
-import { capText, contentBody, inertItemTags, plainText } from "./item-text";
+import { capText, inertItemTags, plainText } from "./item-text";
+import { type StoredItemHeader, storedContent } from "./items";
 import type { PassedItem } from "./stages";
 
 /** An Item chosen for Synthesis, with the short ref the model cites it by. */
@@ -14,24 +15,25 @@ export function selectForSynthesis(ranked: readonly PassedItem[], k: number): Sy
 }
 
 export interface SynthesisTextLimits {
-  /** Longest summary, in characters. */
+  /** Longest summary, in characters, for an Item whose content has no text. */
   summary_cap: number;
-  /** For an Item with no summary, the longest content, in characters of plain text. */
+  /** Longest content, in characters of plain text. */
   content_chars: number;
 }
 
 /**
- * The text Synthesis reads for one Item: its summary, or, when it has no summary, its content as
- * plain text. Both are capped, and the cut is marked. `markdown` is the Item's R2 Markdown,
- * needed only when there is no summary.
+ * The text Synthesis reads for one Item: its content as plain text, or, when the content has no
+ * text (or the Markdown is missing), its summary. Both are capped, and the cut is marked.
+ * `markdown` is the Item's R2 Markdown.
  */
 export function synthesisText(
-  item: { summary: string | null },
+  item: StoredItemHeader,
   markdown: string | null,
   limits: SynthesisTextLimits,
 ): string {
-  if (item.summary !== null) return capText(item.summary, limits.summary_cap);
-  return capText(plainText(contentBody(markdown ?? "")), limits.content_chars);
+  const content = markdown === null ? "" : plainText(storedContent(markdown, item));
+  if (content.trim() !== "") return capText(content, limits.content_chars);
+  return item.summary === null ? "" : capText(item.summary, limits.summary_cap);
 }
 
 /** Feed-controlled metadata is capped like Item text, so one entry can't inflate the prompt. */

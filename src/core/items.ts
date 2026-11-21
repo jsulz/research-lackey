@@ -55,6 +55,32 @@ export function itemMarkdown(raw: RawItem): string {
   return `${parts.join("\n")}\n`;
 }
 
+/** The Item fields `itemMarkdown` writes before an Item's content. */
+export interface StoredItemHeader {
+  title: string;
+  url: string;
+  published_at: string | null;
+  summary: string | null;
+}
+
+/**
+ * The content section of an Item's stored Markdown. The Markdown must start with exactly what
+ * `itemMarkdown` writes for these fields, so feed text in the title, URL or summary that looks
+ * like a heading can't move the cut. Empty when there is no content section, or when the
+ * Markdown wasn't written from these fields.
+ */
+export function storedContent(markdown: string, item: StoredItemHeader): string {
+  const header = itemMarkdown({
+    externalId: "",
+    url: item.url,
+    title: item.title,
+    ...(item.published_at !== null ? { publishedAt: item.published_at } : {}),
+    ...(item.summary !== null ? { summary: item.summary } : {}),
+  });
+  const prefix = `${header.slice(0, -1)}\n\n## Content\n\n`;
+  return markdown.startsWith(prefix) ? markdown.slice(prefix.length).trim() : "";
+}
+
 /**
  * Items newest first by `published_at`, for the first-poll cap. Equal dates keep feed order and
  * undated Items go last. Dates order Items only; they never decide identity. Returns a new array.

@@ -45,7 +45,8 @@ export class AnthropicModelClient implements ModelClient {
       logLevel: "off",
       // Workflow steps own retries (with backoff), so the SDK doesn't retry on its own.
       maxRetries: 0,
-      timeout: 120_000,
+      // A high-effort Sonnet Synthesis can think for minutes; the request isn't streamed.
+      timeout: 300_000,
       ...(opts.fetch ? { fetch: opts.fetch } : {}),
     });
   }

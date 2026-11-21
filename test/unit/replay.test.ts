@@ -42,20 +42,22 @@ describe("parseRunConfig", () => {
     expect(canonicalJson(parsed.config)).toBe(canonicalJson(CONFIG));
   });
 
-  it("accepts another Synthesis model that has a price", () => {
+  it("accepts another Synthesis model that has a price, keeping its effort and max_tokens", () => {
     const c = copy() as {
-      tasks: { synthesis: { model: string } };
+      tasks: { synthesis: { model: string; effort: string; max_tokens: number } };
       prices: Record<string, unknown>;
     };
-    c.tasks.synthesis.model = "claude-sonnet-5-5";
-    c.prices["claude-sonnet-5-5"] = {
-      standard: { input: 2, output: 10, cache_read: 0.1, cache_write_5m: 2.5, cache_write_1h: 4 },
-    };
+    // The default runs Synthesis on Sonnet; a Replay may compare it with Haiku.
+    c.tasks.synthesis = { model: "claude-haiku-5-5", effort: "medium", max_tokens: 16_000 };
+    delete c.prices["claude-sonnet-5-5"];
     const parsed = parseRunConfig(c);
     expect(parsed).toMatchObject({
       ok: true,
-      config: { tasks: { synthesis: { model: "claude-sonnet-5-5" } } },
+      config: {
+        tasks: { synthesis: { model: "claude-haiku-5-5", effort: "medium", max_tokens: 16_000 } },
+      },
     });
+    expect(parsed.ok && Object.keys(parsed.config.prices)).toEqual(["claude-haiku-5-5"]);
   });
 
   const cases: [string, (c: Record<string, unknown>) => unknown][] = [

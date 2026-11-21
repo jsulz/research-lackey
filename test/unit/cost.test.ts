@@ -54,3 +54,35 @@ describe("stageCost for claude-haiku-5-5", () => {
     expect(stageCost({ ...NONE, input_tokens: 100_000 }, price)).toBeCloseTo(0.01, 10);
   });
 });
+
+// Claude Sonnet 5.5 list prices (USD per million tokens), from Anthropic's pricing page on
+// 2026-11-21: input 2, 5m write 2.50, 1h write 4, cache read 0.10 (0.05x input), output 10.
+// No long-context tier: the full 1M window bills at standard rates.
+describe("stageCost for claude-sonnet-5-5", () => {
+  const listed = CONFIG.prices["claude-sonnet-5-5"];
+  if (!listed) throw new Error("claude-sonnet-5-5 is missing from the price table");
+  const price = listed;
+
+  it("lists Anthropic's prices, with no long-context tier", () => {
+    expect(price).toEqual({
+      standard: { input: 2, output: 10, cache_read: 0.1, cache_write_5m: 2.5, cache_write_1h: 4 },
+    });
+  });
+
+  it("adds input, output, cache reads and both cache write durations", () => {
+    // 30,000 x 2 + 8,000 x 10 + 1,000 x 0.10 + 400 x 2.50 + 100 x 4, per million
+    // = 0.06 + 0.08 + 0.0001 + 0.001 + 0.0004 = 0.1415
+    const usage: ModelUsage = {
+      input_tokens: 30_000,
+      output_tokens: 8_000,
+      cache_read_input_tokens: 1_000,
+      cache_write_5m_input_tokens: 400,
+      cache_write_1h_input_tokens: 100,
+    };
+    expect(stageCost(usage, price)).toBeCloseTo(0.1415, 10);
+  });
+
+  it("keeps the standard prices for a prompt over 100,000 tokens", () => {
+    expect(stageCost({ ...NONE, input_tokens: 500_000 }, price)).toBeCloseTo(1, 10);
+  });
+});
