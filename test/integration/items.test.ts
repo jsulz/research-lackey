@@ -194,7 +194,13 @@ describe("Runs read fixture feeds and record deduplicated Items", () => {
       ["t-missing", "failed", null],
       ["t-wrong", "failed", null],
     ]);
-    expect(rows.every((p) => p.failure_reason !== null)).toBe(true);
+    // Each Poll keeps its own reason, and the Run's reason carries it in full.
+    const wrong = rows.find((p) => p.source_id === "t-wrong")?.failure_reason ?? "";
+    expect(wrong.length).toBeGreaterThan(0);
+    expect(run.failure_reason).toContain(`t-wrong: ${wrong}`);
+    expect(rows.find((p) => p.source_id === "t-missing")?.failure_reason).toBe(
+      "Fixture not found: missing.atom.xml",
+    );
   });
 
   it("replaces the Run's whole Poll set when fetch records Polls again", async () => {
