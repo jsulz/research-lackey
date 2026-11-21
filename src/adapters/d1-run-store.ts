@@ -1,6 +1,7 @@
 import type {
   FinalStatus,
   Item,
+  Poll,
   PublicReport,
   ReportFinding,
   ReportRecord,
@@ -11,6 +12,7 @@ import type {
   RunStore,
   Schedule,
   Source,
+  SourcePollCounts,
   StepName,
   StepUsage,
   Topic,
@@ -299,6 +301,39 @@ export class D1RunStore implements RunStore {
       .bind(sourceId)
       .first<{ first_poll: number }>();
     return row?.first_poll === 1;
+  }
+
+  async recordPolls(runId: string, polls: Poll[]): Promise<void> {
+    const insert = this.db.prepare(
+      `INSERT INTO polls
+         (run_id, source_id, outcome, attempts, items_read, failure_reason, duration_ms)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    );
+    // One transaction: an earlier attempt's Polls go, this attempt's come in.
+    await this.db.batch([
+      this.db.prepare("DELETE FROM polls WHERE run_id = ?").bind(runId),
+      ...polls.map((p) =>
+        insert.bind(
+          runId,
+          p.source_id,
+          p.outcome,
+          p.attempts,
+          p.items_read,
+          p.failure_reason,
+          p.duration_ms,
+        ),
+      ),
+    ]);
+  }
+
+  async recordPollCounts(runId: string, counts: SourcePollCounts[]): Promise<void> {
+    if (counts.length === 0) return;
+    const update = this.db.prepare(
+      "UPDATE polls SET items_new = ?, items_filtered = ? WHERE run_id = ? AND source_id = ?",
+    );
+    await this.db.batch(
+      counts.map((c) => update.bind(c.items_new, c.items_filtered, runId, c.source_id)),
+    );
   }
 
   async recordItems(runId: string, items: Item[]): Promise<void> {

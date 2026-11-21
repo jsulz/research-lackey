@@ -1,8 +1,9 @@
 import { env } from "cloudflare:workers";
 
-/** Deletes every Run and what references it: Reports and Findings, Step rows, Items. */
+/** Deletes every Run and what references it: Polls, Reports and Findings, Step rows, Items. */
 export async function deleteRuns(): Promise<void> {
   await env.DB.batch([
+    env.DB.prepare("DELETE FROM polls"),
     env.DB.prepare("DELETE FROM finding_items"),
     env.DB.prepare("DELETE FROM findings"),
     env.DB.prepare("DELETE FROM reports"),
