@@ -77,9 +77,9 @@ function active(id: string, status: ActiveRun["status"], created_at: string): Ac
 }
 
 /** A store with the given active Runs and no Topics, recording calls in order. */
-function reconcileStore(runs: ActiveRun[], failRun?: (id: string) => Promise<void>) {
+function reconcileStore(runs: ActiveRun[], failStuckRun?: (id: string) => Promise<boolean>) {
   const calls: string[] = [];
-  const failed: { id: string; stage: string; reason: string; at: Date }[] = [];
+  const failed: { id: string; from: string; stage: string; reason: string; at: Date }[] = [];
   const store = {
     activeRuns: async () => {
       calls.push("activeRuns");
@@ -89,10 +89,11 @@ function reconcileStore(runs: ActiveRun[], failRun?: (id: string) => Promise<voi
       calls.push("dueTopicsInput");
       return [];
     },
-    failRun: async (id: string, stage: string, reason: string, at: Date) => {
-      calls.push(`failRun ${id}`);
-      if (failRun) await failRun(id);
-      failed.push({ id, stage, reason, at });
+    failStuckRun: async (id: string, from: string, stage: string, reason: string, at: Date) => {
+      calls.push(`failStuckRun ${id}`);
+      const changed = failStuckRun ? await failStuckRun(id) : true;
+      if (changed) failed.push({ id, from, stage, reason, at });
+      return changed;
     },
   } as unknown as RunStore;
   return { store, calls, failed };
@@ -126,12 +127,13 @@ describe("runScheduler stuck Runs", () => {
     expect(failed).toEqual([
       {
         id: "manual-ai-infra-1",
+        from: "running",
         stage: "reconcile",
         reason: "Workflow instance not found",
         at: clock.now(),
       },
     ]);
-    expect(calls).toEqual(["activeRuns", "failRun manual-ai-infra-1", "dueTopicsInput"]);
+    expect(calls).toEqual(["activeRuns", "failStuckRun manual-ai-infra-1", "dueTopicsInput"]);
     expect(lines).toContainEqual({
       level: "warn",
       msg: "run reconciled",
@@ -196,6 +198,26 @@ describe("runScheduler stuck Runs", () => {
     expect(failed.map((f) => f.id)).toEqual(["old", "running"]);
   });
 
+  it("fails a Run only from the status it was read in, and logs nothing when the row moved on", async () => {
+    // Read queued with no instance; by the write the instance has started and set it running.
+    const { store, failed } = reconcileStore(
+      [active("moved", "queued", "2026-11-16T10:00:00Z")],
+      async () => false,
+    );
+    const { starter } = starterWith({ moved: { state: "missing" } });
+    const { log, lines } = logger();
+
+    await runScheduler({ tick: TICK, store, starter, clock, log });
+
+    expect(failed).toEqual([]);
+    expect(lines.filter((l) => l.msg === "run reconciled")).toEqual([]);
+    expect(lines).toContainEqual({
+      level: "debug",
+      msg: "run not reconciled: status changed",
+      fields: { run_id: "moved", status: "queued" },
+    });
+  });
+
   it("logs a failed lookup or write and still reconciles the other Runs and schedules", async () => {
     const { store, calls, failed } = reconcileStore(
       [
@@ -205,6 +227,7 @@ describe("runScheduler stuck Runs", () => {
       ],
       async (id) => {
         if (id === "b-write") throw new Error("D1 unavailable");
+        return true;
       },
     );
     const { starter } = starterWith({

@@ -300,6 +300,17 @@ export interface RunStore {
    * Given only an ID, it updates an existing Run. Never changes a final status.
    */
   failRun(run: RunRef | string, stage: string, reason: string, at: Date): Promise<void>;
+  /**
+   * Ends the Run as `failed` only while its status is still `from`, the status it was read in.
+   * Returns whether it changed the Run.
+   */
+  failStuckRun(
+    runId: string,
+    from: ActiveRun["status"],
+    stage: string,
+    reason: string,
+    at: Date,
+  ): Promise<boolean>;
   getRun(runId: string): Promise<Run | null>;
   getTopic(topicId: string): Promise<Topic | null>;
   /** The Topic's `feed` Sources, ordered by ID. */

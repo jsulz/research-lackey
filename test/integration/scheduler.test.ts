@@ -163,6 +163,32 @@ describe("scheduled handler with stuck Runs", () => {
     });
   });
 
+  it("leaves a queued Run older than the grace period while its instance is live", async () => {
+    const id = "topic-ai-infra-20261128T1200Z";
+    await using held = await introspectWorkflowInstance(env.RUN_WORKFLOW, id);
+    // Every `start` attempt fails, so the row stays queued while the instance is in retry backoff.
+    await held.modify(async (m) => {
+      await m.mockStepError({ name: "start" }, new Error("held for the test"));
+    });
+    await tick("2026-11-28T12:00:00Z");
+    await env.DB.prepare("UPDATE runs SET created_at = '2026-01-01T00:00:00Z' WHERE id = ?")
+      .bind(id)
+      .run();
+
+    await tick("2026-11-28T12:15:00Z");
+
+    const status = (await (await env.RUN_WORKFLOW.get(id)).status()).status;
+    expect(["queued", "running", "waiting"]).toContain(status);
+    expect(await row(id)).toEqual({
+      status: "queued",
+      failed_stage: null,
+      failure_reason: null,
+      ended_at: null,
+    });
+    await (await env.RUN_WORKFLOW.get(id)).terminate();
+    await held.waitForStatus("terminated");
+  });
+
   it("leaves a Run whose instance is still running, and fails it once the instance is terminated", async () => {
     const manual = "manual-ai-infra-20261126T110000Z";
     const slot = "topic-ai-infra-20261126T1200Z";
@@ -233,6 +259,35 @@ describe("D1RunStore.activeRuns", () => {
       },
       { id: "d-queued", topic_id: "other", status: "queued", created_at: "2026-11-27T12:00:01Z" },
     ]);
+  });
+});
+
+describe("D1RunStore.failStuckRun", () => {
+  afterEach(async () => {
+    await deleteRuns();
+  });
+
+  it("fails the Run only while it is still in the given status", async () => {
+    await insertRun("manual-ai-infra-x", "manual", "running");
+    const at = new Date("2026-11-29T00:00:00Z");
+
+    expect(await store.failStuckRun("manual-ai-infra-x", "queued", "reconcile", "r", at)).toBe(
+      false,
+    );
+    expect((await store.getRun("manual-ai-infra-x"))?.status).toBe("running");
+
+    expect(await store.failStuckRun("manual-ai-infra-x", "running", "reconcile", "r", at)).toBe(
+      true,
+    );
+    expect(await store.getRun("manual-ai-infra-x")).toMatchObject({
+      status: "failed",
+      failed_stage: "reconcile",
+      failure_reason: "r",
+      ended_at: "2026-11-29T00:00:00.000Z",
+    });
+    expect(await store.failStuckRun("manual-ai-infra-x", "running", "reconcile", "r", at)).toBe(
+      false,
+    );
   });
 });
 

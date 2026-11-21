@@ -263,6 +263,26 @@ export class D1RunStore implements RunStore {
       .run();
   }
 
+  async failStuckRun(
+    runId: string,
+    from: ActiveRun["status"],
+    stage: string,
+    reason: string,
+    at: Date,
+  ): Promise<boolean> {
+    const ended = at.toISOString();
+    const { meta } = await this.db
+      .prepare(
+        `UPDATE runs SET
+           status = 'failed', failed_stage = ?, failure_reason = ?, ended_at = ?,
+           duration_ms = ${DURATION_MS("?", "started_at")}
+         WHERE id = ? AND status = ?`,
+      )
+      .bind(stage, reason, ended, ended, runId, from)
+      .run();
+    return meta.changes === 1;
+  }
+
   async getRun(runId: string): Promise<Run | null> {
     return this.db
       .prepare(

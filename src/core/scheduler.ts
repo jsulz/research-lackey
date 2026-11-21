@@ -95,9 +95,13 @@ async function reconcileStuckRuns(deps: SchedulerDeps): Promise<void> {
     const reason = stuckReason(state);
     if (reason === null) continue;
     try {
-      // Only a `queued` or `running` Run changes, so one that ended meanwhile keeps its status.
-      await store.failRun(run.id, "reconcile", reason, clock.now());
-      log.warn("run reconciled", { run_id: run.id, topic_id: run.topic_id, reason });
+      // Only from the status read above: a queued Run whose instance has since started is
+      // running now and is left alone. A Run that ended meanwhile keeps its status too.
+      if (await store.failStuckRun(run.id, run.status, "reconcile", reason, clock.now())) {
+        log.warn("run reconciled", { run_id: run.id, topic_id: run.topic_id, reason });
+      } else {
+        log.debug("run not reconciled: status changed", { run_id: run.id, status: run.status });
+      }
     } catch (err) {
       log.error("run reconcile not recorded", { run_id: run.id, error: message(err) });
     }
