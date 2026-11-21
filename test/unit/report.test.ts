@@ -211,14 +211,17 @@ describe("reportMarkdown", () => {
           item("t", "https://example.com/x?q=a b&r=\"'<>\\"),
           item("t", "https://example.com/p) [x](javascript:alert(1)"),
           item("t", "https://example.com/c\u0001d#f g"),
+          item("t", "https://example.com/search?q=a&copy;b&amp;c"),
         ]),
       ),
     );
     expect(lines).toEqual([
       "- [t](https://example.com/a%28b%29c)",
-      "- [t](https://example.com/x?q=a%20b&r=%22%27%3C%3E%5C)",
+      "- [t](https://example.com/x?q=a%20b\\&r=%22%27%3C%3E%5C)",
       "- [t](https://example.com/p%29%20[x]%28javascript:alert%281%29)",
       "- [t](https://example.com/c%01d#f%20g)",
+      // Backslash-escaped so renderers keep the literal text instead of decoding entities.
+      "- [t](https://example.com/search?q=a\\&copy;b\\&amp;c)",
     ]);
     for (const l of lines) expect(l.match(/\]\(/g)).toHaveLength(1);
   });

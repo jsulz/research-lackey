@@ -153,14 +153,18 @@ function markdownText(text: string): string {
 }
 
 /**
- * A normalized URL as a link destination: characters that could end or break it are encoded.
- * `URL` serialization has already percent-encoded control characters in every component.
+ * A normalized URL as a link destination: characters that could end or break it are
+ * percent-encoded, and `&` is backslash-escaped so renderers don't decode `&copy;` and the like
+ * (percent-encoding it would change the query). `URL` serialization has already percent-encoded
+ * control characters in every component.
  */
 function markdownUrl(href: string): string {
-  return href.replace(
-    /[ ()<>\\"']/g,
-    (c) => `%${c.charCodeAt(0).toString(16).toUpperCase().padStart(2, "0")}`,
-  );
+  return href
+    .replace(
+      /[ ()<>\\"']/g,
+      (c) => `%${c.charCodeAt(0).toString(16).toUpperCase().padStart(2, "0")}`,
+    )
+    .replaceAll("&", "\\&");
 }
 
 /** One source line: a link when the URL is http or https, else the title as plain text. */
