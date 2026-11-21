@@ -1,5 +1,6 @@
 import type { RunConfig } from "./config";
 import { stageCost } from "./cost";
+import { capText } from "./item-text";
 import { itemKey, itemMarkdown, newestFirst } from "./items";
 import type {
   ArtifactStore,
@@ -25,7 +26,7 @@ import {
   validateReport,
 } from "./report";
 import type { Stage } from "./run-pipeline";
-import { capText, selectForSynthesis, synthesisPrompt } from "./synthesis";
+import { selectForSynthesis, synthesisPrompt } from "./synthesis";
 import {
   rankTopK,
   selectForTriage,

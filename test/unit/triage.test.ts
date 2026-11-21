@@ -3,11 +3,10 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { CONFIG } from "../../src/core/config";
 import { parseFeed } from "../../src/core/feeds";
+import { contentBody, plainText } from "../../src/core/item-text";
 import { itemMarkdown } from "../../src/core/items";
 import type { PassedItem } from "../../src/core/stages";
 import {
-  contentBody,
-  plainText,
   rankTopK,
   selectForTriage,
   triageJsonSchema,

@@ -1,3 +1,4 @@
+import { capText } from "./item-text";
 import type { PassedItem } from "./stages";
 
 /** An Item chosen for Synthesis, with the short ref the model cites it by. */
@@ -10,11 +11,6 @@ export interface SynthesisItem {
 /** The first `k` of Triage's selection, already in rank order, with refs `I1`..`Ik`. */
 export function selectForSynthesis(ranked: readonly PassedItem[], k: number): SynthesisItem[] {
   return ranked.slice(0, k).map((item, i) => ({ ref: `I${i + 1}`, item }));
-}
-
-/** Cuts text longer than `cap` characters and marks the cut, so one Item can't dominate a prompt. */
-export function capText(text: string, cap: number): string {
-  return text.length <= cap ? text : `${text.slice(0, cap)}\n[truncated]`;
 }
 
 /** Feed-controlled metadata is capped like Item text, so one entry can't inflate the prompt. */

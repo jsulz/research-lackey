@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
+import { capText } from "../../src/core/item-text";
 import type { PassedItem } from "../../src/core/stages";
-import { capText, selectForSynthesis, synthesisPrompt } from "../../src/core/synthesis";
+import { selectForSynthesis, synthesisPrompt } from "../../src/core/synthesis";
 
 function item(id: string, published_at: string | null, summary: string | null = "s"): PassedItem {
   return {
