@@ -15,7 +15,7 @@ export function parseFeed(format: FeedFormat, text: string): RawItem[] {
   }
 }
 
-const xml = new XMLParser({
+const xmlOptions = {
   ignoreAttributes: false,
   attributeNamePrefix: "@_",
   parseTagValue: false,
@@ -24,9 +24,11 @@ const xml = new XMLParser({
   // once, so the same text has the same value however the feed escapes it.
   htmlEntities: true,
   // Repeatable elements are always arrays, so a one-entry feed parses like a long one.
-  isArray: (_name, jpath) =>
+  isArray: (_name: string, jpath: unknown) =>
     jpath === "rss.channel.item" || jpath === "feed.entry" || jpath === "feed.entry.link",
-});
+};
+
+const xml = new XMLParser(xmlOptions);
 
 type Node = Record<string, unknown>;
 
@@ -58,20 +60,139 @@ function parseRss(text: string): RawItem[] {
 }
 
 function parseAtom(text: string): RawItem[] {
-  const feed = parseXml(text).feed as Node | undefined;
+  const plain = parseXml(text);
+  const canonical = atomCanonicalNames(plain);
+  // Element names as the parse reads them: canonical when the root binds an Atom prefix.
+  const k = canonical ? (local: string) => `${ATOM_MARK}${local}` : (local: string) => local;
+  const doc = canonical
+    ? (new XMLParser({
+        ...xmlOptions,
+        transformTagName: canonical,
+        isArray: (_name, jpath) =>
+          jpath === `${k("feed")}.${k("entry")}` ||
+          jpath === `${k("feed")}.${k("entry")}.${k("link")}`,
+      }).parse(text) as Node)
+    : plain;
+  const feed = doc[k("feed")] as Node | undefined;
   if (!feed) throw new Error("Not an Atom document: no feed element");
-  const entries = (feed.entry as unknown[] | undefined) ?? [];
+  const entries = (feed[k("entry")] as unknown[] | undefined) ?? [];
+  let ordered: Node[][] | undefined;
   return entries.map((node, i) => {
     const entry = fields(node);
+    const field = (local: string) => entry[k(local)];
+    /** Text of an Atom text construct: an XHTML one is read from the order-preserving parse. */
+    const textField = (local: string): string => {
+      if (fields(field(local))["@_type"] !== "xhtml") return textOf(field(local));
+      ordered ??= orderedEntries(text, canonical, k);
+      return textOf(orderedText(childNodes(ordered[i], k(local))));
+    };
     return identified(i, {
-      externalId: idOf(entry.id),
-      url: alternateLink(entry.link as unknown[] | undefined),
-      title: textOf(entry.title),
-      summary: optional(textOf(entry.summary)),
-      content: optional(textOf(entry.content)),
-      publishedAt: isoDate(textOf(entry.published)) ?? isoDate(textOf(entry.updated)),
+      externalId: idOf(field("id")),
+      url: alternateLink(field("link") as unknown[] | undefined),
+      title: textField("title"),
+      summary: optional(textField("summary")),
+      content: optional(textField("content")),
+      publishedAt: isoDate(textOf(field("published"))) ?? isoDate(textOf(field("updated"))),
     });
   });
+}
+
+const ATOM_NS = "http://www.w3.org/2005/Atom";
+
+/** Starts every canonical Atom element name. `|` cannot occur in an XML name, so no real element collides. */
+const ATOM_MARK = "atom|";
+
+/**
+ * A tag-name transform for a document whose root element binds one or more prefixes to the Atom
+ * namespace, or undefined when it binds none. Every Atom element, under any of its prefixes, is
+ * renamed `atom|<local name>`, so aliases merge in document order. Other elements keep their
+ * names: `media:title` is not Atom, and an unprefixed element is Atom only when the default
+ * namespace is Atom too. The transform is idempotent, because the parser applies it twice to a
+ * self-closing tag (the second time to its own output).
+ */
+function atomCanonicalNames(doc: Node): ((tag: string) => string) | undefined {
+  const rootKey = Object.keys(doc).find((key) => !key.startsWith("?"));
+  const root = fields(rootKey === undefined ? undefined : doc[rootKey]);
+  const prefixes = new Set(
+    Object.entries(root)
+      .filter(([key, value]) => key.startsWith("@_xmlns:") && idOf(value) === ATOM_NS)
+      .map(([key]) => key.slice("@_xmlns:".length)),
+  );
+  if (prefixes.size === 0) return undefined;
+  const unprefixedIsAtom = idOf(root["@_xmlns"]) === ATOM_NS;
+  const canonical = (tag: string): string => {
+    if (tag.startsWith(ATOM_MARK) || tag.startsWith("?") || tag.startsWith("!")) return tag;
+    const colon = tag.indexOf(":");
+    if (colon === -1) return unprefixedIsAtom ? `${ATOM_MARK}${tag}` : tag;
+    return prefixes.has(tag.slice(0, colon)) ? `${ATOM_MARK}${tag.slice(colon + 1)}` : tag;
+  };
+  // A root outside the Atom namespace (an unqualified `<feed>` that only declares an Atom
+  // prefix) keeps the unqualified reading.
+  return canonical(rootKey ?? "").startsWith(ATOM_MARK) ? canonical : undefined;
+}
+
+/**
+ * Each entry's child nodes from an order-preserving parse, which keeps the text and elements of
+ * mixed XHTML content in document order and untrimmed. It uses the same names as the default
+ * parse, so its entries are the same ones in the same order.
+ */
+function orderedEntries(
+  text: string,
+  canonical: ((tag: string) => string) | undefined,
+  k: (local: string) => string,
+): Node[][] {
+  const ordered = new XMLParser({
+    ...xmlOptions,
+    isArray: undefined,
+    preserveOrder: true,
+    trimValues: false,
+    transformTagName: canonical ?? false,
+  }).parse(text) as Node[];
+  const entry = k("entry");
+  return childNodes(ordered, k("feed"))
+    .filter((node) => entry in node)
+    .map((node) => nodeList(node[entry]));
+}
+
+/** The child nodes of the first element named `key` among `nodes`. */
+function childNodes(nodes: Node[] | undefined, key: string): Node[] {
+  const node = (nodes ?? []).find((n) => key in n);
+  return node ? nodeList(node[key]) : [];
+}
+
+function nodeList(value: unknown): Node[] {
+  return Array.isArray(value) ? value.map(fields) : [];
+}
+
+/** Elements whose boundaries separate words in XHTML text. */
+const XHTML_BLOCKS = new Set(
+  "address article aside blockquote br caption center dd details dialog div dl dt fieldset figcaption figure footer form h1 h2 h3 h4 h5 h6 header hr legend li main menu nav ol p pre search section summary table tbody td tfoot th thead tr ul".split(
+    " ",
+  ),
+);
+
+/** Elements whose bodies are not text, as `plainText` in `item-text.ts` also drops them. */
+const XHTML_SKIPPED = new Set(["script", "style", "svg", "template"]);
+
+/**
+ * The character data of ordered nodes in document order, with block elements as word breaks and
+ * script, style, svg and template bodies left out.
+ * The parser rejects nesting deeper than 100 elements, which bounds the recursion.
+ */
+function orderedText(nodes: Node[]): string {
+  let out = "";
+  for (const node of nodes) {
+    for (const [key, value] of Object.entries(node)) {
+      if (key === "#text") out += String(value);
+      else if (key !== ":@" && !key.startsWith("?")) {
+        const local = key.replace(/^.*[:|]/, "");
+        if (XHTML_SKIPPED.has(local)) continue;
+        const brk = XHTML_BLOCKS.has(local) ? " " : "";
+        out += brk + orderedText(nodeList(value)) + brk;
+      }
+    }
+  }
+  return out;
 }
 
 /** The Hugging Face Daily Papers API response: a JSON array, one element per paper. */
