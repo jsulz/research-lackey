@@ -31,9 +31,10 @@ describe("mapLimit", () => {
     release[0]?.();
     await settle();
     expect(release).toHaveLength(3);
-    while (release.length < 5) {
+    for (const expected of [4, 5]) {
       release[release.length - 1]?.();
       await settle();
+      expect(release).toHaveLength(expected);
     }
     for (const r of release) r();
     await done;
