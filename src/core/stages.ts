@@ -181,14 +181,15 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
   return [
     {
       name: "fetch",
-      // Polls every feed Source of the Topic, writes each read Source's entries to R2, and records
-      // each Poll. A Source that can't be read is skipped; the stage fails only when every Source
-      // failed, naming each with its reason. The output holds only R2 keys and counts.
+      // Polls every feed Source of the Topic, records each Poll, then writes each read Source's
+      // entries to R2. A Source that can't be read is skipped; the stage fails only when every
+      // Source failed, naming each with its reason. The output holds only R2 keys and counts.
       run: async (input, { run, log }) => {
         const { topic_id } = input as { topic_id: string };
         const sources = await deps.store.listFeedSources(topic_id);
         const fetched: FetchedSource[] = [];
         const polls: Poll[] = [];
+        const entries = new Map<string, RawItem[]>();
         for (const source of sources) {
           const started = deps.clock.now().getTime();
           let items: RawItem[] = [];
@@ -220,13 +221,11 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
             outcome,
             failure_reason,
             items_read: items.length,
-            // Written again by a retried step, to the same key.
-            entries_key:
-              outcome === "succeeded"
-                ? await deps.artifacts.putRawEntries(run.id, source.id, items)
-                : null,
+            entries_key: null,
           });
+          if (outcome === "succeeded") entries.set(source.id, items);
         }
+        // Polls first: a raw-entry write that fails every retry still leaves the Polls recorded.
         await deps.store.recordPolls(run.id, polls);
         const failed = fetched.flatMap((f) =>
           f.failure_reason === null
@@ -235,6 +234,11 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
         );
         if (sources.length > 0 && failed.length === sources.length) {
           throw new Error(allFailedReason(failed));
+        }
+        for (const f of fetched) {
+          const read = entries.get(f.source_id);
+          // A retried step writes the same key again.
+          if (read) f.entries_key = await deps.artifacts.putRawEntries(run.id, f.source_id, read);
         }
         return { sources: fetched };
       },
@@ -250,9 +254,18 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
         const counts: SourcePollCounts[] = [];
         let recorded = 0;
         for (const source of sources) {
-          if (source.outcome === "failed" || source.entries_key === null) continue;
+          if (source.outcome === "failed") continue;
+          if (!source.entries_key) {
+            throw new Error(`Source ${source.source_id} succeeded but has no raw entries key`);
+          }
           const entries = await deps.artifacts.getRawEntries(source.entries_key);
           if (entries === null) throw new Error(`Raw entries missing: ${source.entries_key}`);
+          if (!Array.isArray(entries) || entries.length !== source.items_read) {
+            const found = Array.isArray(entries) ? entries.length : "not a list";
+            throw new Error(
+              `Raw entries for Source ${source.source_id}: expected ${source.items_read}, found ${found}`,
+            );
+          }
           const firstPoll = await deps.store.isFirstPoll(source.source_id);
           const fresh = await recordNew(source, entries, run.id);
           recorded += fresh.length;
