@@ -392,10 +392,8 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
         const picked = selectForSynthesis(items, deps.config.synthesis_k);
         const withText = [];
         for (const p of picked) {
-          const markdown =
-            p.item.summary === null
-              ? await deps.artifacts.getItemContent(p.item.content_key)
-              : null;
+          // Content is read for every Item: Synthesis prefers it to the summary.
+          const markdown = await deps.artifacts.getItemContent(p.item.content_key);
           const text = synthesisText(p.item, markdown, {
             summary_cap: deps.config.item_text_cap,
             content_chars: deps.config.synthesis_content_chars,

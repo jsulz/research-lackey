@@ -38,15 +38,24 @@ function item(
 }
 
 describe("config", () => {
-  it("sets the starting values: 1,500 content characters, 50 Items triaged, K = 5", () => {
-    expect(CONFIG.triage_content_chars).toBe(1_500);
-    expect(CONFIG.triage_limit).toBe(50);
-    expect(CONFIG.synthesis_k).toBe(5);
+  it("sets the T2 values: 3,000 content characters, 100 Items triaged, K = 8", () => {
+    expect(CONFIG.triage_content_chars).toBe(3_000);
+    expect(CONFIG.triage_limit).toBe(100);
+    expect(CONFIG.synthesis_k).toBe(8);
     expect(CONFIG.tasks.triage).toEqual({
       model: "claude-haiku-5-5",
       effort: "low",
       max_tokens: 8_000,
     });
+  });
+
+  it("runs Synthesis on Sonnet at high effort, with room for its thinking and the Report", () => {
+    expect(CONFIG.tasks.synthesis).toEqual({
+      model: "claude-sonnet-5-5",
+      effort: "high",
+      max_tokens: 32_000,
+    });
+    expect(CONFIG.prices[CONFIG.tasks.synthesis.model]).toBeDefined();
   });
 });
 
@@ -67,7 +76,7 @@ describe("triageText", () => {
       externalId: "1",
       url: "https://example.com/1",
       title: "v1.0",
-      content: `<h1>v1.0</h1> <p>Faster <strong>KV cache</strong> &amp; more.</p>${"<p>y</p>".repeat(1_000)}`,
+      content: `<h1>v1.0</h1> <p>Faster <strong>KV cache</strong> &amp; more.</p>${"<p>y</p>".repeat(2_000)}`,
     });
     const text = triageText({ title: "v1.0", summary: null }, md, LIMITS);
     expect(text.startsWith("v1.0\nv1.0 Faster KV cache & more. y y")).toBe(true);

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Test-only: two entries with both a summary and HTML content. The second entry's content
+     runs past Synthesis's 16,000-character cap. -->
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>tag:example.com,2026:summary-and-content</id>
+  <title>Summary and content</title>
+  <updated>2026-11-20T12:00:00Z</updated>
+  <entry>
+    <id>tag:example.com,2026:post-1</id>
+    <updated>2026-11-20T12:00:00Z</updated>
+    <link rel="alternate" type="text/html" href="https://example.com/post-1"/>
+    <title>Short post</title>
+    <summary>Teaser for the short post.</summary>
+    <content type="html">&lt;h1&gt;Short post&lt;/h1&gt;
+&lt;p&gt;The &lt;strong&gt;full article&lt;/strong&gt; explains chunked prefill &amp;amp; why it lowers tail latency.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:example.com,2026:post-2</id>
+    <updated>2026-11-19T12:00:00Z</updated>
+    <link rel="alternate" type="text/html" href="https://example.com/post-2"/>
+    <title>Long post</title>
+    <summary>Teaser for the long post.</summary>
+    <content type="html">&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+&lt;p&gt;Paged attention keeps the KV cache in fixed-size blocks, so the scheduler can admit a new request whenever a block is free.&lt;/p&gt;
+</content>
+  </entry>
+</feed>

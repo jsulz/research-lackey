@@ -1,6 +1,7 @@
 import arxivServing from "../../fixtures/feeds/arxiv-serving.atom.xml";
 import hfDailyPapers from "../../fixtures/feeds/hf-daily-papers-2026-11-13.json";
 import modalBlog from "../../fixtures/feeds/modal-blog.atom.xml";
+import summaryAndContent from "../../fixtures/feeds/summary-and-content.atom.xml";
 import vllmBlog from "../../fixtures/feeds/vllm-blog.rss.xml";
 import vllmBlog20261117 from "../../fixtures/feeds/vllm-blog-2026-11-17.rss.xml";
 import vllmBlogPlusOne from "../../fixtures/feeds/vllm-blog-plus-one.rss.xml";
@@ -18,6 +19,7 @@ const FIXTURES: Record<string, unknown> = {
   "arxiv-serving.atom.xml": arxivServing,
   "hf-daily-papers-2026-11-13.json": hfDailyPapers,
   "modal-blog.atom.xml": modalBlog,
+  "summary-and-content.atom.xml": summaryAndContent,
   "vllm-blog.rss.xml": vllmBlog,
   "vllm-blog-2026-11-17.rss.xml": vllmBlog20261117,
   "vllm-blog-plus-one.rss.xml": vllmBlogPlusOne,
