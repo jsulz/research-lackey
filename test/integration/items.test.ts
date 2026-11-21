@@ -3,6 +3,7 @@ import { env } from "cloudflare:workers";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { D1RunStore } from "../../src/adapters/d1-run-store";
 import type { FeedFormat, Run } from "../../src/core/ports";
+import { NO_FILTERS } from "../../src/core/source-filters";
 import { deleteRuns, deleteTestTopics } from "./cleanup";
 
 // Each test gets its own Topic and Sources, so it controls exactly which fixtures a Run reads.
@@ -116,6 +117,7 @@ describe("Runs read fixture feeds and record deduplicated Items", () => {
           failure_reason: null,
           items_read: 34,
           entries_key: "runs/items-fetch/raw/t-hf.json",
+          filters: NO_FILTERS,
         },
         {
           source_id: "t-none",
@@ -124,6 +126,7 @@ describe("Runs read fixture feeds and record deduplicated Items", () => {
           failure_reason: "Source t-none has no fixture",
           items_read: 0,
           entries_key: null,
+          filters: NO_FILTERS,
         },
         {
           source_id: "t-vllm",
@@ -132,6 +135,7 @@ describe("Runs read fixture feeds and record deduplicated Items", () => {
           failure_reason: null,
           items_read: 50,
           entries_key: "runs/items-fetch/raw/t-vllm.json",
+          filters: NO_FILTERS,
         },
       ],
     });
@@ -394,5 +398,103 @@ describe("Runs read fixture feeds and record deduplicated Items", () => {
     ).first<{ content_key: string }>();
     expect(row?.content_key).toMatch(new RegExp(`/${next.id}\\.md$`));
     expect(await env.ARTIFACTS.head(row?.content_key ?? "")).not.toBeNull();
+  });
+
+  describe("Source filters", () => {
+    // vllm-releases-2026-11-17 lists 10 releases, 7 of them release candidates (`rc<n>` tags).
+    const RELEASES = "vllm-releases-2026-11-17.atom.xml";
+
+    async function setTitlePattern(id: string, pattern: string | null) {
+      await env.DB.prepare("UPDATE sources SET exclude_title_pattern = ? WHERE id = ?")
+        .bind(pattern, id)
+        .run();
+    }
+
+    interface TriageOutput {
+      triaged: number;
+      scored: { item_key: string; title: string }[];
+    }
+
+    it("records Items its filters remove as seen, counts them in the Poll, and keeps them from Triage", async () => {
+      await addSource("t-rel", "atom", RELEASES);
+      await setTitlePattern("t-rel", "rc\\d");
+      const run = await runTopic("filters-first");
+
+      expect(run.status).toBe("completed_no_new_findings");
+      expect(await polls(run.id)).toEqual([
+        expect.objectContaining({
+          source_id: "t-rel",
+          outcome: "succeeded",
+          items_read: 10,
+          items_new: 10,
+          items_filtered: 7,
+        }),
+      ]);
+      // Every Item is recorded as seen, filtered or not.
+      expect(await itemCount(run.id)).toBe(10);
+      const output = await dedupe(run.id);
+      expect(output).toMatchObject({ recorded: 10, passed: 3 });
+      const triage = await stepOutput<TriageOutput>(run.id, "triage");
+      expect(triage.triaged).toBe(3);
+      expect(triage.scored.every((s) => !/rc\d/i.test(s.title))).toBe(true);
+      expect(triage.scored.map((s) => s.item_key).sort()).toEqual(
+        output.items.map((i) => i.item_key).sort(),
+      );
+    });
+
+    it("a filtered Item does not come back in the next Run, even once the filter is removed", async () => {
+      await addSource("t-rel", "atom", RELEASES);
+      await setTitlePattern("t-rel", "rc\\d");
+      await runTopic("filters-before");
+
+      await setTitlePattern("t-rel", null);
+      const next = await runTopic("filters-after");
+      expect(next.status).toBe("completed_no_new_findings");
+      expect(await dedupe(next.id)).toMatchObject({ recorded: 0, passed: 0, items: [] });
+      expect((await polls(next.id))[0]).toMatchObject({ items_new: 0, items_filtered: 0 });
+      const triage = await stepOutput<{ skipped?: string }>(next.id, "triage");
+      expect(triage.skipped).toBe("no new Items");
+    });
+
+    it("fails only the Poll of a Source whose filters can't be applied, without reading it", async () => {
+      await addSource("t-vllm", "rss2", "vllm-blog.rss.xml");
+      await addSource("t-bad", "atom", RELEASES);
+      await setTitlePattern("t-bad", "rc(");
+      const run = await runTopic("filters-invalid");
+
+      expect(run.status).toBe("completed_no_new_findings");
+      const rows = await polls(run.id);
+      expect(rows.find((p) => p.source_id === "t-bad")).toMatchObject({
+        outcome: "failed",
+        items_read: 0,
+        items_new: null,
+        items_filtered: null,
+        failure_reason: expect.stringMatching(/^Invalid filters: exclude_title_pattern /),
+      });
+      expect(rows.find((p) => p.source_id === "t-vllm")).toMatchObject({
+        outcome: "succeeded",
+        items_new: 50,
+        items_filtered: 0,
+      });
+      expect(await itemCount(run.id)).toBe(50);
+    });
+
+    it("fails only the Poll of a Source whose keyword list is stored as bytes", async () => {
+      await addSource("t-vllm", "rss2", "vllm-blog.rss.xml");
+      await addSource("t-blob", "atom", RELEASES);
+      // The bytes of `[3]`: SQLite's JSON functions accept a BLOB, so the CHECK lets it in.
+      await env.DB.prepare(
+        "UPDATE sources SET include_keywords = x'5b335d' WHERE id = 't-blob'",
+      ).run();
+      const run = await runTopic("filters-blob");
+
+      expect(run.status).toBe("completed_no_new_findings");
+      const rows = await polls(run.id);
+      expect(rows.find((p) => p.source_id === "t-blob")).toMatchObject({
+        outcome: "failed",
+        failure_reason: expect.stringMatching(/^Invalid filters: include_keywords /),
+      });
+      expect(rows.find((p) => p.source_id === "t-vllm")).toMatchObject({ outcome: "succeeded" });
+    });
   });
 });

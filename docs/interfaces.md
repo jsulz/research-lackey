@@ -142,6 +142,18 @@ export interface Source {
   format: FeedFormat;
   /** File name under `fixtures/feeds/`. Null when the Source has none, which fails its fetch. */
   fixture_ref: string | null;
+  /** Which Items `dedupe` passes onward; the others are recorded as seen and counted as filtered. */
+  filters: SourceFilters;
+}
+
+/** A Source's filters. Stored in `sources.include_keywords`, `exclude_keywords` (JSON arrays) and `exclude_title_pattern`. */
+export interface SourceFilters {
+  /** When non-empty, an Item passes only if its title or summary contains one, ignoring case. */
+  include_keywords: string[];
+  /** An Item whose title or summary contains one, ignoring case, is removed. */
+  exclude_keywords: string[];
+  /** A regular expression, tested against the title ignoring case; a match removes the Item. */
+  exclude_title_pattern: string | null;
 }
 
 /** Reads a Source's entries. T1 reads fixtures; T3 adds HTTP. Throws when the Source can't be read. */

@@ -18,6 +18,7 @@ import type {
   ReportItemLink,
   RunStore,
   SourceFetcher,
+  SourceFilters,
   SourcePollCounts,
 } from "./ports";
 import {
@@ -30,6 +31,7 @@ import {
   validateReport,
 } from "./report";
 import type { Stage } from "./run-pipeline";
+import { filtersProblem, NO_FILTERS, passesFilters } from "./source-filters";
 import { selectForSynthesis, synthesisPrompt, synthesisText } from "./synthesis";
 import {
   rankTopK,
@@ -67,6 +69,11 @@ export interface FetchedSource {
   items_read: number;
   /** R2 key of the parsed entries (`ArtifactStore.putRawEntries`); null when the Poll failed. */
   entries_key: string | null;
+  /**
+   * The Source's filters as `fetch` read them, so the Step artifact shows what `dedupe` applied.
+   * Absent from `fetch` outputs written before filters existed: those pass every Item.
+   */
+  filters?: SourceFilters;
 }
 
 /** A new Item passed on to the next stage. Content stays in R2 under `content_key`. */
@@ -84,7 +91,7 @@ export interface PassedItem {
 export interface DedupeOutput {
   /** New Items recorded across all Sources. */
   recorded: number;
-  /** Items passed onward: every new Item, except only the newest N on a Source's first poll. */
+  /** Items passed onward: new Items that pass their Source's filters, only the newest N on a first poll. */
   passed: number;
   items: PassedItem[];
 }
@@ -199,6 +206,9 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
           let items: RawItem[] = [];
           let failure_reason: string | null = null;
           try {
+            // Filters that can't be applied fail this Source's Poll, not the Run.
+            const problem = filtersProblem(source.filters);
+            if (problem) throw new Error(`Invalid filters: ${problem}`);
             items = await deps.fetcher.fetch(source);
           } catch (err) {
             const message = err instanceof Error ? err.message : String(err);
@@ -226,6 +236,7 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
             failure_reason,
             items_read: items.length,
             entries_key: null,
+            filters: source.filters,
           });
           if (outcome === "succeeded") entries.set(source.id, items);
         }
@@ -250,7 +261,8 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
     {
       name: "dedupe",
       // Reads each read Source's entries from R2, records its unseen Items (content to R2, rows to
-      // D1), sets its Poll counts, and passes the Items onward.
+      // D1), sets its Poll counts, and passes onward the Items that pass the Source's filters.
+      // Filtered Items are recorded too, so they are seen and never come back.
       // Safe to retry: R2 keys are per Run, and rows recorded by this unfinished Run are taken over.
       run: async (input, { run }): Promise<DedupeOutput> => {
         const { sources } = input as { sources: FetchedSource[] };
@@ -273,11 +285,16 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
           const firstPoll = await deps.store.isFirstPoll(source.source_id);
           const fresh = await recordNew(source, entries, run.id);
           recorded += fresh.length;
-          // No filters yet, so nothing is filtered.
-          counts.push({ source_id: source.source_id, items_new: fresh.length, items_filtered: 0 });
+          const filters = source.filters ?? NO_FILTERS;
+          const passing = fresh.filter((item) => passesFilters(filters, item));
+          counts.push({
+            source_id: source.source_id,
+            items_new: fresh.length,
+            items_filtered: fresh.length - passing.length,
+          });
           // A Source's first poll can hold its whole history: record it all, pass on the newest N.
           items.push(
-            ...(firstPoll ? newestFirst(fresh).slice(0, deps.config.first_poll_cap) : fresh),
+            ...(firstPoll ? newestFirst(passing).slice(0, deps.config.first_poll_cap) : passing),
           );
         }
         // Written once, after every Source is recorded: a Poll shows counts only when dedupe finished.
