@@ -141,14 +141,14 @@ describe("GET /api/reports/:id", () => {
     await seed({ run: "run-arxiv", edit: (d) => ({ ...d, attributions: [line] }) });
     const res = await getReport("rpt_run-arxiv");
     expect(res.status).toBe(200);
-    expect(res.body.attributions).toEqual([line]);
+    expect((res.body as { attributions: unknown }).attributions).toEqual([line]);
   });
 
   it("returns an empty attributions list when the document stores none", async () => {
     await seed({ run: "run-none", edit: (d) => ({ ...d, attributions: [] }) });
     const res = await getReport("rpt_run-none");
     expect(res.status).toBe(200);
-    expect(res.body.attributions).toEqual([]);
+    expect((res.body as { attributions: unknown }).attributions).toEqual([]);
   });
 
   it("passes on only contract fields, never extra document fields such as source text", async () => {

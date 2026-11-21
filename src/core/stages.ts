@@ -21,9 +21,9 @@ import type {
 } from "./ports";
 import {
   findingId,
+  reportAttributions,
   reportId,
   reportJsonSchema,
-  reportAttributions,
   reportMarkdown,
   type SynthesisReport,
   validateReport,

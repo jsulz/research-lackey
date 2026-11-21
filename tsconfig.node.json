@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.base.json",
-  "compilerOptions": { "types": ["node"] },
+  "compilerOptions": { "types": ["node"], "jsx": "react-jsx" },
   "include": [
     "scripts",
     "test/unit",

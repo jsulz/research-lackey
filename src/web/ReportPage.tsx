@@ -42,7 +42,8 @@ export function ReportPage({ id }: { id: string | null }) {
   );
 }
 
-function Report({ report }: { report: PublicReportDetail }) {
+/** One Report's sections, source links and attribution footer. Exported for unit tests. */
+export function Report({ report }: { report: PublicReportDetail }) {
   const { sections } = report;
   return (
     <article>
@@ -102,6 +103,14 @@ function Report({ report }: { report: PublicReportDetail }) {
           ))}
         </ul>
       </section>
+      {report.attributions.length > 0 && (
+        <footer className="report-attributions">
+          {report.attributions.map((line, i) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: lines are plain text and may repeat
+            <p key={i}>{line}</p>
+          ))}
+        </footer>
+      )}
     </article>
   );
 }
