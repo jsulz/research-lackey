@@ -1,4 +1,5 @@
-import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { parseFeed } from "../../src/core/feeds";
@@ -153,5 +154,202 @@ describe("parseFeed, character references", () => {
       "https://e.com/p?a=1&b=2",
     ]);
     expect(items.map((i) => i.title)).toEqual(["Café A", "Literal &#38; stays"]);
+  });
+});
+
+const ATOM_NS = "http://www.w3.org/2005/Atom";
+
+/** Rewrites a default-namespace Atom document so every Atom element carries the `atom:` prefix. */
+function prefixAtom(text: string): string {
+  return text
+    .replace(/<(\/?)([A-Za-z][\w.-]*)(?=[\s/>])/g, "<$1atom:$2")
+    .replace(`xmlns="${ATOM_NS}"`, `xmlns:atom="${ATOM_NS}"`);
+}
+
+describe("parseFeed, Atom elements with a namespace prefix", () => {
+  it.each(["arxiv-serving.atom.xml", "summary-and-content.atom.xml", "vllm-releases.atom.xml"])(
+    "%s parses to the same Items with every Atom element prefixed",
+    (name) => {
+      const plain = fixture(name);
+      const prefixed = prefixAtom(plain);
+      expect(prefixed).toMatch(/<atom:feed [^>]*xmlns:atom=/);
+      expect(prefixed).not.toMatch(/<feed[\s>]/);
+      expect(prefixed).not.toMatch(/<atom:(arxiv|opensearch|media):/);
+      expect(parseFeed("atom", prefixed)).toEqual(parseFeed("atom", plain));
+    },
+  );
+
+  it("reads a prefixed entry with any prefix name, keeping extension elements out of its fields", () => {
+    const text = `<a:feed xmlns:a="${ATOM_NS}" xmlns:media="http://search.yahoo.com/mrss/">
+      <a:entry>
+        <a:id>urn:x:1</a:id>
+        <media:title>Extension title</media:title>
+        <a:title>Atom title</a:title>
+        <a:link rel="alternate" href="https://example.com/1"/>
+        <media:description>Extension description</media:description>
+        <a:summary>Atom summary</a:summary>
+        <a:updated>2026-11-20T00:00:00Z</a:updated>
+      </a:entry>
+    </a:feed>`;
+    expect(parseFeed("atom", text)).toEqual([
+      {
+        externalId: "urn:x:1",
+        url: "https://example.com/1",
+        title: "Atom title",
+        summary: "Atom summary",
+        content: undefined,
+        publishedAt: "2026-11-20T00:00:00.000Z",
+      },
+    ]);
+  });
+
+  it("does not read an extension title as the title when the Atom title is missing", () => {
+    const text = `<atom:feed xmlns:atom="${ATOM_NS}" xmlns:media="http://search.yahoo.com/mrss/">
+      <atom:entry><atom:id>urn:x:2</atom:id><media:title>Extension only</media:title></atom:entry>
+    </atom:feed>`;
+    expect(parseFeed("atom", text)[0]?.title).toBe("");
+  });
+
+  it("RSS keeps its own title and link when the channel declares the Atom and Media namespaces", () => {
+    const text = `<rss xmlns:atom="${ATOM_NS}" xmlns:media="http://search.yahoo.com/mrss/"><channel>
+      <atom:link rel="self" href="https://example.com/feed.xml"/>
+      <item><media:title>Extension title</media:title><title>RSS title</title>
+        <atom:link href="https://example.com/atom-link"/><link>https://example.com/rss-link</link></item>
+    </channel></rss>`;
+    expect(parseFeed("rss2", text)).toEqual([
+      expect.objectContaining({ title: "RSS title", url: "https://example.com/rss-link" }),
+    ]);
+  });
+
+  it("leaves a prefix bound to another namespace alone", () => {
+    const text = `<x:feed xmlns:x="http://example.com/not-atom"><x:entry><x:id>1</x:id></x:entry></x:feed>`;
+    expect(() => parseFeed("atom", text)).toThrow(/no feed element/);
+  });
+});
+
+describe("parseFeed, Atom XHTML text", () => {
+  const XHTML = 'xmlns="http://www.w3.org/1999/xhtml"';
+  function entry(fields: string): string {
+    return `<feed xmlns="${ATOM_NS}"><entry><id>urn:x:1</id>${fields}</entry></feed>`;
+  }
+
+  it("reads an XHTML title, summary and content as text in document order", () => {
+    const [item] = parseFeed(
+      "atom",
+      entry(`
+        <title type="xhtml"><div ${XHTML}>Hello <b>big</b> world</div></title>
+        <summary type="xhtml"><div ${XHTML}>Caf&#233; &amp; <i>more</i>!</div></summary>
+        <content type="xhtml"><div ${XHTML}><p>First paragraph.</p><p>Second<br/>line</p></div></content>`),
+    );
+    expect(item).toMatchObject({
+      title: "Hello big world",
+      summary: "Café & more!",
+      content: "First paragraph. Second line",
+    });
+  });
+
+  it.each([
+    ["nested inline elements", `<div ${XHTML}>a<b>b<i>c</i>d</b>e</div>`, "abcde"],
+    ["CDATA inside XHTML", `<div ${XHTML}>x <![CDATA[<y> & z]]></div>`, "x <y> & z"],
+    [
+      "a quoted > in an attribute",
+      `<div ${XHTML}><a title="a>b" href="#">link</a> text</div>`,
+      "link text",
+    ],
+    [
+      "a prefixed XHTML div",
+      `<h:div xmlns:h="http://www.w3.org/1999/xhtml">one<h:br/>two</h:div>`,
+      "one two",
+    ],
+    ["list items", `<div ${XHTML}><ul><li>one</li><li>two</li></ul></div>`, "one two"],
+    ["a comment", `<div ${XHTML}>keep<!-- drop -->this</div>`, "keepthis"],
+  ])("handles %s", (_case, xhtml, expected) => {
+    const [item] = parseFeed("atom", entry(`<title type="xhtml">${xhtml}</title>`));
+    expect(item?.title).toBe(expected);
+  });
+
+  it("reads an empty XHTML summary as no summary", () => {
+    const [item] = parseFeed(
+      "atom",
+      entry(`<title>T</title><summary type="xhtml"><div ${XHTML}/></summary>`),
+    );
+    expect(item?.summary).toBeUndefined();
+  });
+
+  it("reads XHTML text in a prefixed Atom document, entry by entry", () => {
+    const text = `<atom:feed xmlns:atom="${ATOM_NS}">
+      <atom:entry><atom:id>1</atom:id><atom:title>Plain</atom:title></atom:entry>
+      <atom:entry><atom:id>2</atom:id><atom:title type="xhtml"><div ${XHTML}>Rich <em>text</em></div></atom:title></atom:entry>
+    </atom:feed>`;
+    expect(parseFeed("atom", text).map((i) => i.title)).toEqual(["Plain", "Rich text"]);
+  });
+});
+
+describe("parseFeed, committed fixtures", () => {
+  // sha256 of JSON.stringify(parseFeed(format, fixture)), computed on `main` at 5ab5690
+  // before the namespace-prefix and XHTML changes.
+  it.each([
+    [
+      "arxiv-serving.atom.xml",
+      "atom",
+      50,
+      "a35cd89ba2afdc7eb656406e785417290b44a80210d7ad626e897132eb451721",
+    ],
+    [
+      "hf-daily-papers-2026-11-13.json",
+      "hf_daily_papers",
+      34,
+      "bc054c4d7346f0ff9d65c9f643626517de4e0c115c82799a50b347ae1ef60351",
+    ],
+    [
+      "modal-blog.atom.xml",
+      "atom",
+      157,
+      "04c2af3a9311b5f02d39b0130929aeb25f7a2ce84b16d21679d1a61645186816",
+    ],
+    [
+      "summary-and-content.atom.xml",
+      "atom",
+      2,
+      "6743361d9bbe5d012b56c2c6dc8f8ae8265d47bcc125efb82c5d28b21ad197d6",
+    ],
+    [
+      "vllm-blog-2026-11-17.rss.xml",
+      "rss2",
+      50,
+      "67f71487cae5ba3b10d2888f151e144f18ca1c337682128a33199751b67c4a89",
+    ],
+    [
+      "vllm-blog-plus-one.rss.xml",
+      "rss2",
+      51,
+      "787ed48353a9a3e338bdc650ac193326b8c7d099b331f119e3dba5e2612c67d8",
+    ],
+    [
+      "vllm-blog.rss.xml",
+      "rss2",
+      50,
+      "11a47933bc3221a1adb6591c5123f8d35a516ae070ad9a85a6ee65dddd616588",
+    ],
+    [
+      "vllm-releases-2026-11-17.atom.xml",
+      "atom",
+      10,
+      "5b705192570a5bdd4d59ef54b68ab0f416032ed4223c828419b6ba3c301cea1c",
+    ],
+    [
+      "vllm-releases.atom.xml",
+      "atom",
+      10,
+      "26e76cde4f974743d741dd1bacc59e8bce3f90bf4d0412d71e712f388f390bee",
+    ],
+  ] as const)("%s parses to the same Items as before", (name, format, count, digest) => {
+    const items = parseFeed(format, fixture(name));
+    expect(items).toHaveLength(count);
+    expect(createHash("sha256").update(JSON.stringify(items)).digest("hex")).toBe(digest);
+  });
+
+  it("covers every committed fixture", () => {
+    expect(readdirSync(path.join(import.meta.dirname, "../../fixtures/feeds")).length).toBe(9);
   });
 });

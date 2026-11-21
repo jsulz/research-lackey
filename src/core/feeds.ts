@@ -15,7 +15,7 @@ export function parseFeed(format: FeedFormat, text: string): RawItem[] {
   }
 }
 
-const xml = new XMLParser({
+const xmlOptions = {
   ignoreAttributes: false,
   attributeNamePrefix: "@_",
   parseTagValue: false,
@@ -24,9 +24,11 @@ const xml = new XMLParser({
   // once, so the same text has the same value however the feed escapes it.
   htmlEntities: true,
   // Repeatable elements are always arrays, so a one-entry feed parses like a long one.
-  isArray: (_name, jpath) =>
+  isArray: (_name: string, jpath: unknown) =>
     jpath === "rss.channel.item" || jpath === "feed.entry" || jpath === "feed.entry.link",
-});
+};
+
+const xml = new XMLParser(xmlOptions);
 
 type Node = Record<string, unknown>;
 
@@ -58,20 +60,105 @@ function parseRss(text: string): RawItem[] {
 }
 
 function parseAtom(text: string): RawItem[] {
-  const feed = parseXml(text).feed as Node | undefined;
+  let doc = parseXml(text);
+  const strip = atomPrefixStripper(doc);
+  if (strip) doc = new XMLParser({ ...xmlOptions, transformTagName: strip }).parse(text) as Node;
+  const feed = doc.feed as Node | undefined;
   if (!feed) throw new Error("Not an Atom document: no feed element");
   const entries = (feed.entry as unknown[] | undefined) ?? [];
+  let ordered: Node[][] | undefined;
   return entries.map((node, i) => {
     const entry = fields(node);
+    /** Text of an Atom text construct: an XHTML one is read from the order-preserving parse. */
+    const textField = (name: string): string => {
+      if (fields(entry[name])["@_type"] !== "xhtml") return textOf(entry[name]);
+      ordered ??= orderedEntries(text, strip);
+      return textOf(orderedText(childNodes(ordered[i], name)));
+    };
     return identified(i, {
       externalId: idOf(entry.id),
       url: alternateLink(entry.link as unknown[] | undefined),
-      title: textOf(entry.title),
-      summary: optional(textOf(entry.summary)),
-      content: optional(textOf(entry.content)),
+      title: textField("title"),
+      summary: optional(textField("summary")),
+      content: optional(textField("content")),
       publishedAt: isoDate(textOf(entry.published)) ?? isoDate(textOf(entry.updated)),
     });
   });
+}
+
+const ATOM_NS = "http://www.w3.org/2005/Atom";
+
+/**
+ * Strips the prefixes the root element binds to the Atom namespace (`atom:entry` becomes
+ * `entry`), or undefined when it binds none. Prefixes of other namespaces, such as
+ * `media:title`, are kept, so extension elements never replace Atom fields.
+ */
+function atomPrefixStripper(doc: Node): ((tag: string) => string) | undefined {
+  const rootKey = Object.keys(doc).find((key) => !key.startsWith("?"));
+  const root = fields(rootKey === undefined ? undefined : doc[rootKey]);
+  const prefixes = new Set(
+    Object.entries(root)
+      .filter(([key, value]) => key.startsWith("@_xmlns:") && idOf(value) === ATOM_NS)
+      .map(([key]) => key.slice("@_xmlns:".length)),
+  );
+  if (prefixes.size === 0) return undefined;
+  return (tag) => {
+    const colon = tag.indexOf(":");
+    return colon > 0 && prefixes.has(tag.slice(0, colon)) ? tag.slice(colon + 1) : tag;
+  };
+}
+
+/**
+ * Each entry's child nodes from an order-preserving parse, which keeps the text and elements of
+ * mixed XHTML content in document order and untrimmed. Entries are in the same order as the
+ * default parse.
+ */
+function orderedEntries(text: string, strip: ((tag: string) => string) | undefined): Node[][] {
+  const ordered = new XMLParser({
+    ...xmlOptions,
+    isArray: undefined,
+    preserveOrder: true,
+    trimValues: false,
+    transformTagName: strip ?? false,
+  }).parse(text) as Node[];
+  const feed = childNodes(ordered, "feed");
+  return feed.filter((node) => "entry" in node).map((node) => nodeList(node.entry));
+}
+
+/** The child nodes of the first element named `name` among `nodes`. */
+function childNodes(nodes: Node[] | undefined, name: string): Node[] {
+  const node = (nodes ?? []).find((n) => name in n);
+  return node ? nodeList(node[name]) : [];
+}
+
+function nodeList(value: unknown): Node[] {
+  return Array.isArray(value) ? value.map(fields) : [];
+}
+
+/** Elements whose boundaries separate words in XHTML text. */
+const XHTML_BLOCKS = new Set(
+  "address article aside blockquote br dd div dl dt figcaption figure footer h1 h2 h3 h4 h5 h6 header hr li ol p pre section table td th tr ul".split(
+    " ",
+  ),
+);
+
+/**
+ * The character data of ordered nodes in document order, with block elements as word breaks.
+ * The parser rejects nesting deeper than 100 elements, which bounds the recursion.
+ */
+function orderedText(nodes: Node[]): string {
+  let out = "";
+  for (const node of nodes) {
+    for (const [key, value] of Object.entries(node)) {
+      if (key === "#text") out += String(value);
+      else if (key !== ":@" && !key.startsWith("?")) {
+        const local = key.slice(key.indexOf(":") + 1);
+        const brk = XHTML_BLOCKS.has(local) ? " " : "";
+        out += brk + orderedText(nodeList(value)) + brk;
+      }
+    }
+  }
+  return out;
 }
 
 /** The Hugging Face Daily Papers API response: a JSON array, one element per paper. */
