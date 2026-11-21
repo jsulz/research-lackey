@@ -36,6 +36,13 @@ const SEEN_ITEM = `SELECT 1 FROM items i JOIN runs r ON r.id = i.first_seen_run_
 const ONE_ACTIVE_PER_TOPIC = "UNIQUE constraint failed: runs.topic_id";
 
 /** RunStore backed by D1 with hand-written SQL (ADR-0005). */
+/** A `sources` row as selected, before its filter columns are parsed. */
+interface SourceRow extends Omit<Source, "filters"> {
+  include_keywords: string;
+  exclude_keywords: string;
+  exclude_title_pattern: string | null;
+}
+
 export class D1RunStore implements RunStore {
   constructor(private readonly db: D1Database) {}
 
@@ -272,13 +279,23 @@ export class D1RunStore implements RunStore {
   async listFeedSources(topicId: string): Promise<Source[]> {
     const { results } = await this.db
       .prepare(
-        `SELECT id, topic_id, format, fixture_ref FROM sources
+        `SELECT id, topic_id, format, fixture_ref, include_keywords, exclude_keywords,
+                exclude_title_pattern
+         FROM sources
          WHERE topic_id = ? AND kind = 'feed'
          ORDER BY id`,
       )
       .bind(topicId)
-      .all<Source>();
-    return results;
+      .all<SourceRow>();
+    // The keyword columns are JSON arrays (CHECK). Their elements are checked by `fetch`.
+    return results.map(({ include_keywords, exclude_keywords, exclude_title_pattern, ...s }) => ({
+      ...s,
+      filters: {
+        include_keywords: JSON.parse(include_keywords),
+        exclude_keywords: JSON.parse(exclude_keywords),
+        exclude_title_pattern,
+      },
+    }));
   }
 
   async unseenItemKeys(sourceId: string, keys: string[]): Promise<string[]> {

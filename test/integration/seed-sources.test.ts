@@ -30,6 +30,29 @@ describe("seed Sources", () => {
     }
   });
 
+  it("have no filters, so every Item they read passes", async () => {
+    const { results } = await env.DB.prepare(
+      `SELECT include_keywords, exclude_keywords, exclude_title_pattern FROM sources
+       WHERE topic_id = 'ai-infra'`,
+    ).all();
+    expect(results).toHaveLength(5);
+    for (const row of results) {
+      expect(row).toEqual({
+        include_keywords: "[]",
+        exclude_keywords: "[]",
+        exclude_title_pattern: null,
+      });
+    }
+  });
+
+  it("can't store a keyword list that is not a JSON array", async () => {
+    await expect(
+      env.DB.prepare(
+        "UPDATE sources SET include_keywords = '\"llm\"' WHERE id = 'vllm-blog'",
+      ).run(),
+    ).rejects.toThrow(/CHECK constraint failed/);
+  });
+
   // The 2026-11-17 captures give production new Items to report: the entries published since
   // the earlier capture. (A feed lists a fixed number of entries, so its oldest may drop off.)
   it.each([

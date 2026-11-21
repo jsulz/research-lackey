@@ -8,7 +8,8 @@ import type {
   RunStore,
   SourcePollCounts,
 } from "../../src/core/ports";
-import { buildStages, type FetchedSource } from "../../src/core/stages";
+import { NO_FILTERS } from "../../src/core/source-filters";
+import { buildStages, type DedupeOutput, type FetchedSource } from "../../src/core/stages";
 
 const RUN: RunRef = { id: "manual-t-1", topic_id: "t", kind: "manual", scheduled_slot: null };
 const LOG: Logger = { debug() {}, info() {}, warn() {}, error() {} };
@@ -173,8 +174,8 @@ describe("fetch Polls and raw entries", () => {
     const recorded: unknown[] = [];
     const store = {
       listFeedSources: async () => [
-        { id: "a", topic_id: "t", format: "rss2", fixture_ref: "a" },
-        { id: "b", topic_id: "t", format: "rss2", fixture_ref: "b" },
+        { id: "a", topic_id: "t", format: "rss2", fixture_ref: "a", filters: NO_FILTERS },
+        { id: "b", topic_id: "t", format: "rss2", fixture_ref: "b", filters: NO_FILTERS },
       ],
       recordPolls: async (_run: string, polls: unknown[]) => {
         recorded.push(polls);
@@ -208,5 +209,92 @@ describe("fetch Polls and raw entries", () => {
         expect.objectContaining({ source_id: "b", outcome: "succeeded", items_read: 1 }),
       ],
     ]);
+  });
+});
+
+describe("dedupe Source filters", () => {
+  // Ten releases, newest first; the odd ones are release candidates.
+  const entries = Array.from({ length: 10 }, (_, i) => ({
+    externalId: `e${i}`,
+    url: `https://example.com/${i}`,
+    title: i % 2 === 1 ? `v1.${9 - i}.0rc1` : `v1.${9 - i}.0`,
+    publishedAt: `2026-11-${String(20 - i).padStart(2, "0")}T00:00:00Z`,
+  }));
+
+  function dedupeOver(firstPoll: boolean) {
+    const counts: SourcePollCounts[][] = [];
+    const recorded: string[][] = [];
+    const store = {
+      unseenItemKeys: async (_s: string, keys: string[]) => keys,
+      isFirstPoll: async () => firstPoll,
+      recordItems: async (_run: string, rows: Array<{ item_key: string }>) => {
+        recorded.push(rows.map((r) => r.item_key));
+      },
+      recordPollCounts: async (_run: string, c: SourcePollCounts[]) => {
+        counts.push(c);
+      },
+    } as unknown as RunStore;
+    const artifacts = {
+      getRawEntries: async () => entries,
+      putItemContent: async (_s: string, key: string) => `items/${key}`,
+    } as unknown as ArtifactStore;
+    const stages = buildStages({
+      store,
+      artifacts,
+      fetcher: { fetch: async () => [] },
+      config: { ...CONFIG, first_poll_cap: 3 },
+      model: {} as ModelClient,
+      prompts: { triage: "", synthesis: "" },
+      model_env: "dev",
+      clock: { now: () => new Date(0) },
+    });
+    const dedupe = stages.find((s) => s.name === "dedupe");
+    if (!dedupe) throw new Error("no dedupe stage");
+    return {
+      run: async (fetched: FetchedSource) =>
+        (await dedupe.run({ sources: [fetched] }, { run: RUN, log: LOG })) as DedupeOutput,
+      counts,
+      recorded,
+    };
+  }
+
+  const rcFiltered: FetchedSource = {
+    ...source("a"),
+    items_read: 10,
+    filters: { ...NO_FILTERS, exclude_title_pattern: "rc\\d" },
+  };
+
+  it("records every new Item, passes only those that pass, and counts the rest as filtered", async () => {
+    const d = dedupeOver(false);
+    const out = await d.run(rcFiltered);
+
+    expect(d.recorded).toEqual([entries.map((e) => e.externalId)]);
+    expect(out.recorded).toBe(10);
+    expect(out.items.map((i) => i.title)).toEqual([
+      "v1.9.0",
+      "v1.7.0",
+      "v1.5.0",
+      "v1.3.0",
+      "v1.1.0",
+    ]);
+    expect(out.passed).toBe(5);
+    expect(d.counts).toEqual([[{ source_id: "a", items_new: 10, items_filtered: 5 }]]);
+  });
+
+  it("applies the first-poll cap to the Items that pass, not to every new Item", async () => {
+    const d = dedupeOver(true);
+    const out = await d.run(rcFiltered);
+
+    expect(out.items.map((i) => i.title)).toEqual(["v1.9.0", "v1.7.0", "v1.5.0"]);
+    expect(d.counts).toEqual([[{ source_id: "a", items_new: 10, items_filtered: 5 }]]);
+  });
+
+  it("passes every Item for a fetch output written before Sources had filters", async () => {
+    const d = dedupeOver(false);
+    const { filters: _filters, ...legacy } = rcFiltered;
+    const out = await d.run(legacy);
+
+    expect(out.passed).toBe(10);
+    expect(d.counts).toEqual([[{ source_id: "a", items_new: 10, items_filtered: 0 }]]);
   });
 });
