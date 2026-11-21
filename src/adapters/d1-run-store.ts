@@ -38,9 +38,23 @@ const ONE_ACTIVE_PER_TOPIC = "UNIQUE constraint failed: runs.topic_id";
 /** RunStore backed by D1 with hand-written SQL (ADR-0005). */
 /** A `sources` row as selected, before its filter columns are parsed. */
 interface SourceRow extends Omit<Source, "filters"> {
-  include_keywords: string;
-  exclude_keywords: string;
+  include_keywords: unknown;
+  exclude_keywords: unknown;
   exclude_title_pattern: string | null;
+}
+
+/**
+ * A keyword column's list. The CHECK accepts a BLOB holding JSON text too, which D1 returns as
+ * bytes: a value that doesn't parse goes through as it is, so `fetch` fails only that Source's
+ * Poll (`filtersProblem`) instead of every Source of the Topic.
+ */
+function keywordList(value: unknown): string[] {
+  if (typeof value !== "string") return value as string[];
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value as unknown as string[];
+  }
 }
 
 export class D1RunStore implements RunStore {
@@ -287,12 +301,12 @@ export class D1RunStore implements RunStore {
       )
       .bind(topicId)
       .all<SourceRow>();
-    // The keyword columns are JSON arrays (CHECK). Their elements are checked by `fetch`.
+    // `fetch` checks the filters before reading each Source.
     return results.map(({ include_keywords, exclude_keywords, exclude_title_pattern, ...s }) => ({
       ...s,
       filters: {
-        include_keywords: JSON.parse(include_keywords),
-        exclude_keywords: JSON.parse(exclude_keywords),
+        include_keywords: keywordList(include_keywords),
+        exclude_keywords: keywordList(exclude_keywords),
         exclude_title_pattern,
       },
     }));

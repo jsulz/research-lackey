@@ -478,5 +478,23 @@ describe("Runs read fixture feeds and record deduplicated Items", () => {
       });
       expect(await itemCount(run.id)).toBe(50);
     });
+
+    it("fails only the Poll of a Source whose keyword list is stored as bytes", async () => {
+      await addSource("t-vllm", "rss2", "vllm-blog.rss.xml");
+      await addSource("t-blob", "atom", RELEASES);
+      // The bytes of `[3]`: SQLite's JSON functions accept a BLOB, so the CHECK lets it in.
+      await env.DB.prepare(
+        "UPDATE sources SET include_keywords = x'5b335d' WHERE id = 't-blob'",
+      ).run();
+      const run = await runTopic("filters-blob");
+
+      expect(run.status).toBe("completed_no_new_findings");
+      const rows = await polls(run.id);
+      expect(rows.find((p) => p.source_id === "t-blob")).toMatchObject({
+        outcome: "failed",
+        failure_reason: expect.stringMatching(/^Invalid filters: include_keywords /),
+      });
+      expect(rows.find((p) => p.source_id === "t-vllm")).toMatchObject({ outcome: "succeeded" });
+    });
   });
 });

@@ -55,7 +55,8 @@ export function passesFilters(
     return false;
   }
   if (include_keywords.length === 0 && exclude_keywords.length === 0) return true;
-  const text = normalize(plainText(`${item.title} ${item.summary ?? ""}`));
+  // Each field is cleaned on its own, so an unclosed tag in the title can't swallow the summary.
+  const text = normalize(`${plainText(item.title)} ${plainText(item.summary ?? "")}`);
   const has = (keyword: string) => text.includes(normalize(keyword));
   if (exclude_keywords.some(has)) return false;
   return include_keywords.length === 0 || include_keywords.some(has);

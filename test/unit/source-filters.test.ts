@@ -43,6 +43,13 @@ describe("include keywords", () => {
       }),
     ).toBe(false);
   });
+  it("keep markup in the title from hiding the summary", () => {
+    const f = filters({ include_keywords: ["inference"] });
+    expect(
+      passesFilters(f, { title: "Release notes <!--", summary: "GPU inference improvements" }),
+    ).toBe(true);
+    expect(passesFilters(f, { title: "Release <b", summary: "inference" })).toBe(true);
+  });
 });
 
 describe("exclude keywords", () => {
