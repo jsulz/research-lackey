@@ -29,10 +29,20 @@ export function parseReviewStubArgs(
       const value = argv[++i];
       if (value === undefined) return { ok: false, error: "--base-url needs a value" };
       const parsed = URL.canParse(value) ? new URL(value) : null;
-      if (parsed === null || (parsed.protocol !== "http:" && parsed.protocol !== "https:")) {
-        return { ok: false, error: `invalid base URL: ${value}` };
+      if (
+        parsed === null ||
+        (parsed.protocol !== "http:" && parsed.protocol !== "https:") ||
+        parsed.search !== "" ||
+        parsed.hash !== "" ||
+        value.includes("?") ||
+        value.includes("#")
+      ) {
+        return {
+          ok: false,
+          error: `invalid base URL (http or https, no query or fragment): ${value}`,
+        };
       }
-      baseUrl = value.replace(/\/+$/, "");
+      baseUrl = `${parsed.origin}${parsed.pathname.replace(/\/+$/, "")}`;
     } else if (arg.startsWith("--")) {
       return { ok: false, error: `unknown argument: ${arg}` };
     } else if (reportId === undefined) {

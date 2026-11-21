@@ -96,11 +96,21 @@ describe("parseReviewStubArgs", () => {
     }
   });
 
+  it("keeps a base URL's path prefix", () => {
+    expect(parseReviewStubArgs(["rpt_x", "--base-url", "https://example.org/proxy/"])).toEqual({
+      ok: true,
+      reportId: "rpt_x",
+      baseUrl: "https://example.org/proxy",
+    });
+  });
+
   it.each([
     ["no Report ID", []],
     ["two Report IDs", ["rpt_a", "rpt_b"]],
     ["--base-url without a value", ["rpt_x", "--base-url"]],
     ["a non-http base URL", ["rpt_x", "--base-url", "file:///etc"]],
+    ["a base URL with a query", ["rpt_x", "--base-url", "https://example.org/proxy?x=1"]],
+    ["a base URL with a fragment", ["rpt_x", "--base-url", "https://example.org/#top"]],
     ["a base URL that does not parse", ["rpt_x", "--base-url", "lackey.jsulz.com"]],
     ["an unknown flag", ["rpt_x", "--remote"]],
   ])("rejects %s", (_label, argv) => {
