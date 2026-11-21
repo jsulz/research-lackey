@@ -156,8 +156,9 @@ export interface Poll {
   duration_ms: number;
 }
 
-/** What `dedupe` counted for a succeeded Poll. */
-export interface PollCounts {
+/** What `dedupe` counted for a succeeded Poll of a Source. */
+export interface SourcePollCounts {
+  source_id: string;
   /** Items the Run recorded as first seen. */
   items_new: number;
   /** Items removed by the Source's filters. */
@@ -301,12 +302,12 @@ export interface RunStore {
    */
   recordItems(runId: string, items: Item[]): Promise<void>;
   /**
-   * Records the Run's Polls, one per Source. A Poll already recorded for the Run and Source is
-   * replaced, counts cleared, so a retried `fetch` step leaves only its own results.
+   * Records the Run's Polls, one per Source, replacing every Poll recorded for the Run before, so
+   * a retried `fetch` step leaves exactly its own results, counts cleared.
    */
   recordPolls(runId: string, polls: Poll[]): Promise<void>;
-  /** Sets the counts `dedupe` made for the Run's Poll of the Source. */
-  recordPollCounts(runId: string, sourceId: string, counts: PollCounts): Promise<void>;
+  /** Sets the counts `dedupe` made for the Run's Polls, all in one transaction. */
+  recordPollCounts(runId: string, counts: SourcePollCounts[]): Promise<void>;
   /** Records the stage's Step artifact key in `run_steps`, keeping any usage already recorded. */
   recordStepArtifact(runId: string, step: StepName, artifactKey: string): Promise<void>;
   /** Records the stage's model, tokens and cost in `run_steps`, replacing an earlier attempt's. */

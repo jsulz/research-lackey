@@ -17,6 +17,7 @@ import type {
   ReportItemLink,
   RunStore,
   SourceFetcher,
+  SourcePollCounts,
 } from "./ports";
 import {
   findingId,
@@ -232,6 +233,7 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
       run: async (input, { run }): Promise<DedupeOutput> => {
         const { sources } = input as { sources: FetchedSource[] };
         const items: PassedItem[] = [];
+        const counts: SourcePollCounts[] = [];
         let recorded = 0;
         for (const source of sources) {
           if (source.outcome === "failed") continue;
@@ -239,15 +241,14 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
           const fresh = await recordNew(source, run.id);
           recorded += fresh.length;
           // No filters yet, so nothing is filtered.
-          await deps.store.recordPollCounts(run.id, source.source_id, {
-            items_new: fresh.length,
-            items_filtered: 0,
-          });
+          counts.push({ source_id: source.source_id, items_new: fresh.length, items_filtered: 0 });
           // A Source's first poll can hold its whole history: record it all, pass on the newest N.
           items.push(
             ...(firstPoll ? newestFirst(fresh).slice(0, deps.config.first_poll_cap) : fresh),
           );
         }
+        // Written once, after every Source is recorded: a Poll shows counts only when dedupe finished.
+        await deps.store.recordPollCounts(run.id, counts);
         return { recorded, passed: items.length, items };
       },
     },

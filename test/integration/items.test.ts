@@ -197,6 +197,34 @@ describe("Runs read fixture feeds and record deduplicated Items", () => {
     expect(rows.every((p) => p.failure_reason !== null)).toBe(true);
   });
 
+  it("replaces the Run's whole Poll set when fetch records Polls again", async () => {
+    await addSource("t-a", "rss2", "vllm-blog.rss.xml");
+    await addSource("t-b", "rss2", "vllm-blog.rss.xml");
+    await env.DB.prepare(
+      "INSERT INTO runs (id, topic_id, kind, status) VALUES ('polls-replace', ?, 'manual', 'running')",
+    )
+      .bind(TOPIC)
+      .run();
+    const poll = (source_id: string) => ({
+      source_id,
+      outcome: "succeeded" as const,
+      attempts: 1,
+      items_read: 3,
+      failure_reason: null,
+      duration_ms: 0,
+    });
+    await store.recordPolls("polls-replace", [poll("t-a"), poll("t-b")]);
+    await store.recordPollCounts("polls-replace", [
+      { source_id: "t-a", items_new: 2, items_filtered: 0 },
+    ]);
+
+    // A retried fetch that no longer sees t-b.
+    await store.recordPolls("polls-replace", [poll("t-a")]);
+    expect((await polls("polls-replace")).map((p) => [p.source_id, p.items_new])).toEqual([
+      ["t-a", null],
+    ]);
+  });
+
   it("ends the Run failed at stage fetch when a fixture is not the format its Source declares", async () => {
     await addSource("t-wrong", "atom", "vllm-blog.rss.xml");
     const run = await runTopic("items-fetch-wrong", { expect: "errored" });

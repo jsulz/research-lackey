@@ -32,4 +32,25 @@ describe("allFailedReason", () => {
     expect(reason.length).toBeLessThanOrEqual(MAX_FAILURE_REASON);
     expect(reason).toContain("short: HTTP 404;");
   });
+
+  it("keeps every Source identifiable when a Source ID is very long", () => {
+    const reason = allFailedReason([
+      { source_id: "l".repeat(980), failure_reason: "HTTP 500" },
+      { source_id: "short-id", failure_reason: "HTTP 403" },
+    ]);
+
+    expect(reason.length).toBeLessThanOrEqual(MAX_FAILURE_REASON);
+    expect(reason).toContain("; short-id: HTTP 403");
+  });
+
+  it("fits 13 Sources with 60-character IDs and long reasons", () => {
+    const failed = Array.from({ length: 13 }, (_, i) => ({
+      source_id: `${String(i).padStart(2, "0")}${"s".repeat(58)}`,
+      failure_reason: "r".repeat(300),
+    }));
+    const reason = allFailedReason(failed);
+
+    expect(reason.length).toBeLessThanOrEqual(MAX_FAILURE_REASON);
+    for (const f of failed) expect(reason).toContain(`${f.source_id}: r`);
+  });
 });

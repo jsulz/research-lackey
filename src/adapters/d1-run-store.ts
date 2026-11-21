@@ -2,7 +2,6 @@ import type {
   FinalStatus,
   Item,
   Poll,
-  PollCounts,
   PublicReport,
   ReportFinding,
   ReportRecord,
@@ -13,6 +12,7 @@ import type {
   RunStore,
   Schedule,
   Source,
+  SourcePollCounts,
   StepName,
   StepUsage,
   Topic,
@@ -304,24 +304,16 @@ export class D1RunStore implements RunStore {
   }
 
   async recordPolls(runId: string, polls: Poll[]): Promise<void> {
-    if (polls.length === 0) return;
-    const upsert = this.db.prepare(
+    const insert = this.db.prepare(
       `INSERT INTO polls
          (run_id, source_id, outcome, attempts, items_read, failure_reason, duration_ms)
-       VALUES (?, ?, ?, ?, ?, ?, ?)
-       ON CONFLICT (run_id, source_id) DO UPDATE SET
-         outcome = excluded.outcome,
-         attempts = excluded.attempts,
-         items_read = excluded.items_read,
-         items_new = NULL,
-         items_filtered = NULL,
-         failure_reason = excluded.failure_reason,
-         duration_ms = excluded.duration_ms,
-         created_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now')`,
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
     );
-    await this.db.batch(
-      polls.map((p) =>
-        upsert.bind(
+    // One transaction: an earlier attempt's Polls go, this attempt's come in.
+    await this.db.batch([
+      this.db.prepare("DELETE FROM polls WHERE run_id = ?").bind(runId),
+      ...polls.map((p) =>
+        insert.bind(
           runId,
           p.source_id,
           p.outcome,
@@ -331,16 +323,17 @@ export class D1RunStore implements RunStore {
           p.duration_ms,
         ),
       ),
-    );
+    ]);
   }
 
-  async recordPollCounts(runId: string, sourceId: string, counts: PollCounts): Promise<void> {
-    await this.db
-      .prepare(
-        "UPDATE polls SET items_new = ?, items_filtered = ? WHERE run_id = ? AND source_id = ?",
-      )
-      .bind(counts.items_new, counts.items_filtered, runId, sourceId)
-      .run();
+  async recordPollCounts(runId: string, counts: SourcePollCounts[]): Promise<void> {
+    if (counts.length === 0) return;
+    const update = this.db.prepare(
+      "UPDATE polls SET items_new = ?, items_filtered = ? WHERE run_id = ? AND source_id = ?",
+    );
+    await this.db.batch(
+      counts.map((c) => update.bind(c.items_new, c.items_filtered, runId, c.source_id)),
+    );
   }
 
   async recordItems(runId: string, items: Item[]): Promise<void> {
