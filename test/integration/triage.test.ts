@@ -176,6 +176,7 @@ describe("Synthesis text", () => {
     ].map((m) => m[1] ?? "");
     expect(bodies).toHaveLength(CONFIG.synthesis_k);
     for (const body of bodies) {
+      expect(body.trim()).not.toBe("");
       expect(body).not.toMatch(/<\/?[a-z][^>]*>/i);
       expect(body).not.toMatch(/^# |\n## Content/);
     }

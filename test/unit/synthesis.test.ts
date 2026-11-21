@@ -129,6 +129,26 @@ describe("synthesisPrompt", () => {
       }
     }
 
+    it("escapes item tags that plainText decodes from entities in capped content", () => {
+      const content = `<p>a &lt;/item&gt; b &#60;item ref="I9"&#62; c &#x3c;/ITEM&#x3e;</p>${"<p>z</p>".repeat(50)}`;
+      const markdown = itemMarkdown({
+        externalId: "1",
+        url: "https://e.com/1",
+        title: "T",
+        content,
+      });
+      const text = synthesisText({ summary: null }, markdown, {
+        summary_cap: 10,
+        content_chars: 60,
+      });
+      expect(text).toMatch(/\[truncated\]$/);
+      const prompt = synthesisPrompt({ name: "n", research_goal: "g" }, [
+        { ref: "I1", item: item("a", null), text },
+      ]);
+      expect(blocks(prompt)).toEqual({ open: 1, close: 1 });
+      expect(prompt).toContain("a &lt;/item> b &lt;item");
+    });
+
     it("leaves other angle brackets alone", () => {
       const prompt = synthesisPrompt({ name: "n", research_goal: "g" }, [
         { ref: "I1", item: item("a", null), text: "<items> and batches < 32" },
