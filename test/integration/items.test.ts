@@ -195,9 +195,10 @@ describe("Runs read fixture feeds and record deduplicated Items", () => {
       ["t-wrong", "failed", null],
     ]);
     // Each Poll keeps its own reason, and the Run's reason carries it in full.
-    const wrong = rows.find((p) => p.source_id === "t-wrong")?.failure_reason ?? "";
-    expect(wrong.length).toBeGreaterThan(0);
-    expect(run.failure_reason).toContain(`t-wrong: ${wrong}`);
+    expect(rows.find((p) => p.source_id === "t-wrong")?.failure_reason).toBe(
+      "Not an Atom document: no feed element",
+    );
+    expect(run.failure_reason).toContain("t-wrong: Not an Atom document: no feed element");
     expect(rows.find((p) => p.source_id === "t-missing")?.failure_reason).toBe(
       "Fixture not found: missing.atom.xml",
     );
