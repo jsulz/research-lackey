@@ -56,7 +56,7 @@ Prompts are bundled into the Worker, so a prompt edit can only be tried locally.
 2. `npm run replay -- --from-prod <run id> --from synthesis --config <copy>` copies the Run, then prints `Replay <replay id>`.
 3. Compare the Runs: `npx wrangler d1 execute research-lackey --local --command "select id, prompt_hashes from runs"`.
 
-The copy holds what the Replay reads: the Run row, its Topic and Sources when local D1 lacks them, the Step artifacts of every stage before `--from`, the Items those artifacts list and the Items' content. Rows are upserted and objects overwritten, so the same Run can be copied again and again. A local Run with the same ID is replaced, and the copied Items count as seen locally.
+The copy holds what the Replay reads: the Run row, its Topic and Sources when local D1 lacks them, the Step artifacts of every stage before `--from`, the Items those artifacts list and the Items' content. Rows are upserted and objects overwritten, so the same Run can be copied again and again. A local Run with the same ID is replaced, and the copied Items count as seen locally when the Run that first recorded them completed.
 
 Production is only read: one `SELECT` or one object download per command, checked before each command runs. Every Wrangler command is printed with a `[prod]` or `[local]` tag. The source Run must have ended and must not be a Replay.
 
