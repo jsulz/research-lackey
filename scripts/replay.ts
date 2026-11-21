@@ -51,6 +51,8 @@ if (args.from_prod) {
       );
     });
   const tmpDir = mkdtempSync(path.join(tmpdir(), "replay-from-prod-"));
+  // `fail` exits at once, so the temp directory is removed before it is called.
+  let failure: string | undefined;
   try {
     const copied = await copyFromProd({
       runId: args.run,
@@ -63,10 +65,10 @@ if (args.from_prod) {
       `Copied Run ${args.run} from production: ${copied.artifacts} Step artifacts, ${copied.items} Items, ${copied.objects} objects`,
     );
   } catch (err) {
-    fail(err instanceof Error ? err.message : String(err), 1);
-  } finally {
-    rmSync(tmpDir, { recursive: true, force: true });
+    failure = err instanceof Error ? err.message : String(err);
   }
+  rmSync(tmpDir, { recursive: true, force: true });
+  if (failure !== undefined) fail(failure, 1);
 }
 
 // The source Run's Topic, from local D1. The Run ID is validated, so quoting it is safe.

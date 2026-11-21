@@ -296,6 +296,12 @@ describe("copyFromProd", () => {
       /has not ended/,
     ],
     [
+      "an Item first seen by a Run that has not ended",
+      (f: Fake) => f.prodDb.exec(`UPDATE runs SET status = 'running' WHERE id = '${OLDER_RUN}'`),
+      RUN,
+      new RegExp(`${OLDER_RUN} has not ended`),
+    ],
+    [
       "a Replay",
       (f: Fake) =>
         f.prodDb.exec(
@@ -385,6 +391,9 @@ describe("isItemContentKey", () => {
     ["a dot segment", "items/./a/r1.md"],
     ["an empty segment", "items//a/r1.md"],
     ["a trailing slash", "items/a/b/r1.md/"],
+    ["a backslash", "items/a/..\\..\\b/r1.md"],
+    ["an extra segment", "items/a/b/c/r1.md"],
+    ["a Run segment that is not a Run ID", "items/a/b/r.1.md"],
     ["a query", "items/a/b/r1.md?versionId=1"],
     ["a fragment", "items/a/b#/r1.md"],
     ["whitespace", "items/a b/c/r1.md"],

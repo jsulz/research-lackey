@@ -34,16 +34,21 @@ export function stagesBefore(from: ReplayStage): StepName[] {
   return from === "triage" ? ["fetch", "dedupe"] : ["fetch", "dedupe", "triage"];
 }
 
+/** One path segment as `encodeURIComponent` or a Source ID can produce it. */
+const KEY_SEGMENT = "[A-Za-z0-9_.!~*'()%-]+";
+const ITEM_CONTENT_KEY = new RegExp(
+  `^items/${KEY_SEGMENT}/${KEY_SEGMENT}/[A-Za-z0-9_-]{1,100}\\.md$`,
+);
+
 /**
- * True for an R2 key as `dedupe` writes Item content: `items/<source>/<encoded key>/<run>.md`, with
- * nothing that would change the object path (dot segments, empty segments, `?`, `#`, whitespace or
- * control characters).
+ * True for an R2 key exactly as `dedupe` writes Item content:
+ * `items/<source>/<encodeURIComponent(item key)>/<run id>.md`. Anything else is refused, so no
+ * character that changes an object path (a separator, a backslash, `?`, `#`, a dot segment)
+ * reaches Wrangler.
  */
 export function isItemContentKey(key: unknown): key is string {
-  if (typeof key !== "string" || !key.startsWith("items/") || !key.endsWith(".md")) return false;
-  // biome-ignore lint/suspicious/noControlCharactersInRegex: control characters are what it rejects
-  if (/[?#\s\u0000-\u001f\u007f]/.test(key)) return false;
-  return key.split("/").every((segment) => segment !== "" && segment !== "." && segment !== "..");
+  if (typeof key !== "string" || !ITEM_CONTENT_KEY.test(key)) return false;
+  return key.split("/").every((segment) => segment !== "." && segment !== "..");
 }
 
 /**
@@ -251,6 +256,13 @@ export async function copyFromProd(
     otherRunIds.length === 0
       ? []
       : await query(`SELECT * FROM runs WHERE id IN (${otherRunIds.map(sqlValue).join(", ")})`);
+  // An active Run copied without its Workflow instance would hold the Topic's one active slot.
+  const active = otherRuns.find((row) => !FINAL_STATUSES.includes(row.status as string));
+  if (active) {
+    throw new Error(
+      `Run ${String(active.id)} has not ended (status ${String(active.status)}); it holds an Item this Run lists. Copy again when it ends`,
+    );
+  }
 
   const contentKeys = [...new Set(wanted.map((r) => r.content_key))];
   const contents = await mapLimit(contentKeys, CONCURRENCY, async (key, i) => ({
