@@ -8,6 +8,7 @@ describe("Node entry points load", () => {
   it.each([
     ["scripts/run-local.ts", "usage: npm run run:local"],
     ["scripts/replay.ts", "usage: npm run replay"],
+    ["scripts/review-stub.ts", "usage: npm run review-stub"],
   ])("%s prints its usage", (script, usage) => {
     const result = spawnSync(process.execPath, [script], { encoding: "utf8" });
 

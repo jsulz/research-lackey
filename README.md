@@ -33,6 +33,7 @@ Scheduled research Runs on Cloudflare Workers. A Worker serves a React homepage 
 | `npm run types` | Regenerate `worker-configuration.d.ts` after changing `wrangler.jsonc` |
 | `npm run run:local -- --topic <id>` | Start a manual Run against `npm run dev` and print its Run ID (`--port` if not 8787) |
 | `npm run replay -- --run <id> --from triage\|synthesis --config <file>` | Replay a local Run from a stage with another config and print the Replay's Run ID (see [Replay](#replay)) |
+| `npm run review-stub -- <report_id>` | Print a Markdown block for recording a verdict on a public Report and a label on each Finding (`--base-url` for a Worker other than production) |
 | `npm run screenshot -- <url> <out.png>` | Screenshot a page with Playwright (`--wait <selector>`, `--map <host>=<ip>`) |
 | `npm run deploy` | Build and deploy to production by hand (CI does this on every merge to `main`) |
 
