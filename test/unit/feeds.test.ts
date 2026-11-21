@@ -246,6 +246,26 @@ describe("parseFeed, Atom elements with a namespace prefix", () => {
     ]);
   });
 
+  it("reads every entry and link when Atom is bound to both the default namespace and a prefix", () => {
+    const text = `<a:feed xmlns:a="${ATOM_NS}" xmlns="${ATOM_NS}">
+      <a:entry><a:id>1</a:id><a:link rel="self" href="https://example.com/self"/><link href="https://example.com/alt"/></a:entry>
+      <entry><id>2</id><title type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml">Second <b>entry</b></div></title></entry>
+      <a:entry><a:id>3</a:id><a:title>Third</a:title></a:entry>
+    </a:feed>`;
+    expect(parseFeed("atom", text).map((i) => [i.externalId, i.url, i.title])).toEqual([
+      ["1", "https://example.com/alt", ""],
+      ["2", "", "Second entry"],
+      ["3", "", "Third"],
+    ]);
+  });
+
+  it("reads a prefix that contains a dot", () => {
+    const text = `<a.b:feed xmlns:a.b="${ATOM_NS}"><a.b:entry><a.b:id>urn:x:1</a.b:id><a.b:link href="https://example.com/1"/></a.b:entry></a.b:feed>`;
+    expect(parseFeed("atom", text)).toEqual([
+      expect.objectContaining({ externalId: "urn:x:1", url: "https://example.com/1" }),
+    ]);
+  });
+
   it("leaves a prefix bound to another namespace alone", () => {
     const text = `<x:feed xmlns:x="http://example.com/not-atom"><x:entry><x:id>1</x:id></x:entry></x:feed>`;
     expect(() => parseFeed("atom", text)).toThrow(/no feed element/);
@@ -287,6 +307,11 @@ describe("parseFeed, Atom XHTML text", () => {
       "one two",
     ],
     ["list items", `<div ${XHTML}><ul><li>one</li><li>two</li></ul></div>`, "one two"],
+    [
+      "a search element",
+      `<div ${XHTML}>Intro<search>Find papers</search>End</div>`,
+      "Intro Find papers End",
+    ],
     [
       "details and summary",
       `<div ${XHTML}>Intro<details><summary>Notes</summary>Body</details>End</div>`,

@@ -60,50 +60,57 @@ function parseRss(text: string): RawItem[] {
 }
 
 function parseAtom(text: string): RawItem[] {
-  let doc = parseXml(text);
-  const prefixed = atomNames(doc);
-  if (prefixed)
-    doc = new XMLParser({ ...xmlOptions, isArray: atomIsArray(prefixed) }).parse(text) as Node;
-  const names = prefixed ?? ((tag: string) => tag);
-  const [, feedNode] = atomChild(doc, names, "feed") ?? [];
-  if (!feedNode) throw new Error("Not an Atom document: no feed element");
-  const [entryKey, entryNodes] = atomChild(fields(feedNode), names, "entry") ?? [];
-  const entries = Array.isArray(entryNodes) ? entryNodes : [];
+  const plain = parseXml(text);
+  const canonical = atomCanonicalNames(plain);
+  // Element names as the parse reads them: canonical when the root binds an Atom prefix.
+  const k = canonical ? (local: string) => `${ATOM_MARK}${local}` : (local: string) => local;
+  const doc = canonical
+    ? (new XMLParser({
+        ...xmlOptions,
+        transformTagName: canonical,
+        isArray: (_name, jpath) =>
+          jpath === `${k("feed")}.${k("entry")}` ||
+          jpath === `${k("feed")}.${k("entry")}.${k("link")}`,
+      }).parse(text) as Node)
+    : plain;
+  const feed = doc[k("feed")] as Node | undefined;
+  if (!feed) throw new Error("Not an Atom document: no feed element");
+  const entries = (feed[k("entry")] as unknown[] | undefined) ?? [];
   let ordered: Node[][] | undefined;
   return entries.map((node, i) => {
     const entry = fields(node);
-    const field = (name: string) => atomChild(entry, names, name);
+    const field = (local: string) => entry[k(local)];
     /** Text of an Atom text construct: an XHTML one is read from the order-preserving parse. */
-    const textField = (name: string): string => {
-      const [key, value] = field(name) ?? [];
-      if (key === undefined || fields(value)["@_type"] !== "xhtml") return textOf(value);
-      ordered ??= orderedEntries(text, names, entryKey ?? "entry");
-      return textOf(orderedText(childNodes(ordered[i], key)));
+    const textField = (local: string): string => {
+      if (fields(field(local))["@_type"] !== "xhtml") return textOf(field(local));
+      ordered ??= orderedEntries(text, canonical, k);
+      return textOf(orderedText(childNodes(ordered[i], k(local))));
     };
     return identified(i, {
-      externalId: idOf(field("id")?.[1]),
-      url: alternateLink(field("link")?.[1] as unknown[] | undefined),
+      externalId: idOf(field("id")),
+      url: alternateLink(field("link") as unknown[] | undefined),
       title: textField("title"),
       summary: optional(textField("summary")),
       content: optional(textField("content")),
-      publishedAt:
-        isoDate(textOf(field("published")?.[1])) ?? isoDate(textOf(field("updated")?.[1])),
+      publishedAt: isoDate(textOf(field("published"))) ?? isoDate(textOf(field("updated"))),
     });
   });
 }
 
 const ATOM_NS = "http://www.w3.org/2005/Atom";
 
-/** An element's Atom local name, or undefined when the element is not in the Atom namespace. */
-type AtomNames = (tag: string) => string | undefined;
+/** Starts every canonical Atom element name. `|` cannot occur in an XML name, so no real element collides. */
+const ATOM_MARK = "atom|";
 
 /**
- * Atom local names for a document whose root element binds one or more prefixes to the Atom
- * namespace (`atom:entry` is `entry`), or undefined when it binds none. Elements with another
- * prefix (`media:title`) are not Atom, and unprefixed elements are Atom only when the default
- * namespace is Atom too, so extension elements never replace Atom fields.
+ * A tag-name transform for a document whose root element binds one or more prefixes to the Atom
+ * namespace, or undefined when it binds none. Every Atom element, under any of its prefixes, is
+ * renamed `atom|<local name>`, so aliases merge in document order. Other elements keep their
+ * names: `media:title` is not Atom, and an unprefixed element is Atom only when the default
+ * namespace is Atom too. The transform is idempotent, because the parser applies it twice to a
+ * self-closing tag (the second time to its own output).
  */
-function atomNames(doc: Node): AtomNames | undefined {
+function atomCanonicalNames(doc: Node): ((tag: string) => string) | undefined {
   const rootKey = Object.keys(doc).find((key) => !key.startsWith("?"));
   const root = fields(rootKey === undefined ? undefined : doc[rootKey]);
   const prefixes = new Set(
@@ -114,43 +121,34 @@ function atomNames(doc: Node): AtomNames | undefined {
   if (prefixes.size === 0) return undefined;
   const unprefixedIsAtom = idOf(root["@_xmlns"]) === ATOM_NS;
   return (tag) => {
+    if (tag.startsWith(ATOM_MARK) || tag.startsWith("?") || tag.startsWith("!")) return tag;
     const colon = tag.indexOf(":");
-    if (colon === -1) return unprefixedIsAtom ? tag : undefined;
-    return prefixes.has(tag.slice(0, colon)) ? tag.slice(colon + 1) : undefined;
+    if (colon === -1) return unprefixedIsAtom ? `${ATOM_MARK}${tag}` : tag;
+    return prefixes.has(tag.slice(0, colon)) ? `${ATOM_MARK}${tag.slice(colon + 1)}` : tag;
   };
-}
-
-/** The default parser's array rule, applied to Atom local names. */
-function atomIsArray(names: AtomNames): (name: string, jpath: unknown) => boolean {
-  return (_name, jpath) => {
-    const local = String(jpath)
-      .split(".")
-      .map((segment) => names(segment) ?? "")
-      .join(".");
-    return local === "feed.entry" || local === "feed.entry.link";
-  };
-}
-
-/** The first child element of `node` whose Atom local name is `name`, as `[key, value]`. */
-function atomChild(node: Node, names: AtomNames, name: string): [string, unknown] | undefined {
-  return Object.entries(node).find(([key]) => !key.startsWith("@_") && names(key) === name);
 }
 
 /**
  * Each entry's child nodes from an order-preserving parse, which keeps the text and elements of
- * mixed XHTML content in document order and untrimmed. Entries are the `entryKey` elements of the
- * feed, the same ones and in the same order as the default parse reads.
+ * mixed XHTML content in document order and untrimmed. It uses the same names as the default
+ * parse, so its entries are the same ones in the same order.
  */
-function orderedEntries(text: string, names: AtomNames, entryKey: string): Node[][] {
+function orderedEntries(
+  text: string,
+  canonical: ((tag: string) => string) | undefined,
+  k: (local: string) => string,
+): Node[][] {
   const ordered = new XMLParser({
     ...xmlOptions,
     isArray: undefined,
     preserveOrder: true,
     trimValues: false,
+    transformTagName: canonical ?? false,
   }).parse(text) as Node[];
-  const feedKey = ordered.flatMap(Object.keys).find((key) => names(key) === "feed") ?? "feed";
-  const feed = childNodes(ordered, feedKey);
-  return feed.filter((node) => entryKey in node).map((node) => nodeList(node[entryKey]));
+  const entry = k("entry");
+  return childNodes(ordered, k("feed"))
+    .filter((node) => entry in node)
+    .map((node) => nodeList(node[entry]));
 }
 
 /** The child nodes of the first element named `key` among `nodes`. */
@@ -165,7 +163,7 @@ function nodeList(value: unknown): Node[] {
 
 /** Elements whose boundaries separate words in XHTML text. */
 const XHTML_BLOCKS = new Set(
-  "address article aside blockquote br caption dd details dialog div dl dt fieldset figcaption figure footer form h1 h2 h3 h4 h5 h6 header hr legend li main menu nav ol p pre section summary table tbody td tfoot th thead tr ul".split(
+  "address article aside blockquote br caption dd details dialog div dl dt fieldset figcaption figure footer form h1 h2 h3 h4 h5 h6 header hr legend li main menu nav ol p pre search section summary table tbody td tfoot th thead tr ul".split(
     " ",
   ),
 );
@@ -180,7 +178,7 @@ function orderedText(nodes: Node[]): string {
     for (const [key, value] of Object.entries(node)) {
       if (key === "#text") out += String(value);
       else if (key !== ":@" && !key.startsWith("?")) {
-        const local = key.slice(key.indexOf(":") + 1);
+        const local = key.replace(/^.*[:|]/, "");
         const brk = XHTML_BLOCKS.has(local) ? " " : "";
         out += brk + orderedText(nodeList(value)) + brk;
       }
