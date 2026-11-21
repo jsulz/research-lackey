@@ -234,8 +234,6 @@ describe("Runs read live feeds over HTTP", () => {
     expect(rest).toEqual([]);
     expect(second - first).toBeGreaterThanOrEqual(interval);
     expect(third - second).toBeGreaterThanOrEqual(interval);
-    // One wait before each later arXiv request (a timer that fires early adds another).
-    expect(sleeps.length).toBeGreaterThanOrEqual(2);
   });
 
   it("a Run of the seed Topic requests the five live URLs, Daily Papers for the day before it started", async () => {

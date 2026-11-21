@@ -21,7 +21,7 @@ const SETTINGS: FetchConfig = {
 type Step = number | "ok" | "network" | "hang" | "stalled-body" | "stalled-404" | { body: string };
 
 /** A fetcher over a scripted outbound fetch and a virtual clock that only `sleep` advances. */
-function harness(steps: Step[], settings: Partial<FetchConfig> = {}) {
+function harness(steps: Step[], settings: Partial<FetchConfig> = {}, latencyMs = 0) {
   let clock = 0;
   const sleeps: number[] = [];
   const requests: { url: string; init: OutboundInit; at: number }[] = [];
@@ -36,6 +36,8 @@ function harness(steps: Step[], settings: Partial<FetchConfig> = {}) {
     fetch: async (url, init) => {
       requests.push({ url, init, at: clock });
       const step = queue.shift() ?? "ok";
+      // The response takes this long to arrive, on the virtual clock.
+      clock += latencyMs;
       if (step === "network") throw new TypeError("connection reset");
       if (step === "hang") {
         return new Promise<Response>((_resolve, reject) => {
@@ -204,6 +206,17 @@ describe("HttpSourceFetcher", () => {
 
       expect(h.sleeps).toEqual([3_000]);
       expect(h.requests.map((r) => r.at)).toEqual([0, 0, 3_000]);
+    });
+
+    it("measures the interval from the end of the previous request, not its start", async () => {
+      const h = harness(["ok", "ok"], spaced, 500);
+
+      await h.fetcher.fetch(request("https://export.arxiv.org/api/query?a"));
+      await h.fetcher.fetch(request("https://export.arxiv.org/api/query?b"));
+
+      // The first request starts at 0 and ends at 500; the second starts 3,000 after that.
+      expect(h.sleeps).toEqual([3_000]);
+      expect(h.requests.map((r) => r.at)).toEqual([0, 3_500]);
     });
 
     it("waits only for what is left of the interval", async () => {
