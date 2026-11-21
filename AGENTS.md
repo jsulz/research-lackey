@@ -12,7 +12,7 @@ Read `docs/dev-loop.md` first. It covers commands, receipts, conventions, ship s
 | `src/web/` | React SPA built by Vite into `dist/client`. Keep testable logic in plain `.ts` modules with no DOM |
 | `migrations/` | D1 schema and seed, applied in order |
 | `scripts/` | Node scripts run with type stripping (`docs-interfaces.ts`, `screenshot.ts`) |
-| `test/unit/` | Vitest in Node. No Workers runtime, no network |
+| `test/unit/` | Vitest in Node. No Workers runtime, no network. Code that names Worker binding types (`Workflow`, `InstanceStatus`, `D1Database`) does not typecheck here; test it in `test/integration/`, even with a fake binding |
 | `test/integration/` | Vitest in the Workers runtime (`@cloudflare/vitest-plugin`) with local D1. Requests go through `exports.default.fetch` |
 
 ## Rules
