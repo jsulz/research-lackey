@@ -60,11 +60,11 @@ describe("RunWorkflow", () => {
     const fetch = await env.ARTIFACTS.get(`runs/${run.id}/steps/fetch.json`);
     const fetched = (await fetch?.json()) as {
       input: unknown;
-      output: { sources: { source_id: string; items: unknown[] }[] };
+      output: { sources: { source_id: string; items_read: number }[] };
     };
     expect(fetched.input).toEqual({ topic_id: "ai-infra" });
     // The seeded Sources (migration 0004), ordered by ID, with their fixture entry counts.
-    expect(fetched.output.sources.map((s) => [s.source_id, s.items.length])).toEqual([
+    expect(fetched.output.sources.map((s) => [s.source_id, s.items_read])).toEqual([
       ["arxiv-serving", 50],
       ["hf-daily-papers", 34],
       ["modal-blog", 157],

@@ -1,4 +1,4 @@
-import type { ArtifactStore, ReportDocument, StepArtifact, StepName } from "../core/ports";
+import type { ArtifactStore, RawItem, ReportDocument, StepArtifact, StepName } from "../core/ports";
 
 /** ArtifactStore backed by R2. Step artifacts are JSON at `runs/<run_id>/steps/<stage>.json`. */
 export class R2ArtifactStore implements ArtifactStore {
@@ -24,6 +24,19 @@ export class R2ArtifactStore implements ArtifactStore {
       httpMetadata: { contentType: "text/markdown; charset=utf-8" },
     });
     return key;
+  }
+
+  async putRawEntries(runId: string, sourceId: string, entries: RawItem[]): Promise<string> {
+    const key = `runs/${runId}/raw/${encodeURIComponent(sourceId)}.json`;
+    await this.bucket.put(key, JSON.stringify(entries), {
+      httpMetadata: { contentType: "application/json" },
+    });
+    return key;
+  }
+
+  async getRawEntries(key: string): Promise<RawItem[] | null> {
+    const object = await this.bucket.get(key);
+    return object ? object.json<RawItem[]>() : null;
   }
 
   async getItemContent(contentKey: string): Promise<string | null> {

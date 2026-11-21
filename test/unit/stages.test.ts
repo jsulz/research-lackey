@@ -19,7 +19,8 @@ function source(id: string): FetchedSource {
     format: "rss2",
     outcome: "succeeded",
     failure_reason: null,
-    items: [{ externalId: `${id}-1`, url: `https://example.com/${id}`, title: id }],
+    items_read: 1,
+    entries_key: `raw/${id}`,
   };
 }
 
@@ -35,6 +36,10 @@ function dedupeWith(failFor: string) {
     },
   } as unknown as RunStore;
   const artifacts = {
+    getRawEntries: async (key: string) => {
+      const id = key.slice("raw/".length);
+      return [{ externalId: `${id}-1`, url: `https://example.com/${id}`, title: id }];
+    },
     putItemContent: async (sourceId: string) => {
       if (sourceId === failFor) throw new Error("R2 unavailable");
       return `items/${sourceId}`;
@@ -63,7 +68,7 @@ describe("dedupe Poll counts", () => {
     const d = dedupeWith("none");
     await d.run([
       source("a"),
-      { ...source("b"), outcome: "failed", failure_reason: "x", items: [] },
+      { ...source("b"), outcome: "failed", failure_reason: "x", items_read: 0, entries_key: null },
       source("c"),
     ]);
 

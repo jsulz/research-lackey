@@ -2,6 +2,7 @@ import { introspectWorkflowInstance } from "cloudflare:test";
 import { env } from "cloudflare:workers";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { D1RunStore } from "../../src/adapters/d1-run-store";
+import { FixtureSourceFetcher } from "../../src/adapters/fixture-source-fetcher";
 import type { FeedFormat, Run } from "../../src/core/ports";
 import { deleteRuns, deleteTestTopics } from "./cleanup";
 
@@ -100,20 +101,63 @@ describe("Runs read fixture feeds and record deduplicated Items", () => {
     await deleteTestTopics();
   });
 
-  it("returns each Source's parsed entries in the fetch Step artifact", async () => {
+  it("writes each Source's raw entries to R2 under the Run, and fetch returns only references and counts", async () => {
     await addSource("t-vllm", "rss2", "vllm-blog.rss.xml");
     await addSource("t-hf", "hf_daily_papers", "hf-daily-papers-2026-11-13.json");
+    await addSource("t-none", "rss2", null);
     const run = await runTopic("items-fetch");
 
     expect(run.status).toBe("completed_no_new_findings");
-    const output = await stepOutput<{ sources: { source_id: string; items: unknown[] }[] }>(
-      run.id,
-      "fetch",
-    );
-    expect(output.sources.map((s) => [s.source_id, s.items.length])).toEqual([
-      ["t-hf", 34],
-      ["t-vllm", 50],
-    ]);
+    expect(await stepOutput(run.id, "fetch")).toEqual({
+      sources: [
+        {
+          source_id: "t-hf",
+          format: "hf_daily_papers",
+          outcome: "succeeded",
+          failure_reason: null,
+          items_read: 34,
+          entries_key: "runs/items-fetch/raw/t-hf.json",
+        },
+        {
+          source_id: "t-none",
+          format: "rss2",
+          outcome: "failed",
+          failure_reason: "Source t-none has no fixture",
+          items_read: 0,
+          entries_key: null,
+        },
+        {
+          source_id: "t-vllm",
+          format: "rss2",
+          outcome: "succeeded",
+          failure_reason: null,
+          items_read: 50,
+          entries_key: "runs/items-fetch/raw/t-vllm.json",
+        },
+      ],
+    });
+    const hf = await env.ARTIFACTS.get("runs/items-fetch/raw/t-hf.json");
+    const vllm = await env.ARTIFACTS.get("runs/items-fetch/raw/t-vllm.json");
+    const vllmEntries = (await vllm?.json()) as { title: string }[];
+    expect((await hf?.json()) as unknown[]).toHaveLength(34);
+    expect(vllmEntries).toHaveLength(50);
+    expect(vllmEntries[0]).toMatchObject({ title: expect.any(String), url: expect.any(String) });
+  });
+
+  it("completes a Run whose feeds total more than 1 MiB of entries", async () => {
+    const entries = await new FixtureSourceFetcher().fetch({
+      id: "t-big",
+      topic_id: TOPIC,
+      format: "atom",
+      fixture_ref: "oversized.atom.xml",
+    });
+    expect(new TextEncoder().encode(JSON.stringify(entries)).length).toBeGreaterThan(1024 * 1024);
+    await addSource("t-big", "atom", "oversized.atom.xml");
+    await addSource("t-vllm", "rss2", "vllm-blog.rss.xml");
+    const run = await runTopic("items-oversized");
+
+    expect(run.status).toBe("completed_no_new_findings");
+    expect(await itemCount(run.id)).toBe(12 + 50);
   });
 
   it("records one succeeded Poll per Source with its counts", async () => {
