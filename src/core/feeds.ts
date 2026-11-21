@@ -166,13 +166,17 @@ function nodeList(value: unknown): Node[] {
 
 /** Elements whose boundaries separate words in XHTML text. */
 const XHTML_BLOCKS = new Set(
-  "address article aside blockquote br caption dd details dialog div dl dt fieldset figcaption figure footer form h1 h2 h3 h4 h5 h6 header hr legend li main menu nav ol p pre search section summary table tbody td tfoot th thead tr ul".split(
+  "address article aside blockquote br caption center dd details dialog div dl dt fieldset figcaption figure footer form h1 h2 h3 h4 h5 h6 header hr legend li main menu nav ol p pre search section summary table tbody td tfoot th thead tr ul".split(
     " ",
   ),
 );
 
+/** Elements whose bodies are not text, as `plainText` in `item-text.ts` also drops them. */
+const XHTML_SKIPPED = new Set(["script", "style", "svg", "template"]);
+
 /**
- * The character data of ordered nodes in document order, with block elements as word breaks.
+ * The character data of ordered nodes in document order, with block elements as word breaks and
+ * script, style, svg and template bodies left out.
  * The parser rejects nesting deeper than 100 elements, which bounds the recursion.
  */
 function orderedText(nodes: Node[]): string {
@@ -182,6 +186,7 @@ function orderedText(nodes: Node[]): string {
       if (key === "#text") out += String(value);
       else if (key !== ":@" && !key.startsWith("?")) {
         const local = key.replace(/^.*[:|]/, "");
+        if (XHTML_SKIPPED.has(local)) continue;
         const brk = XHTML_BLOCKS.has(local) ? " " : "";
         out += brk + orderedText(nodeList(value)) + brk;
       }

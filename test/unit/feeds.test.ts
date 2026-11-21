@@ -320,6 +320,16 @@ describe("parseFeed, Atom XHTML text", () => {
       "Intro Find papers End",
     ],
     [
+      "script, style, svg and template bodies",
+      `<div ${XHTML}><style>.note { color: red; }</style><p>Results</p><script>alert(1)</script><template>t</template><svg xmlns="http://www.w3.org/2000/svg"><title>icon</title></svg></div>`,
+      "Results",
+    ],
+    [
+      "a center element",
+      `<div ${XHTML}>before<center>centered</center>after</div>`,
+      "before centered after",
+    ],
+    [
       "details and summary",
       `<div ${XHTML}>Intro<details><summary>Notes</summary>Body</details>End</div>`,
       "Intro Notes Body End",
