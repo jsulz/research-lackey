@@ -14,6 +14,7 @@ How to work in this repo: commands, environments, receipts, conventions, ship st
 | Fire the cron locally | `curl "http://localhost:8787/cdn-cgi/handler/scheduled?cron=*/15+*+*+*+*&time=<ms>"` | Needs `npm run dev` running. `time` is the tick in Unix milliseconds; omit it to use now. Starts a `scheduled` Run for each due Topic |
 | Replay a Run | `npm run replay -- --run <id> --from triage\|synthesis --config <file>` | Needs `npm run dev` running. Local only. `<file>` is `.json` or a copy of `src/core/config.ts`. Prints the Replay's Run ID |
 | Print a Report review block | `npm run review-stub -- <report_id>` | Reads `GET /api/reports/:id` from production, no credentials. `--base-url http://localhost:8787` for a local Report. Exits 1 with the API status and body when the request fails |
+| Show Source health | `npm run sources` | Reads Sources and Polls from production D1 with Wrangler (needs `npx wrangler login`); `-- --local` reads local D1. One row per Source: last outcome, last Poll time, Items new in the last Poll, failed Polls in its last 10 Runs. Flags a Source whose last 3 Polls all failed. Exits 1 with Wrangler's output when the read fails |
 | Regenerate interface docs | `npm run docs:interfaces` | Writes `docs/interfaces.md` from `src/core/ports.ts` |
 | Regenerate binding types | `npm run types` | Rerun after changing `wrangler.jsonc` |
 | Query local D1 | `npx wrangler d1 execute research-lackey --local --command "<sql>"` | Use `--remote` for production, read-only queries only |
