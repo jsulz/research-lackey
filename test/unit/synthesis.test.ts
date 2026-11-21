@@ -147,6 +147,7 @@ describe("synthesisPrompt", () => {
       ]);
       expect(blocks(prompt)).toEqual({ open: 1, close: 1 });
       expect(prompt).toContain("a &lt;/item> b &lt;item");
+      expect(prompt).toContain("c &lt;/ITEM>");
     });
 
     it("leaves other angle brackets alone", () => {
