@@ -221,6 +221,31 @@ describe("parseFeed, Atom elements with a namespace prefix", () => {
     ]);
   });
 
+  it.each([
+    ["a non-Atom default namespace", ' xmlns="urn:example:extension"'],
+    ["no default namespace", ""],
+  ])("keeps unprefixed elements out of a prefixed Atom feed with %s", (_case, defaultNs) => {
+    const text = `<a:feed xmlns:a="${ATOM_NS}"${defaultNs}>
+      <a:entry><a:id>urn:x:1</a:id><title>Extension</title><a:title>Atom title</a:title><link href="https://example.com/ext"/></a:entry>
+      <entry><id>urn:x:extension</id><title>Extension entry</title></entry>
+    </a:feed>`;
+    expect(parseFeed("atom", text)).toEqual([
+      expect.objectContaining({ externalId: "urn:x:1", title: "Atom title", url: "" }),
+    ]);
+  });
+
+  it("reads unprefixed elements as Atom when the default namespace is Atom as well", () => {
+    const text = `<a:feed xmlns:a="${ATOM_NS}" xmlns="${ATOM_NS}">
+      <a:entry><id>urn:x:1</id><a:title>Mixed</a:title><link href="https://example.com/1"/></a:entry></a:feed>`;
+    expect(parseFeed("atom", text)).toEqual([
+      expect.objectContaining({
+        externalId: "urn:x:1",
+        title: "Mixed",
+        url: "https://example.com/1",
+      }),
+    ]);
+  });
+
   it("leaves a prefix bound to another namespace alone", () => {
     const text = `<x:feed xmlns:x="http://example.com/not-atom"><x:entry><x:id>1</x:id></x:entry></x:feed>`;
     expect(() => parseFeed("atom", text)).toThrow(/no feed element/);
@@ -262,6 +287,11 @@ describe("parseFeed, Atom XHTML text", () => {
       "one two",
     ],
     ["list items", `<div ${XHTML}><ul><li>one</li><li>two</li></ul></div>`, "one two"],
+    [
+      "details and summary",
+      `<div ${XHTML}>Intro<details><summary>Notes</summary>Body</details>End</div>`,
+      "Intro Notes Body End",
+    ],
     ["a comment", `<div ${XHTML}>keep<!-- drop -->this</div>`, "keepthis"],
   ])("handles %s", (_case, xhtml, expected) => {
     const [item] = parseFeed("atom", entry(`<title type="xhtml">${xhtml}</title>`));
@@ -285,71 +315,77 @@ describe("parseFeed, Atom XHTML text", () => {
   });
 });
 
+// sha256 of JSON.stringify(parseFeed(format, fixture)), computed on `main` at 5ab5690
+// before the namespace-prefix and XHTML changes.
+const FIXTURE_DIGESTS = [
+  [
+    "arxiv-serving.atom.xml",
+    "atom",
+    50,
+    "a35cd89ba2afdc7eb656406e785417290b44a80210d7ad626e897132eb451721",
+  ],
+  [
+    "hf-daily-papers-2026-11-13.json",
+    "hf_daily_papers",
+    34,
+    "bc054c4d7346f0ff9d65c9f643626517de4e0c115c82799a50b347ae1ef60351",
+  ],
+  [
+    "modal-blog.atom.xml",
+    "atom",
+    157,
+    "04c2af3a9311b5f02d39b0130929aeb25f7a2ce84b16d21679d1a61645186816",
+  ],
+  [
+    "summary-and-content.atom.xml",
+    "atom",
+    2,
+    "6743361d9bbe5d012b56c2c6dc8f8ae8265d47bcc125efb82c5d28b21ad197d6",
+  ],
+  [
+    "vllm-blog-2026-11-17.rss.xml",
+    "rss2",
+    50,
+    "67f71487cae5ba3b10d2888f151e144f18ca1c337682128a33199751b67c4a89",
+  ],
+  [
+    "vllm-blog-plus-one.rss.xml",
+    "rss2",
+    51,
+    "787ed48353a9a3e338bdc650ac193326b8c7d099b331f119e3dba5e2612c67d8",
+  ],
+  [
+    "vllm-blog.rss.xml",
+    "rss2",
+    50,
+    "11a47933bc3221a1adb6591c5123f8d35a516ae070ad9a85a6ee65dddd616588",
+  ],
+  [
+    "vllm-releases-2026-11-17.atom.xml",
+    "atom",
+    10,
+    "5b705192570a5bdd4d59ef54b68ab0f416032ed4223c828419b6ba3c301cea1c",
+  ],
+  [
+    "vllm-releases.atom.xml",
+    "atom",
+    10,
+    "26e76cde4f974743d741dd1bacc59e8bce3f90bf4d0412d71e712f388f390bee",
+  ],
+] as const;
+
 describe("parseFeed, committed fixtures", () => {
-  // sha256 of JSON.stringify(parseFeed(format, fixture)), computed on `main` at 5ab5690
-  // before the namespace-prefix and XHTML changes.
-  it.each([
-    [
-      "arxiv-serving.atom.xml",
-      "atom",
-      50,
-      "a35cd89ba2afdc7eb656406e785417290b44a80210d7ad626e897132eb451721",
-    ],
-    [
-      "hf-daily-papers-2026-11-13.json",
-      "hf_daily_papers",
-      34,
-      "bc054c4d7346f0ff9d65c9f643626517de4e0c115c82799a50b347ae1ef60351",
-    ],
-    [
-      "modal-blog.atom.xml",
-      "atom",
-      157,
-      "04c2af3a9311b5f02d39b0130929aeb25f7a2ce84b16d21679d1a61645186816",
-    ],
-    [
-      "summary-and-content.atom.xml",
-      "atom",
-      2,
-      "6743361d9bbe5d012b56c2c6dc8f8ae8265d47bcc125efb82c5d28b21ad197d6",
-    ],
-    [
-      "vllm-blog-2026-11-17.rss.xml",
-      "rss2",
-      50,
-      "67f71487cae5ba3b10d2888f151e144f18ca1c337682128a33199751b67c4a89",
-    ],
-    [
-      "vllm-blog-plus-one.rss.xml",
-      "rss2",
-      51,
-      "787ed48353a9a3e338bdc650ac193326b8c7d099b331f119e3dba5e2612c67d8",
-    ],
-    [
-      "vllm-blog.rss.xml",
-      "rss2",
-      50,
-      "11a47933bc3221a1adb6591c5123f8d35a516ae070ad9a85a6ee65dddd616588",
-    ],
-    [
-      "vllm-releases-2026-11-17.atom.xml",
-      "atom",
-      10,
-      "5b705192570a5bdd4d59ef54b68ab0f416032ed4223c828419b6ba3c301cea1c",
-    ],
-    [
-      "vllm-releases.atom.xml",
-      "atom",
-      10,
-      "26e76cde4f974743d741dd1bacc59e8bce3f90bf4d0412d71e712f388f390bee",
-    ],
-  ] as const)("%s parses to the same Items as before", (name, format, count, digest) => {
-    const items = parseFeed(format, fixture(name));
-    expect(items).toHaveLength(count);
-    expect(createHash("sha256").update(JSON.stringify(items)).digest("hex")).toBe(digest);
-  });
+  it.each(FIXTURE_DIGESTS)(
+    "%s parses to the same Items as before",
+    (name, format, count, digest) => {
+      const items = parseFeed(format, fixture(name));
+      expect(items).toHaveLength(count);
+      expect(createHash("sha256").update(JSON.stringify(items)).digest("hex")).toBe(digest);
+    },
+  );
 
   it("covers every committed fixture", () => {
-    expect(readdirSync(path.join(import.meta.dirname, "../../fixtures/feeds")).length).toBe(9);
+    const files = readdirSync(path.join(import.meta.dirname, "../../fixtures/feeds")).sort();
+    expect(FIXTURE_DIGESTS.map(([name]) => name)).toEqual(files);
   });
 });

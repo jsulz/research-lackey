@@ -61,39 +61,49 @@ function parseRss(text: string): RawItem[] {
 
 function parseAtom(text: string): RawItem[] {
   let doc = parseXml(text);
-  const strip = atomPrefixStripper(doc);
-  if (strip) doc = new XMLParser({ ...xmlOptions, transformTagName: strip }).parse(text) as Node;
-  const feed = doc.feed as Node | undefined;
-  if (!feed) throw new Error("Not an Atom document: no feed element");
-  const entries = (feed.entry as unknown[] | undefined) ?? [];
+  const prefixed = atomNames(doc);
+  if (prefixed)
+    doc = new XMLParser({ ...xmlOptions, isArray: atomIsArray(prefixed) }).parse(text) as Node;
+  const names = prefixed ?? ((tag: string) => tag);
+  const [, feedNode] = atomChild(doc, names, "feed") ?? [];
+  if (!feedNode) throw new Error("Not an Atom document: no feed element");
+  const [entryKey, entryNodes] = atomChild(fields(feedNode), names, "entry") ?? [];
+  const entries = Array.isArray(entryNodes) ? entryNodes : [];
   let ordered: Node[][] | undefined;
   return entries.map((node, i) => {
     const entry = fields(node);
+    const field = (name: string) => atomChild(entry, names, name);
     /** Text of an Atom text construct: an XHTML one is read from the order-preserving parse. */
     const textField = (name: string): string => {
-      if (fields(entry[name])["@_type"] !== "xhtml") return textOf(entry[name]);
-      ordered ??= orderedEntries(text, strip);
-      return textOf(orderedText(childNodes(ordered[i], name)));
+      const [key, value] = field(name) ?? [];
+      if (key === undefined || fields(value)["@_type"] !== "xhtml") return textOf(value);
+      ordered ??= orderedEntries(text, names, entryKey ?? "entry");
+      return textOf(orderedText(childNodes(ordered[i], key)));
     };
     return identified(i, {
-      externalId: idOf(entry.id),
-      url: alternateLink(entry.link as unknown[] | undefined),
+      externalId: idOf(field("id")?.[1]),
+      url: alternateLink(field("link")?.[1] as unknown[] | undefined),
       title: textField("title"),
       summary: optional(textField("summary")),
       content: optional(textField("content")),
-      publishedAt: isoDate(textOf(entry.published)) ?? isoDate(textOf(entry.updated)),
+      publishedAt:
+        isoDate(textOf(field("published")?.[1])) ?? isoDate(textOf(field("updated")?.[1])),
     });
   });
 }
 
 const ATOM_NS = "http://www.w3.org/2005/Atom";
 
+/** An element's Atom local name, or undefined when the element is not in the Atom namespace. */
+type AtomNames = (tag: string) => string | undefined;
+
 /**
- * Strips the prefixes the root element binds to the Atom namespace (`atom:entry` becomes
- * `entry`), or undefined when it binds none. Prefixes of other namespaces, such as
- * `media:title`, are kept, so extension elements never replace Atom fields.
+ * Atom local names for a document whose root element binds one or more prefixes to the Atom
+ * namespace (`atom:entry` is `entry`), or undefined when it binds none. Elements with another
+ * prefix (`media:title`) are not Atom, and unprefixed elements are Atom only when the default
+ * namespace is Atom too, so extension elements never replace Atom fields.
  */
-function atomPrefixStripper(doc: Node): ((tag: string) => string) | undefined {
+function atomNames(doc: Node): AtomNames | undefined {
   const rootKey = Object.keys(doc).find((key) => !key.startsWith("?"));
   const root = fields(rootKey === undefined ? undefined : doc[rootKey]);
   const prefixes = new Set(
@@ -102,33 +112,51 @@ function atomPrefixStripper(doc: Node): ((tag: string) => string) | undefined {
       .map(([key]) => key.slice("@_xmlns:".length)),
   );
   if (prefixes.size === 0) return undefined;
+  const unprefixedIsAtom = idOf(root["@_xmlns"]) === ATOM_NS;
   return (tag) => {
     const colon = tag.indexOf(":");
-    return colon > 0 && prefixes.has(tag.slice(0, colon)) ? tag.slice(colon + 1) : tag;
+    if (colon === -1) return unprefixedIsAtom ? tag : undefined;
+    return prefixes.has(tag.slice(0, colon)) ? tag.slice(colon + 1) : undefined;
   };
+}
+
+/** The default parser's array rule, applied to Atom local names. */
+function atomIsArray(names: AtomNames): (name: string, jpath: unknown) => boolean {
+  return (_name, jpath) => {
+    const local = String(jpath)
+      .split(".")
+      .map((segment) => names(segment) ?? "")
+      .join(".");
+    return local === "feed.entry" || local === "feed.entry.link";
+  };
+}
+
+/** The first child element of `node` whose Atom local name is `name`, as `[key, value]`. */
+function atomChild(node: Node, names: AtomNames, name: string): [string, unknown] | undefined {
+  return Object.entries(node).find(([key]) => !key.startsWith("@_") && names(key) === name);
 }
 
 /**
  * Each entry's child nodes from an order-preserving parse, which keeps the text and elements of
- * mixed XHTML content in document order and untrimmed. Entries are in the same order as the
- * default parse.
+ * mixed XHTML content in document order and untrimmed. Entries are the `entryKey` elements of the
+ * feed, the same ones and in the same order as the default parse reads.
  */
-function orderedEntries(text: string, strip: ((tag: string) => string) | undefined): Node[][] {
+function orderedEntries(text: string, names: AtomNames, entryKey: string): Node[][] {
   const ordered = new XMLParser({
     ...xmlOptions,
     isArray: undefined,
     preserveOrder: true,
     trimValues: false,
-    transformTagName: strip ?? false,
   }).parse(text) as Node[];
-  const feed = childNodes(ordered, "feed");
-  return feed.filter((node) => "entry" in node).map((node) => nodeList(node.entry));
+  const feedKey = ordered.flatMap(Object.keys).find((key) => names(key) === "feed") ?? "feed";
+  const feed = childNodes(ordered, feedKey);
+  return feed.filter((node) => entryKey in node).map((node) => nodeList(node[entryKey]));
 }
 
-/** The child nodes of the first element named `name` among `nodes`. */
-function childNodes(nodes: Node[] | undefined, name: string): Node[] {
-  const node = (nodes ?? []).find((n) => name in n);
-  return node ? nodeList(node[name]) : [];
+/** The child nodes of the first element named `key` among `nodes`. */
+function childNodes(nodes: Node[] | undefined, key: string): Node[] {
+  const node = (nodes ?? []).find((n) => key in n);
+  return node ? nodeList(node[key]) : [];
 }
 
 function nodeList(value: unknown): Node[] {
@@ -137,7 +165,7 @@ function nodeList(value: unknown): Node[] {
 
 /** Elements whose boundaries separate words in XHTML text. */
 const XHTML_BLOCKS = new Set(
-  "address article aside blockquote br dd div dl dt figcaption figure footer h1 h2 h3 h4 h5 h6 header hr li ol p pre section table td th tr ul".split(
+  "address article aside blockquote br caption dd details dialog div dl dt fieldset figcaption figure footer form h1 h2 h3 h4 h5 h6 header hr legend li main menu nav ol p pre section summary table tbody td tfoot th thead tr ul".split(
     " ",
   ),
 );
