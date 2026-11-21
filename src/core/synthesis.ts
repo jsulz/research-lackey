@@ -1,3 +1,4 @@
+import { capText, contentBody, inertItemTags, plainText } from "./item-text";
 import type { PassedItem } from "./stages";
 
 /** An Item chosen for Synthesis, with the short ref the model cites it by. */
@@ -12,16 +13,36 @@ export function selectForSynthesis(ranked: readonly PassedItem[], k: number): Sy
   return ranked.slice(0, k).map((item, i) => ({ ref: `I${i + 1}`, item }));
 }
 
-/** Cuts text longer than `cap` characters and marks the cut, so one Item can't dominate a prompt. */
-export function capText(text: string, cap: number): string {
-  return text.length <= cap ? text : `${text.slice(0, cap)}\n[truncated]`;
+export interface SynthesisTextLimits {
+  /** Longest summary, in characters. */
+  summary_cap: number;
+  /** For an Item with no summary, the longest content, in characters of plain text. */
+  content_chars: number;
+}
+
+/**
+ * The text Synthesis reads for one Item: its summary, or, when it has no summary, its content as
+ * plain text. Both are capped, and the cut is marked. `markdown` is the Item's R2 Markdown,
+ * needed only when there is no summary.
+ */
+export function synthesisText(
+  item: { summary: string | null },
+  markdown: string | null,
+  limits: SynthesisTextLimits,
+): string {
+  if (item.summary !== null) return capText(item.summary, limits.summary_cap);
+  return capText(plainText(contentBody(markdown ?? "")), limits.content_chars);
 }
 
 /** Feed-controlled metadata is capped like Item text, so one entry can't inflate the prompt. */
 const TITLE_CAP = 300;
 const URL_CAP = 2_000;
 
-/** The user message for Synthesis: the Topic, then each Item's metadata and text. */
+/**
+ * The user message for Synthesis: the Topic, then each Item's metadata and text. Feed text can't
+ * open or close an item block, so it stays inside the block the system prompt marks as material,
+ * not instructions.
+ */
 export function synthesisPrompt(
   topic: { name: string; research_goal: string },
   items: readonly (SynthesisItem & { text: string })[],
@@ -36,12 +57,12 @@ export function synthesisPrompt(
     lines.push(
       "",
       `<item ref="${ref}">`,
-      `Source: ${item.source_id}`,
-      `Published: ${item.published_at ?? "unknown"}`,
-      `Title: ${capText(item.title, TITLE_CAP)}`,
-      `URL: ${capText(item.url, URL_CAP)}`,
+      `Source: ${inertItemTags(item.source_id)}`,
+      `Published: ${inertItemTags(item.published_at ?? "unknown")}`,
+      `Title: ${inertItemTags(capText(item.title, TITLE_CAP))}`,
+      `URL: ${inertItemTags(capText(item.url, URL_CAP))}`,
       "",
-      text,
+      inertItemTags(text),
       "</item>",
     );
   }

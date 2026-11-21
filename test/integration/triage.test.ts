@@ -165,6 +165,29 @@ describe("Triage", () => {
   });
 });
 
+describe("Synthesis text", () => {
+  it("sends vllm-releases notes, which have no summary, as plain text up to the content cap", async () => {
+    await seedTopic([["atom", "vllm-releases-2026-11-17.atom.xml"]]);
+    await runTopic("syn-plain");
+
+    const prompt = callsFor("synthesis")[0]?.prompt ?? "";
+    const bodies = [
+      ...prompt.matchAll(/<item ref="I\d+">\n[\s\S]*?\nURL: [^\n]*\n\n([\s\S]*?)\n<\/item>/g),
+    ].map((m) => m[1] ?? "");
+    expect(bodies).toHaveLength(CONFIG.synthesis_k);
+    for (const body of bodies) {
+      expect(body.trim()).not.toBe("");
+      expect(body).not.toMatch(/<\/?[a-z][^>]*>/i);
+      expect(body).not.toMatch(/^# |\n## Content/);
+    }
+    // v0.34.0's notes run past the cap: Synthesis reads up to 16,000 characters, not 4,000.
+    const v034 = bodies.find((b) => b.includes("Extensible KV cache is on by default"));
+    expect(v034).toBeDefined();
+    expect(v034?.endsWith("\n[truncated]")).toBe(true);
+    expect(v034?.length).toBe(CONFIG.synthesis_content_chars + "\n[truncated]".length);
+  });
+});
+
 describe("Cost per stage", () => {
   it("records triage and synthesis tokens and cost separately; the Reports API sums both per model", async () => {
     await seedTopic([["rss2", "vllm-blog.rss.xml"]]);
