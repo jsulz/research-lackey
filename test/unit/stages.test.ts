@@ -89,7 +89,7 @@ describe("dedupe Poll counts", () => {
 });
 
 describe("dedupe Item content writes", () => {
-  it("writes Item content with at most content_write_concurrency writes in flight, in feed order", async () => {
+  it("writes Item content with at most the configured content_write_concurrency writes in flight, in feed order", async () => {
     const entries = Array.from({ length: 20 }, (_, i) => ({
       externalId: `e${i}`,
       url: `https://example.com/${i}`,
@@ -117,7 +117,7 @@ describe("dedupe Item content writes", () => {
         return `items/${key}`;
       },
     } as unknown as ArtifactStore;
-    const config = { ...CONFIG, content_write_concurrency: 8 };
+    const config = { ...CONFIG, content_write_concurrency: 3 };
     const stages = buildStages({
       store,
       artifacts,
@@ -136,7 +136,7 @@ describe("dedupe Item content writes", () => {
       { run: RUN, log: LOG },
     )) as { items: Array<{ item_key: string; content_key: string }> };
 
-    expect(peak).toBe(8);
+    expect(peak).toBe(3);
     const keys = entries.map((e) => e.externalId);
     expect(recorded).toEqual([keys]);
     expect(out.items.map((i) => [i.item_key, i.content_key])).toEqual(

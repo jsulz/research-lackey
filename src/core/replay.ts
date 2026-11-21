@@ -1,4 +1,10 @@
-import { CONFIG, type ModelPrice, type PriceTier, type RunConfig, type TaskConfig } from "./config";
+import {
+  CONFIG,
+  type ModelPrice,
+  type PriceTier,
+  type RunConfig,
+  type TaskConfig,
+} from "./config.ts";
 import type { Effort, ReplayStage, StepName, TaskName } from "./ports";
 
 // Replays rerun a Run from `triage` or `synthesis` with an alternate config. Only runtime-free
