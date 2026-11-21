@@ -32,6 +32,7 @@ import {
 } from "./report";
 import type { Stage } from "./run-pipeline";
 import { filtersProblem, NO_FILTERS, passesFilters } from "./source-filters";
+import { sourceRequestUrl } from "./source-url";
 import { selectForSynthesis, synthesisPrompt, synthesisText } from "./synthesis";
 import {
   rankTopK,
@@ -69,6 +70,11 @@ export interface FetchedSource {
   items_read: number;
   /** R2 key of the parsed entries (`ArtifactStore.putRawEntries`); null when the Poll failed. */
   entries_key: string | null;
+  /**
+   * The URL requested, placeholders resolved; null when the Source's URL could not be used.
+   * Absent from `fetch` outputs written before Sources had URLs.
+   */
+  url?: string | null;
   /**
    * The Source's filters as `fetch` read them, so the Step artifact shows what `dedupe` applied.
    * Absent from `fetch` outputs written before filters existed: those pass every Item.
@@ -192,12 +198,16 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
   return [
     {
       name: "fetch",
-      // Polls every feed Source of the Topic, records each Poll, then writes each read Source's
-      // entries to R2. A Source that can't be read is skipped; the stage fails only when every
+      // Polls every feed Source of the Topic over HTTP, records each Poll, then writes each read
+      // Source's entries to R2. A Source that can't be read is skipped; the stage fails only when every
       // Source failed, naming each with its reason. The output holds only R2 keys and counts.
       run: async (input, { run, log }) => {
         const { topic_id } = input as { topic_id: string };
         const sources = await deps.store.listFeedSources(topic_id);
+        // `{date}` in a URL counts from the Run's recorded start, so a retried step asks again
+        // for the same day.
+        const startedAt = (await deps.store.getRun(run.id))?.started_at;
+        const runStart = startedAt ? new Date(startedAt) : deps.clock.now();
         const fetched: FetchedSource[] = [];
         const polls: Poll[] = [];
         const entries = new Map<string, RawItem[]>();
@@ -205,11 +215,24 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
           const started = deps.clock.now().getTime();
           let items: RawItem[] = [];
           let failure_reason: string | null = null;
+          let url: string | null = null;
+          // A Poll that makes no request (unusable filters or URL) still counts as one attempt.
+          let attempts = 1;
           try {
-            // Filters that can't be applied fail this Source's Poll, not the Run.
+            // Filters or a URL that can't be used fail this Source's Poll, not the Run.
             const problem = filtersProblem(source.filters);
             if (problem) throw new Error(`Invalid filters: ${problem}`);
-            items = await deps.fetcher.fetch(source);
+            const target = sourceRequestUrl(source.url, runStart);
+            if (!target.ok) throw new Error(target.reason);
+            url = target.url;
+            const read = await deps.fetcher.fetch({
+              source_id: source.id,
+              url,
+              format: source.format,
+            });
+            attempts = Math.max(1, read.attempts);
+            if (!read.ok) throw new Error(read.reason);
+            items = read.items;
           } catch (err) {
             const message = err instanceof Error ? err.message : String(err);
             failure_reason = cut(message || "unknown error", MAX_FAILURE_REASON);
@@ -223,8 +246,7 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
           polls.push({
             source_id: source.id,
             outcome,
-            // The fixture fetcher makes one attempt; the HTTP fetcher will report its retries.
-            attempts: 1,
+            attempts,
             items_read: items.length,
             failure_reason,
             duration_ms: Math.max(0, deps.clock.now().getTime() - started),
@@ -236,6 +258,7 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
             failure_reason,
             items_read: items.length,
             entries_key: null,
+            url,
             filters: source.filters,
           });
           if (outcome === "succeeded") entries.set(source.id, items);

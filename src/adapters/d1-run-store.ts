@@ -327,7 +327,7 @@ export class D1RunStore implements RunStore {
   async listFeedSources(topicId: string): Promise<Source[]> {
     const { results } = await this.db
       .prepare(
-        `SELECT id, topic_id, format, fixture_ref, include_keywords, exclude_keywords,
+        `SELECT id, topic_id, format, url, include_keywords, exclude_keywords,
                 exclude_title_pattern
          FROM sources
          WHERE topic_id = ? AND kind = 'feed'

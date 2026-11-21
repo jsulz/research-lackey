@@ -5,17 +5,20 @@ import { D1RunStore } from "../../src/adapters/d1-run-store";
 import type { FeedFormat, Run } from "../../src/core/ports";
 import { NO_FILTERS } from "../../src/core/source-filters";
 import { deleteRuns, deleteTestTopics } from "./cleanup";
+import { FEEDS, resetFeeds } from "./fake-source-fetcher-factory";
 
-// Each test gets its own Topic and Sources, so it controls exactly which fixtures a Run reads.
+// Each test gets its own Topic and Sources, so it controls exactly which feeds a Run reads. The
+// fake outbound fetch serves each fixture file at `https://feeds.test/<file>`.
 // Entry counts per fixture come from inspecting the files with Python (see the unit tests).
 const TOPIC = "test-feeds";
 const store = new D1RunStore(env.DB);
 
-async function addSource(id: string, format: FeedFormat, fixtureRef: string | null) {
+/** Adds a Source whose URL serves the named fixture file (`null`: a Source with no URL). */
+async function addSource(id: string, format: FeedFormat, fixture: string | null) {
   await env.DB.prepare(
-    "INSERT INTO sources (id, topic_id, kind, format, fixture_ref) VALUES (?, ?, 'feed', ?, ?)",
+    "INSERT INTO sources (id, topic_id, kind, format, url) VALUES (?, ?, 'feed', ?, ?)",
   )
-    .bind(id, TOPIC, format, fixtureRef)
+    .bind(id, TOPIC, format, fixture === null ? null : `${FEEDS}${fixture}`)
     .run();
 }
 
@@ -86,7 +89,7 @@ async function stepOutput<T>(runId: string, step: string): Promise<T> {
   return ((await object.json()) as { output: T }).output;
 }
 
-describe("Runs read fixture feeds and record deduplicated Items", () => {
+describe("Runs read feeds and record deduplicated Items", () => {
   beforeEach(async () => {
     await env.DB.prepare(
       `INSERT INTO topics (id, name, research_goal, schedule_kind, schedule_time_utc)
@@ -97,6 +100,7 @@ describe("Runs read fixture feeds and record deduplicated Items", () => {
   });
 
   afterEach(async () => {
+    resetFeeds();
     await deleteRuns();
     await deleteTestTopics();
   });
@@ -117,15 +121,17 @@ describe("Runs read fixture feeds and record deduplicated Items", () => {
           failure_reason: null,
           items_read: 34,
           entries_key: "runs/items-fetch/raw/t-hf.json",
+          url: "https://feeds.test/hf-daily-papers-2026-11-13.json",
           filters: NO_FILTERS,
         },
         {
           source_id: "t-none",
           format: "rss2",
           outcome: "failed",
-          failure_reason: "Source t-none has no fixture",
+          failure_reason: "Source has no URL",
           items_read: 0,
           entries_key: null,
+          url: null,
           filters: NO_FILTERS,
         },
         {
@@ -135,6 +141,7 @@ describe("Runs read fixture feeds and record deduplicated Items", () => {
           failure_reason: null,
           items_read: 50,
           entries_key: "runs/items-fetch/raw/t-vllm.json",
+          url: "https://feeds.test/vllm-blog.rss.xml",
           filters: NO_FILTERS,
         },
       ],
@@ -221,7 +228,7 @@ describe("Runs read fixture feeds and record deduplicated Items", () => {
       items_read: 0,
       items_new: null,
       items_filtered: null,
-      failure_reason: "Fixture not found: missing.atom.xml",
+      failure_reason: "HTTP 404",
       duration_ms: expect.any(Number),
     });
     expect(rows.find((p) => p.source_id === "t-vllm")).toMatchObject({
@@ -237,7 +244,7 @@ describe("Runs read fixture feeds and record deduplicated Items", () => {
 
     expect(run).toMatchObject({ status: "failed", failed_stage: "fetch" });
     expect(run.failure_reason).toMatch(/^Every Source failed \(2\): /);
-    expect(run.failure_reason).toContain("t-missing: Fixture not found: missing.atom.xml");
+    expect(run.failure_reason).toContain("t-missing: HTTP 404");
     expect(run.failure_reason).toContain("t-wrong: ");
     const rows = await polls(run.id);
     expect(rows.map((p) => [p.source_id, p.outcome, p.items_new])).toEqual([
@@ -249,9 +256,7 @@ describe("Runs read fixture feeds and record deduplicated Items", () => {
       "Not an Atom document: no feed element",
     );
     expect(run.failure_reason).toContain("t-wrong: Not an Atom document: no feed element");
-    expect(rows.find((p) => p.source_id === "t-missing")?.failure_reason).toBe(
-      "Fixture not found: missing.atom.xml",
-    );
+    expect(rows.find((p) => p.source_id === "t-missing")?.failure_reason).toBe("HTTP 404");
   });
 
   it("replaces the Run's whole Poll set when fetch records Polls again", async () => {
@@ -308,7 +313,7 @@ describe("Runs read fixture feeds and record deduplicated Items", () => {
     await addSource("t-vllm", "rss2", "vllm-blog.rss.xml");
     await runTopic("items-base");
     await env.DB.prepare(
-      "UPDATE sources SET fixture_ref = 'vllm-blog-plus-one.rss.xml' WHERE id = 't-vllm'",
+      "UPDATE sources SET url = 'https://feeds.test/vllm-blog-plus-one.rss.xml' WHERE id = 't-vllm'",
     ).run();
 
     const run = await runTopic("items-plus-one");
@@ -365,7 +370,7 @@ describe("Runs read fixture feeds and record deduplicated Items", () => {
     await runTopic("items-cap-a");
     await addSource("t-arxiv", "atom", "arxiv-serving.atom.xml");
     await env.DB.prepare(
-      "UPDATE sources SET fixture_ref = 'vllm-blog-plus-one.rss.xml' WHERE id = 't-vllm'",
+      "UPDATE sources SET url = 'https://feeds.test/vllm-blog-plus-one.rss.xml' WHERE id = 't-vllm'",
     ).run();
 
     const output = await dedupe((await runTopic("items-cap-b")).id);

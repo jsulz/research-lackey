@@ -33,7 +33,7 @@ beforeEach(async () => {
        VALUES (?, 'Replay test topic', 'Track vLLM serving changes.', 'daily', '12:00')`,
     ).bind(TOPIC),
     env.DB.prepare(
-      "INSERT INTO sources (id, topic_id, kind, format, fixture_ref) VALUES (?, ?, 'feed', 'rss2', 'vllm-blog.rss.xml')",
+      "INSERT INTO sources (id, topic_id, kind, format, url) VALUES (?, ?, 'feed', 'rss2', 'https://feeds.test/vllm-blog.rss.xml')",
     ).bind(SOURCE, TOPIC),
   ]);
 });

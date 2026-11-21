@@ -25,6 +25,18 @@ export interface TaskConfig {
   max_tokens: number;
 }
 
+/** How feeds are requested. */
+export interface FetchConfig {
+  /** Longest one request may take, headers and body, before it counts as timed out. */
+  timeout_ms: number;
+  /** Extra requests after a timeout, a network error, a 429 or a 5xx. Other statuses are final. */
+  retries: number;
+  /** Wait before the first retry; each later retry waits twice as long as the one before. */
+  backoff_ms: number;
+  /** Shortest gap between requests to a host, by host name. Hosts not listed have none. */
+  host_intervals_ms: Record<string, number>;
+}
+
 /**
  * Typed Run configuration. Values are tuning starting points (T1 spec, "Behavioral rules").
  * Each Run stores a snapshot of it and its hash.
@@ -47,6 +59,8 @@ export interface RunConfig {
   item_text_cap: number;
   /** At most this many Item content writes to R2 run at once in `dedupe`. Matters on first polls. */
   content_write_concurrency: number;
+  /** Timeout, retries and per-host spacing for feed requests. */
+  fetch: FetchConfig;
   /** Which model runs each task. */
   tasks: Record<TaskName, TaskConfig>;
   /** Price table per model ID. Update it when Anthropic changes prices (ADR-0004). */
@@ -61,6 +75,13 @@ export const CONFIG: RunConfig = {
   synthesis_content_chars: 16_000,
   item_text_cap: 4_000,
   content_write_concurrency: 8,
+  fetch: {
+    timeout_ms: 20_000,
+    retries: 2,
+    backoff_ms: 1_000,
+    // arXiv's terms of use: at most one request every 3 seconds.
+    host_intervals_ms: { "export.arxiv.org": 3_000 },
+  },
   tasks: {
     // Scoring is classification: low effort keeps thinking tokens down.
     triage: { model: "claude-haiku-5-5", effort: "low", max_tokens: 8_000 },

@@ -137,13 +137,16 @@ export interface Topic {
   research_goal: string;
 }
 
-/** A `feed` Source of a Topic. In T1 every feed reads a bundled fixture file. */
+/** A `feed` Source of a Topic, read over HTTP. */
 export interface Source {
   id: string;
   topic_id: string;
   format: FeedFormat;
-  /** File name under `fixtures/feeds/`. Null when the Source has none, which fails its fetch. */
-  fixture_ref: string | null;
+  /**
+   * The feed's URL. `{date}` in it stands for the UTC day before the Run started. Null when the
+   * Source has none, which fails its Poll.
+   */
+  url: string | null;
   /** Which Items `dedupe` passes onward; the others are recorded as seen and counted as filtered. */
   filters: SourceFilters;
 }
@@ -158,9 +161,28 @@ export interface SourceFilters {
   exclude_title_pattern: string | null;
 }
 
-/** Reads a Source's entries. T1 reads fixtures; T3 adds HTTP. Throws when the Source can't be read. */
+/** One feed to read: the Source's URL with its placeholders resolved. */
+export interface FeedRequest {
+  source_id: string;
+  url: string;
+  format: FeedFormat;
+}
+
+/**
+ * What reading a feed gave: its parsed entries, or why it could not be read. `attempts` counts
+ * the requests made, retries included.
+ */
+export type FeedRead =
+  | { ok: true; items: RawItem[]; attempts: number }
+  | { ok: false; reason: string; attempts: number };
+
+/**
+ * Reads a feed over HTTP and parses it as the Source's format. It owns the User-Agent, the
+ * timeout, retries and the spacing between requests to one host. A feed that can't be read is a
+ * result, not an exception.
+ */
 export interface SourceFetcher {
-  fetch(source: Source): Promise<RawItem[]>;
+  fetch(request: FeedRequest): Promise<FeedRead>;
 }
 
 /**

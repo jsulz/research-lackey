@@ -12,13 +12,21 @@ export default defineConfig(async () => {
         miniflare: { bindings: { TEST_MIGRATIONS: migrations } },
       }),
     ],
-    // The Workflow runs in the test isolate, so swapping the model client factory module here
-    // gives it a scripted client that tests control. No real model call is ever made.
+    // The Workflow runs in the test isolate, so swapping these factory modules here gives it a
+    // scripted model client and a fake outbound fetch that tests control. No real model call and
+    // no real feed request is ever made.
     resolve: {
       alias: [
         {
           find: /^\.\/model-client-factory$/,
           replacement: path.join(import.meta.dirname, "test/integration/scripted-model-client.ts"),
+        },
+        {
+          find: /^\.\/source-fetcher-factory$/,
+          replacement: path.join(
+            import.meta.dirname,
+            "test/integration/fake-source-fetcher-factory.ts",
+          ),
         },
       ],
     },

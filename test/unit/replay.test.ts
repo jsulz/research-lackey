@@ -59,6 +59,39 @@ describe("parseRunConfig", () => {
     });
   });
 
+  it("defaults fetch when a config file written before it leaves it out", () => {
+    const { fetch: _omit, ...older } = copy();
+    expect(parseRunConfig(older)).toEqual({ ok: true, config: CONFIG });
+  });
+
+  it("keeps the fetch settings the config names, and rejects ones that aren't whole numbers", () => {
+    const fetch = {
+      timeout_ms: 5_000,
+      retries: 0,
+      backoff_ms: 0,
+      host_intervals_ms: { "a.test": 10 },
+    };
+    expect(parseRunConfig({ ...copy(), fetch })).toMatchObject({ ok: true, config: { fetch } });
+    expect(parseRunConfig({ ...copy(), fetch: { ...fetch, timeout_ms: 0 } })).toEqual({
+      ok: false,
+      reason: "fetch.timeout_ms must be a positive integer",
+    });
+    expect(parseRunConfig({ ...copy(), fetch: { ...fetch, retries: -1 } })).toEqual({
+      ok: false,
+      reason: "fetch.retries must be a non-negative integer",
+    });
+    expect(
+      parseRunConfig({ ...copy(), fetch: { ...fetch, host_intervals_ms: { "a.test": "3s" } } }),
+    ).toEqual({
+      ok: false,
+      reason: 'fetch.host_intervals_ms["a.test"] must be a non-negative integer',
+    });
+    expect(parseRunConfig({ ...copy(), fetch: "fast" })).toEqual({
+      ok: false,
+      reason: "fetch must be an object",
+    });
+  });
+
   it("accepts another Synthesis model that has a price, keeping its effort and max_tokens", () => {
     const c = copy() as {
       tasks: { synthesis: { model: string; effort: string; max_tokens: number } };
