@@ -1,3 +1,4 @@
+import { mapLimit } from "./concurrency";
 import type { RunConfig } from "./config";
 import { stageCost } from "./cost";
 import { itemKey, itemMarkdown, newestFirst } from "./items";
@@ -154,25 +155,27 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
       if (!byKey.has(key)) byKey.set(key, raw);
     }
     const unseen = new Set(await deps.store.unseenItemKeys(source.source_id, [...byKey.keys()]));
-    const fresh: PassedItem[] = [];
-    for (const [key, raw] of byKey) {
-      if (!unseen.has(key)) continue;
-      const contentKey = await deps.artifacts.putItemContent(
-        source.source_id,
-        key,
-        runId,
-        itemMarkdown(raw),
-      );
-      fresh.push({
+    const toWrite = [...byKey].filter(([key]) => unseen.has(key));
+    // A first poll can hold hundreds of Items: write their content a few at a time, not one by one.
+    // Results keep feed order.
+    const fresh = await mapLimit(
+      toWrite,
+      deps.config.content_write_concurrency,
+      async ([key, raw]): Promise<PassedItem> => ({
         source_id: source.source_id,
         item_key: key,
         url: raw.url,
         title: raw.title,
         summary: raw.summary ?? null,
         published_at: raw.publishedAt ?? null,
-        content_key: contentKey,
-      });
-    }
+        content_key: await deps.artifacts.putItemContent(
+          source.source_id,
+          key,
+          runId,
+          itemMarkdown(raw),
+        ),
+      }),
+    );
     const rows: Item[] = fresh.map(({ summary: _summary, ...row }) => row);
     await deps.store.recordItems(runId, rows);
     return fresh;

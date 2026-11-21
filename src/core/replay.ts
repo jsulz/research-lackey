@@ -1,4 +1,4 @@
-import type { ModelPrice, PriceTier, RunConfig, TaskConfig } from "./config";
+import { CONFIG, type ModelPrice, type PriceTier, type RunConfig, type TaskConfig } from "./config";
 import type { Effort, ReplayStage, StepName, TaskName } from "./ports";
 
 // Replays rerun a Run from `triage` or `synthesis` with an alternate config. Only runtime-free
@@ -110,6 +110,12 @@ export function parseRunConfig(
     if (!isPositiveInt(v)) return { ok: false, reason: `${name} must be a positive integer` };
     limits[name] = v;
   }
+  // Optional: Replay config files written before JSU-36 leave it out, and Replays never run dedupe.
+  const content_write_concurrency =
+    value.content_write_concurrency ?? CONFIG.content_write_concurrency;
+  if (!isPositiveInt(content_write_concurrency)) {
+    return { ok: false, reason: "content_write_concurrency must be a positive integer" };
+  }
   if (!isObject(value.tasks)) return { ok: false, reason: "tasks must be an object" };
   const tasks: Partial<Record<TaskName, TaskConfig>> = {};
   for (const name of TASKS) {
@@ -134,6 +140,7 @@ export function parseRunConfig(
     ok: true,
     config: {
       ...(limits as Record<(typeof LIMITS)[number], number>),
+      content_write_concurrency,
       tasks: tasks as Record<TaskName, TaskConfig>,
       prices,
     },

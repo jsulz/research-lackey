@@ -88,6 +88,67 @@ describe("dedupe Poll counts", () => {
   });
 });
 
+describe("dedupe Item content writes", () => {
+  it("writes Item content with at most content_write_concurrency writes in flight, in feed order", async () => {
+    const entries = Array.from({ length: 20 }, (_, i) => ({
+      externalId: `e${i}`,
+      url: `https://example.com/${i}`,
+      title: `Item ${i}`,
+    }));
+    let inFlight = 0;
+    let peak = 0;
+    const recorded: string[][] = [];
+    const store = {
+      unseenItemKeys: async (_s: string, keys: string[]) => keys,
+      isFirstPoll: async () => false,
+      recordItems: async (_run: string, rows: Array<{ item_key: string }>) => {
+        recorded.push(rows.map((r) => r.item_key));
+      },
+      recordPollCounts: async () => {},
+    } as unknown as RunStore;
+    const artifacts = {
+      getRawEntries: async () => entries,
+      putItemContent: async (_s: string, key: string) => {
+        inFlight++;
+        peak = Math.max(peak, inFlight);
+        // Later Items finish first, so results arriving out of order would show.
+        await new Promise((resolve) => setTimeout(resolve, 20 - Number(key.slice(1))));
+        inFlight--;
+        return `items/${key}`;
+      },
+    } as unknown as ArtifactStore;
+    const config = { ...CONFIG, content_write_concurrency: 8 };
+    const stages = buildStages({
+      store,
+      artifacts,
+      fetcher: { fetch: async () => [] },
+      config,
+      model: {} as ModelClient,
+      prompts: { triage: "", synthesis: "" },
+      model_env: "dev",
+      clock: { now: () => new Date(0) },
+    });
+    const dedupe = stages.find((s) => s.name === "dedupe");
+    if (!dedupe) throw new Error("no dedupe stage");
+
+    const out = (await dedupe.run(
+      { sources: [{ ...source("a"), items_read: 20 }] },
+      { run: RUN, log: LOG },
+    )) as { items: Array<{ item_key: string; content_key: string }> };
+
+    expect(peak).toBe(8);
+    const keys = entries.map((e) => e.externalId);
+    expect(recorded).toEqual([keys]);
+    expect(out.items.map((i) => [i.item_key, i.content_key])).toEqual(
+      keys.map((k) => [k, `items/${k}`]),
+    );
+  });
+
+  it("starts with a cap of 8", () => {
+    expect(CONFIG.content_write_concurrency).toBe(8);
+  });
+});
+
 describe("dedupe reads each read Source's raw entries", () => {
   it("fails when a succeeded Source has no entries key, rather than skipping it", async () => {
     const d = dedupeWith("none");
