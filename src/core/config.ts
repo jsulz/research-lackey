@@ -45,6 +45,8 @@ export interface RunConfig {
    * Item whose content has no text.
    */
   item_text_cap: number;
+  /** At most this many Item content writes to R2 run at once in `dedupe`. Matters on first polls. */
+  content_write_concurrency: number;
   /** Which model runs each task. */
   tasks: Record<TaskName, TaskConfig>;
   /** Price table per model ID. Update it when Anthropic changes prices (ADR-0004). */
@@ -58,6 +60,7 @@ export const CONFIG: RunConfig = {
   synthesis_k: 8,
   synthesis_content_chars: 16_000,
   item_text_cap: 4_000,
+  content_write_concurrency: 8,
   tasks: {
     // Scoring is classification: low effort keeps thinking tokens down.
     triage: { model: "claude-haiku-5-5", effort: "low", max_tokens: 8_000 },

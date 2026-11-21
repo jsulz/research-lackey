@@ -42,6 +42,23 @@ describe("parseRunConfig", () => {
     expect(canonicalJson(parsed.config)).toBe(canonicalJson(CONFIG));
   });
 
+  it("defaults content_write_concurrency when a config file written before it leaves it out", () => {
+    const { content_write_concurrency: _omit, ...older } = copy();
+    const parsed = parseRunConfig(older);
+    expect(parsed).toEqual({ ok: true, config: CONFIG });
+  });
+
+  it("keeps a content_write_concurrency the config names, and rejects one that isn't a positive integer", () => {
+    expect(parseRunConfig({ ...copy(), content_write_concurrency: 3 })).toMatchObject({
+      ok: true,
+      config: { content_write_concurrency: 3 },
+    });
+    expect(parseRunConfig({ ...copy(), content_write_concurrency: 0 })).toEqual({
+      ok: false,
+      reason: "content_write_concurrency must be a positive integer",
+    });
+  });
+
   it("accepts another Synthesis model that has a price, keeping its effort and max_tokens", () => {
     const c = copy() as {
       tasks: { synthesis: { model: string; effort: string; max_tokens: number } };
