@@ -1,3 +1,5 @@
+import { isValidRunId } from "../src/core/run-ids.ts";
+
 export const USAGE = "usage: npm run review-stub -- <report_id> [--base-url <url>]";
 
 export const PRODUCTION_BASE_URL = "https://lackey.jsulz.com";
@@ -54,6 +56,7 @@ export function parseReviewStubArgs(
   if (reportId === undefined || reportId === "") {
     return { ok: false, error: "a Report ID is required" };
   }
+  if (!isReportId(reportId)) return { ok: false, error: `invalid Report ID: ${reportId}` };
   return { ok: true, reportId, baseUrl };
 }
 
@@ -103,7 +106,15 @@ export async function reviewStub(
   if (!isReviewStubReport(report)) {
     return fail(1, `GET ${url} returned a body without the Report fields the block needs`);
   }
+  if (report.id !== args.reportId) {
+    return fail(1, `GET ${url} returned Report ${JSON.stringify(report.id)}, not ${args.reportId}`);
+  }
   return { code: 0, stdout: formatReviewStub(report, args.baseUrl), stderr: "" };
+}
+
+/** A Report ID is `rpt_<run_id>` (`reportId` in `src/core/report.ts`), so it never needs encoding. */
+function isReportId(id: string): boolean {
+  return id.startsWith("rpt_") && isValidRunId(id.slice("rpt_".length));
 }
 
 function fail(code: number, message: string): ReviewStubResult {

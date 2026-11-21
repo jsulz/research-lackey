@@ -107,6 +107,12 @@ describe("parseReviewStubArgs", () => {
   it.each([
     ["no Report ID", []],
     ["two Report IDs", ["rpt_a", "rpt_b"]],
+    ["an ID without the rpt_ prefix", ["topic-ai-infra-20261117T1200Z"]],
+    ["a dot segment", [".."]],
+    ["a single dot", ["."]],
+    ["an ID with a slash", ["rpt_a/b"]],
+    ["an ID with a dot segment after the prefix", ["rpt_../x"]],
+    ["rpt_ alone", ["rpt_"]],
     ["--base-url without a value", ["rpt_x", "--base-url"]],
     ["a non-http base URL", ["rpt_x", "--base-url", "file:///etc"]],
     ["a base URL with a query", ["rpt_x", "--base-url", "https://example.org/proxy?x=1"]],
@@ -130,12 +136,19 @@ describe("reviewStub", () => {
     expect(result).toEqual({ code: 0, stdout: EXPECTED, stderr: "" });
   });
 
-  it("fetches from --base-url and encodes the Report ID", async () => {
+  it("fetches from --base-url", async () => {
     const fetch = fakeFetch(200, JSON.stringify(REPORT));
 
-    await reviewStub(["rpt_a/b", "--base-url", "http://localhost:8787/"], fetch.fn);
+    await reviewStub([REPORT.id, "--base-url", "http://localhost:8787/"], fetch.fn);
 
-    expect(fetch.urls).toEqual(["http://localhost:8787/api/reports/rpt_a%2Fb"]);
+    expect(fetch.urls).toEqual([`http://localhost:8787/api/reports/${REPORT.id}`]);
+  });
+
+  it("exits non-zero when the API returns a different Report", async () => {
+    const result = await reviewStub(["rpt_other"], fakeFetch(200, JSON.stringify(REPORT)).fn);
+
+    expect(result).toMatchObject({ code: 1, stdout: "" });
+    expect(result.stderr).toContain("rpt_topic-ai-infra-20261117T1200Z");
   });
 
   it("prints the API's 404 and exits non-zero for an unknown Report ID", async () => {
@@ -178,7 +191,7 @@ describe("reviewStub", () => {
       }),
     ],
   ])("exits non-zero when the body has %s", async (_label, body) => {
-    const result = await reviewStub(["rpt_x"], fakeFetch(200, body).fn);
+    const result = await reviewStub([REPORT.id], fakeFetch(200, body).fn);
 
     expect(result).toMatchObject({ code: 1, stdout: "" });
     expect(result.stderr).not.toBe("");
