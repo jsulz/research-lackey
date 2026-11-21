@@ -34,8 +34,10 @@ class FakeRunStore
   stepRows: [string, string][] = [];
   failure: { stage: string; reason: string } | null = null;
   topicBusy = false;
-  async markRunning(_run: RunRef): Promise<"running" | "topic_busy"> {
+  ended = false;
+  async markRunning(_run: RunRef): Promise<"running" | "topic_busy" | "ended"> {
     if (this.topicBusy) return "topic_busy";
+    if (this.ended) return "ended";
     this.statuses.push("running");
     return "running";
   }
@@ -217,6 +219,27 @@ describe("runPipeline", () => {
     await expect(run()).resolves.toBe("failed");
     expect(store.statuses).toEqual(["queued", "failed"]);
     expect(store.failure).toEqual({ stage: "start", reason: "Topic has an active Run" });
+    expect(ran).toBe(false);
+    expect(artifacts.items.size).toBe(0);
+    expect(store.configs).toEqual([]);
+  });
+
+  it("runs no stage and writes nothing when the Run already has a final status", async () => {
+    // A late instance whose Run a cron tick already failed as stuck (JSU-34).
+    let ran = false;
+    const { store, artifacts, run } = setup([
+      {
+        name: "fetch",
+        run: async () => {
+          ran = true;
+          return { items: [] };
+        },
+      },
+    ]);
+    store.ended = true;
+    await expect(run()).resolves.toBe("failed");
+    expect(store.statuses).toEqual(["queued"]);
+    expect(store.failure).toBeNull();
     expect(ran).toBe(false);
     expect(artifacts.items.size).toBe(0);
     expect(store.configs).toEqual([]);

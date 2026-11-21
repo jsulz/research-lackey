@@ -74,6 +74,12 @@ export async function runPipeline(deps: PipelineDeps): Promise<FinalStatus> {
       await step.do("reject", () => store.failRun(run, "start", reason, clock.now()));
       return "failed";
     }
+    if (started === "ended") {
+      // The Run already ended, for example failed as stuck by a cron tick before this instance
+      // began (JSU-34). Its row stays as it is and no stage runs.
+      log.warn("run not started: already ended", { run_id: run.id });
+      return "failed";
+    }
 
     let previous: StepName | null = null;
     // A Run that publishes nothing ends with no new Findings; `publish` decides otherwise.

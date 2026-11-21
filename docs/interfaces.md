@@ -291,9 +291,10 @@ export interface RunStore {
   /**
    * Sets the Run `running`, inserting it first when it does not exist (manual Runs). Never
    * changes a final status. Returns `topic_busy`, changing nothing, when inserting it would
-   * give the Topic a second active scheduled or manual Run.
+   * give the Topic a second active scheduled or manual Run, and `ended`, changing nothing, when
+   * the Run already has a final status (for example, failed as stuck before its instance began).
    */
-  markRunning(run: RunRef, at: Date): Promise<"running" | "topic_busy">;
+  markRunning(run: RunRef, at: Date): Promise<"running" | "topic_busy" | "ended">;
   /**
    * Stores the Run's config snapshot, config hash and prompt hashes. Called when the Run starts
    * running, so a Run that ran no stage (rejected at `start`, failed at `schedule`) has none.

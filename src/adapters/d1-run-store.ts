@@ -200,19 +200,20 @@ export class D1RunStore implements RunStore {
     return meta.changes === 1;
   }
 
-  async markRunning(run: RunRef, at: Date): Promise<"running" | "topic_busy"> {
-    // Manual Runs have no row until here. A retried step keeps the first start time.
+  async markRunning(run: RunRef, at: Date): Promise<"running" | "topic_busy" | "ended"> {
+    // Manual Runs have no row until here. A retried step keeps the first start time. No change
+    // means the row exists with a final status, which the update's WHERE never overwrites.
     try {
-      await this.markRunningRow(run, at);
-      return "running";
+      return (await this.markRunningRow(run, at)) ? "running" : "ended";
     } catch (err) {
       if (err instanceof Error && err.message.includes(ONE_ACTIVE_PER_TOPIC)) return "topic_busy";
       throw err;
     }
   }
 
-  private async markRunningRow(run: RunRef, at: Date): Promise<void> {
-    await this.db
+  /** Whether the row was inserted or set running. */
+  private async markRunningRow(run: RunRef, at: Date): Promise<boolean> {
+    const { meta } = await this.db
       .prepare(
         `INSERT INTO runs
            (id, topic_id, kind, scheduled_slot, source_run_id, from_stage, status, started_at)
@@ -224,6 +225,7 @@ export class D1RunStore implements RunStore {
       )
       .bind(...runColumns(run), at.toISOString())
       .run();
+    return meta.changes === 1;
   }
 
   async recordRunConfig(runId: string, record: RunConfigRecord): Promise<void> {

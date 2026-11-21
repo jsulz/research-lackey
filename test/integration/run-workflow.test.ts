@@ -139,6 +139,37 @@ describe("RunWorkflow", () => {
     expect(row.failure_reason).toContain("D1 unavailable");
   });
 
+  it("runs no stage when its scheduled Run was already failed as stuck before the instance started", async () => {
+    // The instance started after a cron tick had reconciled its queued Run (JSU-34).
+    const id = "topic-ai-infra-20261130T1200Z";
+    await env.DB.prepare(
+      `INSERT INTO runs (id, topic_id, kind, scheduled_slot, status, failed_stage, failure_reason, ended_at)
+       VALUES (?, 'ai-infra', 'scheduled', '2026-11-30T12:00:00Z', 'failed', 'reconcile',
+               'Workflow instance not found', '2026-11-30T12:15:00Z')`,
+    )
+      .bind(id)
+      .run();
+    await using instance = await introspectWorkflowInstance(env.RUN_WORKFLOW, id);
+    await env.RUN_WORKFLOW.create({
+      id,
+      params: { topic_id: "ai-infra", kind: "scheduled", scheduled_slot: "2026-11-30T12:00:00Z" },
+    });
+    await instance.waitForStatus("complete");
+
+    expect(await getRun(id)).toMatchObject({
+      status: "failed",
+      failed_stage: "reconcile",
+      failure_reason: "Workflow instance not found",
+      started_at: null,
+      ended_at: "2026-11-30T12:15:00Z",
+    });
+    expect(await env.ARTIFACTS.get(`runs/${id}/steps/fetch.json`)).toBeNull();
+    const polls = await env.DB.prepare("SELECT count(*) AS n FROM polls WHERE run_id = ?")
+      .bind(id)
+      .first<{ n: number }>();
+    expect(polls?.n).toBe(0);
+  });
+
   it("ends a manual Run failed at start, running no stage, when its Topic has an active scheduled Run", async () => {
     const scheduled: RunRef = {
       id: "topic-ai-infra-20261116T1200Z",
