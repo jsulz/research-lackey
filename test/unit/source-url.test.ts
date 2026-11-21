@@ -65,10 +65,20 @@ describe("sourceRequestUrl", () => {
     expect(sourceRequestUrl(url, new Date("2026-11-22T12:00:00Z"))).toEqual({ ok: false, reason });
   });
 
-  it("rejects a Run start that is not a date", () => {
-    expect(sourceRequestUrl(HF, new Date("nope"))).toEqual({
-      ok: false,
-      reason: "Run start is not a date",
-    });
-  });
+  it.each([
+    ["missing", null],
+    ["not a date", new Date("nope")],
+  ])(
+    "rejects a {date} URL when the Run start is %s, and still resolves a URL without one",
+    (_n, start) => {
+      expect(sourceRequestUrl(HF, start)).toEqual({
+        ok: false,
+        reason: "Source URL needs {date}, and the Run has no start time",
+      });
+      expect(sourceRequestUrl("https://modal.com/blog/atom.xml", start)).toEqual({
+        ok: true,
+        url: "https://modal.com/blog/atom.xml",
+      });
+    },
+  );
 });

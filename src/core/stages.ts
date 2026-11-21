@@ -207,7 +207,7 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
         // `{date}` in a URL counts from the Run's recorded start, so a retried step asks again
         // for the same day.
         const startedAt = (await deps.store.getRun(run.id))?.started_at;
-        const runStart = startedAt ? new Date(startedAt) : deps.clock.now();
+        const runStart = startedAt ? new Date(startedAt) : null;
         const fetched: FetchedSource[] = [];
         const polls: Poll[] = [];
         const entries = new Map<string, RawItem[]>();

@@ -441,6 +441,25 @@ describe("fetch requests each Source's URL", () => {
     },
   );
 
+  it("fails only the {date} Source's Poll when the Run has no recorded start, rather than guessing the day", async () => {
+    const f = fetchOver(
+      [
+        { id: "hf", url: "https://hf.test/papers?date={date}" },
+        { id: "plain", url: "https://e.com/feed" },
+      ],
+      one,
+      null,
+    );
+
+    await f.run();
+
+    expect(f.requested.map((r) => r.source_id)).toEqual(["plain"]);
+    expect(f.polls[0]?.map((p) => [p.source_id, p.outcome, p.failure_reason])).toEqual([
+      ["hf", "failed", "Source URL needs {date}, and the Run has no start time"],
+      ["plain", "succeeded", null],
+    ]);
+  });
+
   it("fails the Poll, not the Run, when the fetcher itself throws", async () => {
     const f = fetchOver(
       [

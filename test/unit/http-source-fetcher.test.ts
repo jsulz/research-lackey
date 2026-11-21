@@ -18,7 +18,7 @@ const SETTINGS: FetchConfig = {
   host_intervals_ms: {},
 };
 
-type Step = number | "ok" | "network" | "hang" | { body: string };
+type Step = number | "ok" | "network" | "hang" | "stalled-body" | "stalled-404" | { body: string };
 
 /** A fetcher over a scripted outbound fetch and a virtual clock that only `sleep` advances. */
 function harness(steps: Step[], settings: Partial<FetchConfig> = {}) {
@@ -41,6 +41,16 @@ function harness(steps: Step[], settings: Partial<FetchConfig> = {}) {
         return new Promise<Response>((_resolve, reject) => {
           init.signal.addEventListener("abort", () => reject(new Error("aborted")));
         });
+      }
+      // Headers arrive, then the body never does, and neither reading nor cancelling it settles.
+      if (step === "stalled-body" || step === "stalled-404") {
+        const never = new Promise<never>(() => {});
+        return {
+          ok: step === "stalled-body",
+          status: step === "stalled-body" ? 200 : 404,
+          text: () => never,
+          body: { cancel: () => never },
+        } as unknown as Response;
       }
       if (typeof step === "number") return new Response("nope", { status: step });
       return new Response(step === "ok" ? FEED : step.body, { status: 200 });
@@ -133,6 +143,24 @@ describe("HttpSourceFetcher", () => {
       reason: "Timed out after 10 ms (3 attempts)",
       attempts: 3,
     });
+  });
+
+  it("times out a response whose body stalls after the headers, even when the abort does not end it", async () => {
+    const h = harness(["stalled-body", "ok"], { timeout_ms: 10 });
+
+    expect(await h.fetcher.fetch(request())).toMatchObject({ ok: true, attempts: 2 });
+    expect(h.requests[0]?.init.signal.aborted).toBe(true);
+  });
+
+  it("fails at once on a 404 whose body cannot be discarded, without waiting for the timeout", async () => {
+    const h = harness(["stalled-404", "ok"], { timeout_ms: 50 });
+
+    expect(await h.fetcher.fetch(request())).toEqual({
+      ok: false,
+      reason: "HTTP 404",
+      attempts: 1,
+    });
+    expect(h.requests).toHaveLength(1);
   });
 
   it("names a network error in the reason", async () => {

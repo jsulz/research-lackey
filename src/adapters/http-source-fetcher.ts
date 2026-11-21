@@ -116,7 +116,8 @@ export class HttpSourceFetcher implements SourceFetcher {
         redirect: "follow",
       });
       if (response.ok) return { kind: "body", text: await response.text() };
-      await response.body?.cancel().catch(() => {});
+      // Discard the error body without waiting for it: the status alone decides what happens next.
+      void response.body?.cancel().catch(() => {});
       const transient = response.status === 429 || response.status >= 500;
       return { kind: transient ? "retry" : "final", reason: `HTTP ${response.status}` };
     };

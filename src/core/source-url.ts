@@ -10,16 +10,23 @@ export function previousUtcDay(at: Date): string {
 /**
  * The URL to request for a Source in a Run that started at `runStartedAt`. `{date}` becomes the
  * previous UTC day, so a daily Run reads one complete day. Returns a reason instead when the
- * Source has no URL, a placeholder is left unresolved, or the result is not an http(s) URL.
+ * Source has no URL, `{date}` is used but the Run's start is unknown, a placeholder is left
+ * unresolved, or the result is not an http(s) URL.
  */
 export function sourceRequestUrl(
   url: string | null,
-  runStartedAt: Date,
+  runStartedAt: Date | null,
 ): { ok: true; url: string } | { ok: false; reason: string } {
   if (typeof url !== "string" || url.trim() === "")
     return { ok: false, reason: "Source has no URL" };
-  if (Number.isNaN(runStartedAt.getTime())) return { ok: false, reason: "Run start is not a date" };
-  const resolved = url.trim().replaceAll(DATE_PLACEHOLDER, previousUtcDay(runStartedAt));
+  let resolved = url.trim();
+  if (resolved.includes(DATE_PLACEHOLDER)) {
+    // Never guessed from the clock: a retried step must ask for the same day.
+    if (runStartedAt === null || Number.isNaN(runStartedAt.getTime())) {
+      return { ok: false, reason: "Source URL needs {date}, and the Run has no start time" };
+    }
+    resolved = resolved.replaceAll(DATE_PLACEHOLDER, previousUtcDay(runStartedAt));
+  }
   const leftover = /\{[^{}]*\}/.exec(resolved);
   if (leftover)
     return {
