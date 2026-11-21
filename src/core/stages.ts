@@ -1,6 +1,5 @@
 import type { RunConfig } from "./config";
 import { stageCost } from "./cost";
-import { capText } from "./item-text";
 import { itemKey, itemMarkdown, newestFirst } from "./items";
 import type {
   ArtifactStore,
@@ -26,7 +25,7 @@ import {
   validateReport,
 } from "./report";
 import type { Stage } from "./run-pipeline";
-import { selectForSynthesis, synthesisPrompt } from "./synthesis";
+import { selectForSynthesis, synthesisPrompt, synthesisText } from "./synthesis";
 import {
   rankTopK,
   selectForTriage,
@@ -317,8 +316,15 @@ export function buildStages(deps: StageDeps): readonly Stage[] {
         const picked = selectForSynthesis(items, deps.config.synthesis_k);
         const withText = [];
         for (const p of picked) {
-          const text = p.item.summary ?? (await deps.artifacts.getItemContent(p.item.content_key));
-          withText.push({ ...p, text: capText(text ?? "", deps.config.item_text_cap) });
+          const markdown =
+            p.item.summary === null
+              ? await deps.artifacts.getItemContent(p.item.content_key)
+              : null;
+          const text = synthesisText(p.item, markdown, {
+            summary_cap: deps.config.item_text_cap,
+            content_chars: deps.config.synthesis_content_chars,
+          });
+          withText.push({ ...p, text });
         }
         const refs = picked.map((p) => p.ref);
         const response = await deps.model.call({

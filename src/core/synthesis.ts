@@ -1,4 +1,4 @@
-import { capText } from "./item-text";
+import { capText, contentBody, plainText } from "./item-text";
 import type { PassedItem } from "./stages";
 
 /** An Item chosen for Synthesis, with the short ref the model cites it by. */
@@ -11,6 +11,27 @@ export interface SynthesisItem {
 /** The first `k` of Triage's selection, already in rank order, with refs `I1`..`Ik`. */
 export function selectForSynthesis(ranked: readonly PassedItem[], k: number): SynthesisItem[] {
   return ranked.slice(0, k).map((item, i) => ({ ref: `I${i + 1}`, item }));
+}
+
+export interface SynthesisTextLimits {
+  /** Longest summary, in characters. */
+  summary_cap: number;
+  /** For an Item with no summary, the longest content, in characters of plain text. */
+  content_chars: number;
+}
+
+/**
+ * The text Synthesis reads for one Item: its summary, or, when it has no summary, its content as
+ * plain text. Both are capped, and the cut is marked. `markdown` is the Item's R2 Markdown,
+ * needed only when there is no summary.
+ */
+export function synthesisText(
+  item: { summary: string | null },
+  markdown: string | null,
+  limits: SynthesisTextLimits,
+): string {
+  if (item.summary !== null) return capText(item.summary, limits.summary_cap);
+  return capText(plainText(contentBody(markdown ?? "")), limits.content_chars);
 }
 
 /** Feed-controlled metadata is capped like Item text, so one entry can't inflate the prompt. */

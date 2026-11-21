@@ -24,6 +24,7 @@ const LIMITS = [
   "triage_limit",
   "triage_content_chars",
   "synthesis_k",
+  "synthesis_content_chars",
   "item_text_cap",
 ] as const;
 const TIER_FIELDS = ["input", "output", "cache_read", "cache_write_5m", "cache_write_1h"] as const;

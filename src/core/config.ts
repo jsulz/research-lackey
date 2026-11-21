@@ -38,7 +38,9 @@ export interface RunConfig {
   triage_content_chars: number;
   /** How many Items, highest Triage score first, Synthesis reads. */
   synthesis_k: number;
-  /** Longest text, in characters, sent to a model per Item (Triage caps summaries at it too). */
+  /** For an Item with no summary, how many characters of its content, as text, Synthesis reads. */
+  synthesis_content_chars: number;
+  /** Longest summary, in characters, sent to a model per Item, by Triage and Synthesis. */
   item_text_cap: number;
   /** Which model runs each task. T2 moves Synthesis to Sonnet by editing this table. */
   tasks: Record<TaskName, TaskConfig>;
@@ -51,6 +53,7 @@ export const CONFIG: RunConfig = {
   triage_limit: 50,
   triage_content_chars: 1_500,
   synthesis_k: 5,
+  synthesis_content_chars: 16_000,
   item_text_cap: 4_000,
   tasks: {
     // Scoring is classification: low effort keeps thinking tokens down.

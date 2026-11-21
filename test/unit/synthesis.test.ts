@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
+import { CONFIG } from "../../src/core/config";
 import { capText } from "../../src/core/item-text";
+import { itemMarkdown } from "../../src/core/items";
 import type { PassedItem } from "../../src/core/stages";
-import { selectForSynthesis, synthesisPrompt } from "../../src/core/synthesis";
+import { selectForSynthesis, synthesisPrompt, synthesisText } from "../../src/core/synthesis";
 
 function item(id: string, published_at: string | null, summary: string | null = "s"): PassedItem {
   return {
@@ -96,5 +98,47 @@ describe("synthesisPrompt", () => {
     expect(lines[urlAt]).toHaveLength("URL: ".length + 2_000);
     expect(lines[urlAt + 1]).toBe("[truncated]");
     expect(prompt.length).toBeLessThan(3_000);
+  });
+});
+
+describe("synthesisText", () => {
+  const LIMITS = { summary_cap: 10, content_chars: 40 };
+  const md = (content?: string) =>
+    itemMarkdown({
+      externalId: "1",
+      url: "https://example.com/1",
+      title: "v1.0",
+      publishedAt: "2026-11-15T00:00:00Z",
+      content,
+    });
+
+  it("starts from 16,000 content characters", () => {
+    expect(CONFIG.synthesis_content_chars).toBe(16_000);
+  });
+
+  it("is the summary, capped at the summary cap, when the Item has one", () => {
+    expect(synthesisText({ summary: "short" }, null, LIMITS)).toBe("short");
+    expect(synthesisText({ summary: "x".repeat(20) }, md("<p>ignored</p>"), LIMITS)).toBe(
+      `${"x".repeat(10)}\n[truncated]`,
+    );
+  });
+
+  it("is the content as plain text, without the stored header, tags or entities, when there is no summary", () => {
+    const text = synthesisText(
+      { summary: null },
+      md("<h1>v1.0</h1> <p>Faster <strong>KV</strong> &amp; more.</p>"),
+      LIMITS,
+    );
+    expect(text).toBe("v1.0 Faster KV & more.");
+  });
+
+  it("caps the plain text at the content cap and marks the cut", () => {
+    const text = synthesisText({ summary: null }, md(`<p>${"y".repeat(100)}</p>`), LIMITS);
+    expect(text).toBe(`${"y".repeat(40)}\n[truncated]`);
+  });
+
+  it("is empty when there is no summary and no content", () => {
+    expect(synthesisText({ summary: null }, null, LIMITS)).toBe("");
+    expect(synthesisText({ summary: null }, md(), LIMITS)).toBe("");
   });
 });
