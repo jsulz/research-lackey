@@ -37,6 +37,27 @@ const SEEN_ITEM = `SELECT 1 FROM items i JOIN runs r ON r.id = i.first_seen_run_
 const ONE_ACTIVE_PER_TOPIC = "UNIQUE constraint failed: runs.topic_id";
 
 /** RunStore backed by D1 with hand-written SQL (ADR-0005). */
+/** A `sources` row as selected, before its filter columns are parsed. */
+interface SourceRow extends Omit<Source, "filters"> {
+  include_keywords: unknown;
+  exclude_keywords: unknown;
+  exclude_title_pattern: string | null;
+}
+
+/**
+ * A keyword column's list. The CHECK accepts a BLOB holding JSON text too, which D1 returns as
+ * bytes: a value that doesn't parse goes through as it is, so `fetch` fails only that Source's
+ * Poll (`filtersProblem`) instead of every Source of the Topic.
+ */
+function keywordList(value: unknown): string[] {
+  if (typeof value !== "string") return value as string[];
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value as unknown as string[];
+  }
+}
+
 export class D1RunStore implements RunStore {
   constructor(private readonly db: D1Database) {}
 
@@ -306,13 +327,23 @@ export class D1RunStore implements RunStore {
   async listFeedSources(topicId: string): Promise<Source[]> {
     const { results } = await this.db
       .prepare(
-        `SELECT id, topic_id, format, fixture_ref FROM sources
+        `SELECT id, topic_id, format, fixture_ref, include_keywords, exclude_keywords,
+                exclude_title_pattern
+         FROM sources
          WHERE topic_id = ? AND kind = 'feed'
          ORDER BY id`,
       )
       .bind(topicId)
-      .all<Source>();
-    return results;
+      .all<SourceRow>();
+    // `fetch` checks the filters before reading each Source.
+    return results.map(({ include_keywords, exclude_keywords, exclude_title_pattern, ...s }) => ({
+      ...s,
+      filters: {
+        include_keywords: keywordList(include_keywords),
+        exclude_keywords: keywordList(exclude_keywords),
+        exclude_title_pattern,
+      },
+    }));
   }
 
   async unseenItemKeys(sourceId: string, keys: string[]): Promise<string[]> {
