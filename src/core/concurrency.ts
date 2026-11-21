@@ -1,7 +1,10 @@
 /**
  * Calls `fn` on each item with at most `limit` calls in flight, and returns the results in input
- * order. On the first rejection it starts no further calls and rejects with that error; calls
- * already in flight run to completion on their own.
+ * order. It rejects with the first rejection. Once that rejection's handler has run, no further
+ * call starts; calls already in flight run to completion on their own. A call that settles in the
+ * same turn just before the rejection is handled may still start one more call, so callers must
+ * tolerate calls that finish after the returned promise rejects. `dedupe`'s writes are per-Run
+ * keys, so a retried step rewrites them.
  */
 export async function mapLimit<T, R>(
   items: readonly T[],
