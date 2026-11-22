@@ -3,7 +3,6 @@ import { NonRetryableError } from "cloudflare:workflows";
 import synthesisPrompt from "../../prompts/synthesis.md";
 import triagePrompt from "../../prompts/triage.md";
 import { D1RunStore } from "../adapters/d1-run-store";
-import { FixtureSourceFetcher } from "../adapters/fixture-source-fetcher";
 import { JsonLogger, parseLogLevel } from "../adapters/json-logger";
 import { R2ArtifactStore } from "../adapters/r2-artifact-store";
 import { CONFIG, type RunConfig } from "../core/config";
@@ -13,6 +12,7 @@ import { parseRunParams, type ReplayParams, type RunParams } from "../core/run-i
 import { runPipeline, type Stage } from "../core/run-pipeline";
 import { buildStages } from "../core/stages";
 import { createModelClient } from "./model-client-factory";
+import { createSourceFetcher } from "./source-fetcher-factory";
 
 /** Prompt file texts, bundled by Wrangler's `Text` rule. Each Run stores a hash of each. */
 const PROMPTS = { triage: triagePrompt, synthesis: synthesisPrompt };
@@ -56,7 +56,7 @@ export class RunWorkflow extends WorkflowEntrypoint<Env, RunParams> {
       buildStages({
         store,
         artifacts,
-        fetcher: new FixtureSourceFetcher(),
+        fetcher: createSourceFetcher(config.fetch),
         config,
         model: createModelClient(this.env, log),
         prompts: PROMPTS,

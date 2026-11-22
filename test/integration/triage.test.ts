@@ -13,7 +13,7 @@ import { callsFor, resetScript, script, triageRefs } from "./scripted-model-clie
 const TOPIC = "test-triage";
 const store = new D1RunStore(env.DB);
 
-/** Creates the test Topic with one Source per `[format, fixture_ref]`. */
+/** Creates the test Topic with one Source per `[format, fixture file]`, served by the fake fetch. */
 async function seedTopic(sources: [string, string][]): Promise<void> {
   await env.DB.batch([
     env.DB.prepare(
@@ -22,8 +22,8 @@ async function seedTopic(sources: [string, string][]): Promise<void> {
     ).bind(TOPIC),
     ...sources.map(([format, ref], i) =>
       env.DB.prepare(
-        "INSERT INTO sources (id, topic_id, kind, format, fixture_ref) VALUES (?, ?, 'feed', ?, ?)",
-      ).bind(`${TOPIC}-${i}`, TOPIC, format, ref),
+        "INSERT INTO sources (id, topic_id, kind, format, url) VALUES (?, ?, 'feed', ?, ?)",
+      ).bind(`${TOPIC}-${i}`, TOPIC, format, `https://feeds.test/${ref}`),
     ),
   ]);
 }

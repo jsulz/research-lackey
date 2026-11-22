@@ -1,5 +1,6 @@
 import {
   CONFIG,
+  type FetchConfig,
   type ModelPrice,
   type PriceTier,
   type RunConfig,
@@ -46,6 +47,44 @@ function isObject(v: unknown): v is Record<string, unknown> {
 
 function isPositiveInt(v: unknown): v is number {
   return typeof v === "number" && Number.isInteger(v) && v > 0;
+}
+
+function isNonNegativeInt(v: unknown): v is number {
+  return typeof v === "number" && Number.isInteger(v) && v >= 0;
+}
+
+function fetchConfig(v: unknown): Parsed<FetchConfig> {
+  if (!isObject(v)) return { ok: false, reason: "fetch must be an object" };
+  if (!isPositiveInt(v.timeout_ms)) {
+    return { ok: false, reason: "fetch.timeout_ms must be a positive integer" };
+  }
+  for (const name of ["retries", "backoff_ms"] as const) {
+    if (!isNonNegativeInt(v[name])) {
+      return { ok: false, reason: `fetch.${name} must be a non-negative integer` };
+    }
+  }
+  if (!isObject(v.host_intervals_ms)) {
+    return { ok: false, reason: "fetch.host_intervals_ms must be an object" };
+  }
+  const host_intervals_ms: Record<string, number> = {};
+  for (const [host, ms] of Object.entries(v.host_intervals_ms)) {
+    if (!isNonNegativeInt(ms)) {
+      return {
+        ok: false,
+        reason: `fetch.host_intervals_ms["${host}"] must be a non-negative integer`,
+      };
+    }
+    host_intervals_ms[host] = ms;
+  }
+  return {
+    ok: true,
+    value: {
+      timeout_ms: v.timeout_ms,
+      retries: v.retries as number,
+      backoff_ms: v.backoff_ms as number,
+      host_intervals_ms,
+    },
+  };
 }
 
 function task(v: unknown, name: string): Parsed<TaskConfig> {
@@ -122,6 +161,9 @@ export function parseRunConfig(
   if (!isPositiveInt(content_write_concurrency)) {
     return { ok: false, reason: "content_write_concurrency must be a positive integer" };
   }
+  // Optional: Replay config files written before JSU-52 leave it out, and Replays never fetch.
+  const fetch = fetchConfig(value.fetch ?? CONFIG.fetch);
+  if (!fetch.ok) return fetch;
   if (!isObject(value.tasks)) return { ok: false, reason: "tasks must be an object" };
   const tasks: Partial<Record<TaskName, TaskConfig>> = {};
   for (const name of TASKS) {
@@ -147,6 +189,7 @@ export function parseRunConfig(
     config: {
       ...(limits as Record<(typeof LIMITS)[number], number>),
       content_write_concurrency,
+      fetch: fetch.value,
       tasks: tasks as Record<TaskName, TaskConfig>,
       prices,
     },

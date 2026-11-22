@@ -2,8 +2,11 @@ import { describe, expect, it } from "vitest";
 import { CONFIG } from "../../src/core/config";
 import type {
   ArtifactStore,
+  FeedRead,
+  FeedRequest,
   Logger,
   ModelClient,
+  Poll,
   RunRef,
   RunStore,
   SourcePollCounts,
@@ -49,7 +52,7 @@ function dedupeWith(failFor: string) {
   const stages = buildStages({
     store,
     artifacts,
-    fetcher: { fetch: async () => [] },
+    fetcher: { fetch: async () => ({ ok: true, items: [], attempts: 1 }) },
     config: CONFIG,
     model: {} as ModelClient,
     prompts: { triage: "", synthesis: "" },
@@ -122,7 +125,7 @@ describe("dedupe Item content writes", () => {
     const stages = buildStages({
       store,
       artifacts,
-      fetcher: { fetch: async () => [] },
+      fetcher: { fetch: async () => ({ ok: true, items: [], attempts: 1 }) },
       config,
       model: {} as ModelClient,
       prompts: { triage: "", synthesis: "" },
@@ -174,9 +177,10 @@ describe("fetch Polls and raw entries", () => {
     const recorded: unknown[] = [];
     const store = {
       listFeedSources: async () => [
-        { id: "a", topic_id: "t", format: "rss2", fixture_ref: "a", filters: NO_FILTERS },
-        { id: "b", topic_id: "t", format: "rss2", fixture_ref: "b", filters: NO_FILTERS },
+        { id: "a", topic_id: "t", format: "rss2", url: "https://e.com/a", filters: NO_FILTERS },
+        { id: "b", topic_id: "t", format: "rss2", url: "https://e.com/b", filters: NO_FILTERS },
       ],
+      getRun: async () => ({ started_at: "2026-11-22T12:00:00Z" }),
       recordPolls: async (_run: string, polls: unknown[]) => {
         recorded.push(polls);
       },
@@ -190,7 +194,13 @@ describe("fetch Polls and raw entries", () => {
     const stages = buildStages({
       store,
       artifacts,
-      fetcher: { fetch: async (s) => [{ externalId: s.id, url: "https://e.com", title: s.id }] },
+      fetcher: {
+        fetch: async (r) => ({
+          ok: true,
+          items: [{ externalId: r.source_id, url: r.url, title: r.source_id }],
+          attempts: 1,
+        }),
+      },
       config: CONFIG,
       model: {} as ModelClient,
       prompts: { triage: "", synthesis: "" },
@@ -241,7 +251,7 @@ describe("dedupe Source filters", () => {
     const stages = buildStages({
       store,
       artifacts,
-      fetcher: { fetch: async () => [] },
+      fetcher: { fetch: async () => ({ ok: true, items: [], attempts: 1 }) },
       config: { ...CONFIG, first_poll_cap: 3 },
       model: {} as ModelClient,
       prompts: { triage: "", synthesis: "" },
@@ -296,5 +306,177 @@ describe("dedupe Source filters", () => {
 
     expect(out.passed).toBe(10);
     expect(d.counts).toEqual([[{ source_id: "a", items_new: 10, items_filtered: 0 }]]);
+  });
+});
+
+describe("fetch requests each Source's URL", () => {
+  const filters = NO_FILTERS;
+
+  /** The fetch stage over fakes: a Run started at `startedAt`, and a fetcher answering per URL. */
+  function fetchOver(
+    sources: Array<{ id: string; url: unknown }>,
+    read: (url: string) => FeedRead,
+    startedAt: string | null = "2026-11-22T12:00:03Z",
+  ) {
+    const polls: Poll[][] = [];
+    const requested: FeedRequest[] = [];
+    const store = {
+      listFeedSources: async () =>
+        sources.map((s) => ({ ...s, topic_id: "t", format: "rss2", filters })),
+      getRun: async () => ({ started_at: startedAt }),
+      recordPolls: async (_run: string, p: Poll[]) => {
+        polls.push(p);
+      },
+    } as unknown as RunStore;
+    const artifacts = {
+      putRawEntries: async (_run: string, sourceId: string) => `raw/${sourceId}`,
+    } as unknown as ArtifactStore;
+    const stages = buildStages({
+      store,
+      artifacts,
+      fetcher: {
+        fetch: async (r) => {
+          requested.push(r);
+          return read(r.url);
+        },
+      },
+      config: CONFIG,
+      model: {} as ModelClient,
+      prompts: { triage: "", synthesis: "" },
+      model_env: "dev",
+      clock: { now: () => new Date("2030-01-01T00:00:00Z") },
+    });
+    const fetch = stages.find((s) => s.name === "fetch");
+    if (!fetch) throw new Error("no fetch stage");
+    return {
+      run: async () =>
+        (await fetch.run({ topic_id: "t" }, { run: RUN, log: LOG })) as {
+          sources: FetchedSource[];
+        },
+      polls,
+      requested,
+    };
+  }
+
+  const one = (url: string): FeedRead => ({
+    ok: true,
+    items: [{ externalId: "1", url, title: "One" }],
+    attempts: 1,
+  });
+
+  it("resolves {date} to the UTC day before the Run started, and records the URL it requested", async () => {
+    const f = fetchOver([{ id: "hf", url: "https://hf.test/papers?date={date}" }], one);
+
+    const out = await f.run();
+
+    expect(f.requested).toEqual([
+      { source_id: "hf", url: "https://hf.test/papers?date=2026-11-21", format: "rss2" },
+    ]);
+    expect(out.sources[0]).toMatchObject({
+      outcome: "succeeded",
+      url: "https://hf.test/papers?date=2026-11-21",
+    });
+  });
+
+  it("records the attempts the fetcher made, for a read Source and a failed one", async () => {
+    const f = fetchOver(
+      [
+        { id: "a", url: "https://e.com/a" },
+        { id: "b", url: "https://e.com/b" },
+      ],
+      (url) =>
+        url.endsWith("/a")
+          ? { ...one(url), attempts: 2 }
+          : { ok: false, reason: "HTTP 503 (3 attempts)", attempts: 3 },
+    );
+
+    await f.run();
+
+    expect(f.polls[0]).toEqual([
+      expect.objectContaining({ source_id: "a", outcome: "succeeded", attempts: 2 }),
+      expect.objectContaining({
+        source_id: "b",
+        outcome: "failed",
+        attempts: 3,
+        failure_reason: "HTTP 503 (3 attempts)",
+      }),
+    ]);
+  });
+
+  it.each([
+    ["no URL", null, "Source has no URL"],
+    ["a URL stored as something other than text", 42, "Source has no URL"],
+    [
+      "an unknown placeholder",
+      "https://e.com/?d={day}",
+      "Source URL has an unknown placeholder {day}",
+    ],
+    [
+      "a URL that is not http(s)",
+      "file:///etc/hosts",
+      "Source URL scheme file: is not http or https",
+    ],
+  ])(
+    "fails the Poll of a Source with %s without a request, and reads the others",
+    async (_n, url, reason) => {
+      const f = fetchOver(
+        [
+          { id: "bad", url },
+          { id: "good", url: "https://e.com/good" },
+        ],
+        one,
+      );
+
+      const out = await f.run();
+
+      expect(f.requested.map((r) => r.source_id)).toEqual(["good"]);
+      expect(f.polls[0]?.[0]).toMatchObject({
+        source_id: "bad",
+        outcome: "failed",
+        attempts: 1,
+        failure_reason: reason,
+      });
+      expect(out.sources[0]).toMatchObject({ source_id: "bad", url: null, entries_key: null });
+      expect(out.sources[1]).toMatchObject({ source_id: "good", outcome: "succeeded" });
+    },
+  );
+
+  it("fails only the {date} Source's Poll when the Run has no recorded start, rather than guessing the day", async () => {
+    const f = fetchOver(
+      [
+        { id: "hf", url: "https://hf.test/papers?date={date}" },
+        { id: "plain", url: "https://e.com/feed" },
+      ],
+      one,
+      null,
+    );
+
+    await f.run();
+
+    expect(f.requested.map((r) => r.source_id)).toEqual(["plain"]);
+    expect(f.polls[0]?.map((p) => [p.source_id, p.outcome, p.failure_reason])).toEqual([
+      ["hf", "failed", "Source URL needs {date}, and the Run has no start time"],
+      ["plain", "succeeded", null],
+    ]);
+  });
+
+  it("fails the Poll, not the Run, when the fetcher itself throws", async () => {
+    const f = fetchOver(
+      [
+        { id: "a", url: "https://e.com/a" },
+        { id: "b", url: "https://e.com/b" },
+      ],
+      (url) => {
+        if (url.endsWith("/a")) throw new Error("boom");
+        return one(url);
+      },
+    );
+
+    await f.run();
+
+    expect(f.polls[0]?.map((p) => [p.source_id, p.outcome, p.attempts, p.failure_reason])).toEqual([
+      ["a", "failed", 1, "boom"],
+      ["b", "succeeded", 1, null],
+    ]);
   });
 });

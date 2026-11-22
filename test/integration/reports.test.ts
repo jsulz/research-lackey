@@ -24,7 +24,7 @@ beforeEach(async () => {
        VALUES (?, 'Report test topic', 'Track vLLM serving changes.', 'daily', '12:00')`,
     ).bind(TOPIC),
     env.DB.prepare(
-      "INSERT INTO sources (id, topic_id, kind, format, fixture_ref) VALUES (?, ?, 'feed', 'rss2', 'vllm-blog.rss.xml')",
+      "INSERT INTO sources (id, topic_id, kind, format, url) VALUES (?, ?, 'feed', 'rss2', 'https://feeds.test/vllm-blog.rss.xml')",
     ).bind(SOURCE, TOPIC),
   ]);
 });
@@ -181,7 +181,7 @@ describe("Synthesis and publish", () => {
     await env.DB.batch([
       env.DB.prepare("DELETE FROM sources WHERE id = ?").bind(SOURCE),
       env.DB.prepare(
-        "INSERT INTO sources (id, topic_id, kind, format, fixture_ref) VALUES ('test-reports-arxiv', ?, 'feed', 'atom', 'arxiv-serving.atom.xml')",
+        "INSERT INTO sources (id, topic_id, kind, format, url) VALUES ('test-reports-arxiv', ?, 'feed', 'atom', 'https://feeds.test/arxiv-serving.atom.xml')",
       ).bind(TOPIC),
     ]);
     answerWith([["I1"]]);
