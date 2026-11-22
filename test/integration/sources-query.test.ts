@@ -144,8 +144,16 @@ describe("SOURCES_SQL", () => {
 
     expect(results.map((r) => r.source_id)).toEqual([
       "arxiv-serving",
+      "arxiv-training",
+      "cloudflare-workers-ai",
+      "google-cloud-ai-infra",
       "hf-daily-papers",
       "modal-blog",
+      "nvidia-inference",
+      "pytorch-blog",
+      "semianalysis",
+      "sglang-releases",
+      "together-blog",
       "vllm-blog",
       "vllm-releases",
     ]);

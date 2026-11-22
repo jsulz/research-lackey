@@ -359,12 +359,31 @@ describe("parseFeed, Atom XHTML text", () => {
 
 // sha256 of JSON.stringify(parseFeed(format, fixture)), computed on `main` at 5ab5690
 // before the namespace-prefix and XHTML changes.
+// The `-2026-11-22` rows are the wave 2 Sources' captures, computed when they were added.
 const FIXTURE_DIGESTS = [
   [
     "arxiv-serving.atom.xml",
     "atom",
     50,
     "a35cd89ba2afdc7eb656406e785417290b44a80210d7ad626e897132eb451721",
+  ],
+  [
+    "arxiv-training-2026-11-22.atom.xml",
+    "atom",
+    50,
+    "6bb7bff9e8e79d3589419da6e8e321a15e78ff2e7cbdfb5ac4b2ac82b082c226",
+  ],
+  [
+    "cloudflare-workers-ai-2026-11-22.rss.xml",
+    "rss2",
+    20,
+    "3605d36a4eb8719686ec646119be4743aa13fdce42a0a7ccb2607e9073348e4d",
+  ],
+  [
+    "google-cloud-ai-infra-2026-11-22.rss.xml",
+    "rss2",
+    20,
+    "bb771d4f34b562e6db2fda812bbaf83d86cfd9cc0e84b917355a42a6e9701bc5",
   ],
   [
     "hf-daily-papers-2026-11-13.json",
@@ -379,10 +398,40 @@ const FIXTURE_DIGESTS = [
     "04c2af3a9311b5f02d39b0130929aeb25f7a2ce84b16d21679d1a61645186816",
   ],
   [
+    "nvidia-inference-2026-11-22.atom.xml",
+    "atom",
+    84,
+    "8cb3756136bc2c75187a150cc22ee534ce8e293e51655a61d657866dc300dedc",
+  ],
+  [
+    "pytorch-blog-2026-11-22.rss.xml",
+    "rss2",
+    10,
+    "eb9e1e0c710eebdffb3e37ec0649562917da798231a034c9ce6d5cedba998126",
+  ],
+  [
+    "semianalysis-2026-11-22.rss.xml",
+    "rss2",
+    20,
+    "267035d72417ea8ca847b08b20fd27d26e3e3d816f587316c088ac96fd54fea4",
+  ],
+  [
+    "sglang-releases-2026-11-22.atom.xml",
+    "atom",
+    10,
+    "7eee438e07fa114dd3a512b6c979fd3483fca66c5741865d6dc3b26db653d291",
+  ],
+  [
     "summary-and-content.atom.xml",
     "atom",
     2,
     "6743361d9bbe5d012b56c2c6dc8f8ae8265d47bcc125efb82c5d28b21ad197d6",
+  ],
+  [
+    "together-blog-2026-11-22.rss.xml",
+    "rss2",
+    100,
+    "3bd4cef5d102e79cf44815f2e47770079588bffdeb268d26bfaa1406a9f76573",
   ],
   [
     "vllm-blog-2026-11-17.rss.xml",
@@ -416,6 +465,109 @@ const FIXTURE_DIGESTS = [
   ],
 ] as const;
 
+// Captured from the live feeds on 2026-11-22. `semianalysis` has its `content:encoded` bodies
+// removed (the RSS parser does not read them). Email addresses in `semianalysis`,
+// `cloudflare-workers-ai` and `google-cloud-ai-infra` are replaced; the rest are as served.
+describe("parseFeed, the wave 2 Sources' captures", () => {
+  it.each([
+    [
+      "arxiv-training-2026-11-22.atom.xml",
+      "atom",
+      50,
+      "http://arxiv.org/abs/2611.26156v1",
+      "https://arxiv.org/abs/2611.26156v1",
+      "Towards Scale-Up Networking: Challenges and Open Questions",
+      "2026-11-19T14:12:24.000Z",
+      0,
+    ],
+    [
+      "pytorch-blog-2026-11-22.rss.xml",
+      "rss2",
+      10,
+      "https://pytorch.org/?p=211820",
+      "https://pytorch.org/blog/2026-pytorch-foundation-contributor-awards/",
+      "Celebrating the 2026 PyTorch Foundation Contributor Award Winners and Nominees",
+      "2026-11-16T20:16:55.000Z",
+      0,
+    ],
+    [
+      "nvidia-inference-2026-11-22.atom.xml",
+      "atom",
+      84,
+      "https://developer.nvidia.com/blog/?p=125544",
+      "https://developer.nvidia.com/blog/build-tool-calling-parsers-in-rust-with-ai-agents/",
+      "Build Tool-Calling Parsers in Rust with AI Agents",
+      "2026-11-19T16:30:46.000Z",
+      0,
+    ],
+    [
+      "cloudflare-workers-ai-2026-11-22.rss.xml",
+      "rss2",
+      20,
+      "01M7R89D5X67THE8N5T2YSWARZ",
+      "https://blog.cloudflare.com/open-clairic/",
+      "An updated Clairic and Clairic-flash are now open-weight, from the new Workers AI Superintelligence team",
+      "2026-11-18T22:00:00.000Z",
+      0,
+    ],
+    [
+      "together-blog-2026-11-22.rss.xml",
+      "rss2",
+      100,
+      "https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026",
+      "https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026",
+      "Security event: Prompt leakage for requests in June and July of 2026",
+      "2026-11-21T00:00:00.000Z",
+      10,
+    ],
+    [
+      "google-cloud-ai-infra-2026-11-22.rss.xml",
+      "rss2",
+      20,
+      "https://cloud.google.com/blog/products/storage-data-transfer/cost-effective-ai-context-extraction-from-unstructured-gcs-data/",
+      "https://cloud.google.com/blog/products/storage-data-transfer/cost-effective-ai-context-extraction-from-unstructured-gcs-data/",
+      "Introducing object enrichments: Transform unstructured data into agent-ready context",
+      "2026-11-19T17:00:00.000Z",
+      0,
+    ],
+    [
+      "sglang-releases-2026-11-22.atom.xml",
+      "atom",
+      10,
+      "tag:github.com,2008:Repository/740303686/router-v0.1.0",
+      "https://github.com/sgl-project/sglang/releases/tag/router-v0.1.0",
+      "router-v0.1.0",
+      "2026-11-18T00:34:15.000Z",
+      0,
+    ],
+    [
+      "semianalysis-2026-11-22.rss.xml",
+      "rss2",
+      20,
+      "https://newsletter.semianalysis.com/p/nvidia-and-the-world-without-jensen",
+      "https://newsletter.semianalysis.com/p/nvidia-and-the-world-without-jensen",
+      "Nvidia and the World Without Jensen",
+      "2026-11-12T18:06:26.000Z",
+      0,
+    ],
+  ] as const)(
+    "%s parses to Items, each with an id, an https link and a date",
+    (name, format, count, externalId, url, title, publishedAt, untitled) => {
+      const items = parseFeed(format, fixture(name));
+
+      expect(items).toHaveLength(count);
+      expect(items[0]).toMatchObject({ externalId, url, title, publishedAt });
+      expect(new Set(items.map((i) => i.externalId)).size).toBe(count);
+      for (const item of items) {
+        expect(item.url, item.externalId).toMatch(/^https:\/\//);
+        expect(Number.isNaN(Date.parse(item.publishedAt ?? "")), item.externalId).toBe(false);
+      }
+      // Together's feed serves 10 entries with an empty <title>; every other entry has one.
+      expect(items.filter((i) => (i.title ?? "").trim() === "")).toHaveLength(untitled);
+    },
+  );
+});
+
 describe("parseFeed, committed fixtures", () => {
   it.each(FIXTURE_DIGESTS)(
     "%s parses to the same Items as before",
@@ -425,6 +577,19 @@ describe("parseFeed, committed fixtures", () => {
       expect(createHash("sha256").update(JSON.stringify(items)).digest("hex")).toBe(digest);
     },
   );
+
+  it("holds no email address except the redaction placeholder", () => {
+    // Captured before this check, with commit authors' addresses in release notes.
+    const exempt = ["vllm-releases-2026-11-17.atom.xml"];
+    const dir = path.join(import.meta.dirname, "../../fixtures/feeds");
+    const address = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+/g;
+    for (const name of readdirSync(dir).filter((f) => !exempt.includes(f))) {
+      const others = (fixture(name).match(address) ?? []).filter(
+        (found) => found !== "redacted@example.invalid",
+      );
+      expect(others.length, name).toBe(0);
+    }
+  });
 
   it("covers every committed fixture", () => {
     const files = readdirSync(path.join(import.meta.dirname, "../../fixtures/feeds")).sort();

@@ -63,11 +63,19 @@ describe("RunWorkflow", () => {
       output: { sources: { source_id: string; items_read: number }[] };
     };
     expect(fetched.input).toEqual({ topic_id: "ai-infra" });
-    // The seeded Sources (migration 0004), ordered by ID, with their fixture entry counts.
+    // The seeded Sources (migrations 0004 and 0009), ordered by ID, with their fixture entry counts.
     expect(fetched.output.sources.map((s) => [s.source_id, s.items_read])).toEqual([
       ["arxiv-serving", 50],
+      ["arxiv-training", 50],
+      ["cloudflare-workers-ai", 20],
+      ["google-cloud-ai-infra", 20],
       ["hf-daily-papers", 34],
       ["modal-blog", 157],
+      ["nvidia-inference", 84],
+      ["pytorch-blog", 10],
+      ["semianalysis", 20],
+      ["sglang-releases", 10],
+      ["together-blog", 100],
       ["vllm-blog", 50],
       ["vllm-releases", 10],
     ]);
