@@ -22,9 +22,17 @@ function modelEnv(value: string | undefined): ModelCallMetadata["env"] {
   return value === "dev" ? "dev" : "prod";
 }
 
-/** Retry policy for every step: 3 retries after the first attempt, 10 s doubling. */
+/**
+ * How long one attempt of a step may run. `fetch` reads the Sources one after another, so it
+ * must outlast every Source timing out on every request: 13 Sources take about 14 minutes, over
+ * the Workflows default of 10. A step cut off there would record no Polls.
+ */
+export const STEP_TIMEOUT_MINUTES = 20;
+
+/** Every step: the timeout above, and 3 retries after the first attempt, 10 s doubling. */
 const STEP_CONFIG = {
   retries: { limit: 3, delay: "10 seconds", backoff: "exponential" },
+  timeout: `${STEP_TIMEOUT_MINUTES} minutes`,
 } as const;
 
 /**

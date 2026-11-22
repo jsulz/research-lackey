@@ -1,0 +1,1037 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>PyTorch</title>
+	<atom:link href="https://pytorch.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://pytorch.org/</link>
+	<description></description>
+	<lastBuildDate>Tue, 17 Nov 2026 11:32:11 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.5</generator>
+
+<image>
+	<url>https://pytorch.org/wp-content/uploads/2024/10/cropped-favicon-32x32.webp</url>
+	<title>PyTorch</title>
+	<link>https://pytorch.org/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>Celebrating the 2026 PyTorch Foundation Contributor Award Winners and Nominees</title>
+		<link>https://pytorch.org/blog/2026-pytorch-foundation-contributor-awards/</link>
+		
+		<dc:creator><![CDATA[PyTorch Foundation]]></dc:creator>
+		<pubDate>Mon, 16 Nov 2026 20:16:55 +0000</pubDate>
+				<category><![CDATA[Announcements]]></category>
+		<category><![CDATA[Blog]]></category>
+		<guid isPermaLink="false">https://pytorch.org/?p=211820</guid>
+
+					<description><![CDATA[<p>The PyTorch Foundation is proud to celebrate the winners and nominees of the fourth annual PyTorch Foundation Contributor Awards! Presented on the keynote stage at PyTorch Conference 2026 in San...</p>
+<p>The post <a href="https://pytorch.org/blog/2026-pytorch-foundation-contributor-awards/">Celebrating the 2026 PyTorch Foundation Contributor Award Winners and Nominees</a> appeared first on <a href="https://pytorch.org">PyTorch</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p><img fetchpriority="high" decoding="async" class="aligncenter wp-image-211821 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/contributor-award-featured-image.png" alt="" width="1280" height="720" srcset="https://pytorch.org/wp-content/uploads/2026/11/contributor-award-featured-image.png 1280w, https://pytorch.org/wp-content/uploads/2026/11/contributor-award-featured-image-300x169.png 300w, https://pytorch.org/wp-content/uploads/2026/11/contributor-award-featured-image-1024x576.png 1024w" sizes="(max-width: 1280px) 100vw, 1280px" /></p>
+<p><span style="font-weight: 400;">The PyTorch Foundation is proud to celebrate the winners and nominees of the fourth annual</span><a href="https://pytorch.org/contributor-awards/"> <span style="font-weight: 400;">PyTorch Foundation Contributor Awards</span></a><span style="font-weight: 400;">!</span></p>
+<p><span style="font-weight: 400;">Presented on the keynote stage at PyTorch Conference 2026 in San Jose, California, these awards recognize the individuals whose dedication, innovation, and contributions help advance open source projects and strengthen the communities around them.</span></p>
+<h3><span style="font-weight: 400;">2026 Awards at a Glance</span></h3>
+<p><span style="font-weight: 400;">15 Award Winners | 11 Nominees | 9 Award Categories | 3 New Categories</span></p>
+<p><img decoding="async" class="aligncenter wp-image-211822 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/2.jpg" alt="" width="1306" height="800" srcset="https://pytorch.org/wp-content/uploads/2026/11/2.jpg 1306w, https://pytorch.org/wp-content/uploads/2026/11/2-300x184.jpg 300w, https://pytorch.org/wp-content/uploads/2026/11/2-1024x627.jpg 1024w" sizes="(max-width: 1306px) 100vw, 1306px" /></p>
+<p><span style="font-weight: 400;">This year marks another milestone for the program, with 15 award winners, up from 11 in 2025, recognizing outstanding contributions across PyTorch Foundation-hosted projects, including PyTorch, vLLM, Ray, and DeepSpeed.</span></p>
+<h2><b>Expanding Recognition Across the PyTorch Ecosystem</b></h2>
+<p><span style="font-weight: 400;">As the PyTorch Foundation&#8217;s community continues to grow, the Contributor Awards have evolved to reflect the diverse ways individuals contribute to its projects.</span></p>
+<p><span style="font-weight: 400;">In 2026, three new award categories were introduced:</span></p>
+<ul>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Knowledge Enhancer: Celebrating contributors who make knowledge more accessible through documentation, tutorials, and educational resources.</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Bug Buster: Recognizing those who identify, report, and resolve bugs that improve project quality and reliability.</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Catalyst: Honoring contributions that improve developer workflows, automation, infrastructure, and AI-supported development.</span></li>
+</ul>
+<p><span style="font-weight: 400;">These additions complement the existing categories recognizing technical innovation, mentorship, community leadership, and ecosystem development.</span></p>
+<h2><b>Meet the 2026 Contributor Award Winners</b></h2>
+<p><span style="font-weight: 400;">Congratulations to our 15 award winners across nine categories!</span></p>
+<p><b>Superhero</b></p>
+<ul>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Thomas Ortner — PyTorch</span></li>
+</ul>
+<p><b>Ecosystem Champion</b></p>
+<ul>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Guangye Yu — PyTorch</span></li>
+</ul>
+<p><b>Knowledge Enhancer</b></p>
+<ul>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Abdulsalam Yazid Bande — PyTorch</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Suman Debnath — Ray</span></li>
+</ul>
+<p><b>Bug Buster</b></p>
+<ul>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Guilherme Vieira Leobas — PyTorch</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Vishal Goyal — PyTorch</span></li>
+</ul>
+<p><b>Newcomer</b></p>
+<ul>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Johannes Lennart Zeiser — PyTorch</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Jiangyun Zhu — vLLM</span></li>
+</ul>
+<p><b>Review Powerhouse</b></p>
+<ul>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Wentao Ye — vLLM</span></li>
+</ul>
+<p><b>Innovator</b></p>
+<ul>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Elfie Guo — PyTorch</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Masahiro Tanaka — DeepSpeed</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Xinan Lin — PyTorch</span></li>
+</ul>
+<p><b>Catalyst</b></p>
+<ul>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Harry Mellor — vLLM</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Jiahao Tan — PyTorch</span></li>
+</ul>
+<p><b>Outstanding Ambassador</b></p>
+<ul>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Jiho Kim — PyTorch</span></li>
+</ul>
+<h2><b>Recognizing Our 2026 Award Nominees</b></h2>
+<p><span style="font-weight: 400;">We also celebrate the 11 award nominees whose contributions and dedication continue to make a difference across the PyTorch ecosystem.</span></p>
+<ul>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Chandra Mohan Singh Negi</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Arun Bhandari</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Masahiro Hiramori</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Luka Govedič</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Irakli Salia</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Jiahao Chen</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Kunshang Ji</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Rohit Kumar Tiwari</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Subin George</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Aaron Gokaslan</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Xunzhuo Liu</span></li>
+</ul>
+<p><span style="font-weight: 400;">Congratulations to all our winners and nominees! Your work helps make the PyTorch ecosystem stronger, more collaborative, and more accessible to developers around the world.</span></p>
+<p><a href="https://pytorch.org/contributor-awards/"><b>Explore the 2026 Contributor Awards and view the honorees</b></a></p>
+<h2><b>Award Ceremony</b></h2>
+<p><span style="font-weight: 400;">Watch the award ceremony at PyTorch Conference North America. </span></p>
+<p><iframe title="YouTube video player" src="https://www.youtube.com/embed/Q9b-fUg1fj4?si=lnSZCpJwuc3ScDSC" width="560" height="315" frameborder="0" allowfullscreen="allowfullscreen"></iframe></p>
+<h2><b>Thank You to Our Community and Sponsor</b></h2>
+<p><span style="font-weight: 400;">A special thank you to the Contributor Awards Program Committee for the time, care, and thoughtful consideration invested in reviewing nominations and supporting this year&#8217;s awards.</span></p>
+<p><span style="font-weight: 400;">We also extend our appreciation to Red Hat, sponsor of the 2026 PyTorch Foundation Contributor Awards, for supporting this important community recognition program.</span></p>
+<p><span style="font-weight: 400;">And most importantly, thank you to the contributors who continue to build, maintain, document, improve, and champion projects across the PyTorch Foundation ecosystem.</span></p>
+<p>The post <a href="https://pytorch.org/blog/2026-pytorch-foundation-contributor-awards/">Celebrating the 2026 PyTorch Foundation Contributor Award Winners and Nominees</a> appeared first on <a href="https://pytorch.org">PyTorch</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>PyTorch Foundation Ambassador Community Highlights November 2026</title>
+		<link>https://pytorch.org/blog/pytorch-ambassador-community-highlights-november-2026/</link>
+		
+		<dc:creator><![CDATA[PyTorch Foundation]]></dc:creator>
+		<pubDate>Mon, 16 Nov 2026 16:20:31 +0000</pubDate>
+				<category><![CDATA[Ambassador Post]]></category>
+		<category><![CDATA[Blog]]></category>
+		<guid isPermaLink="false">https://pytorch.org/?p=211755</guid>
+
+					<description><![CDATA[<p>PyTorch Foundation Ambassadors bring people together to learn, share technical knowledge and contribute to PyTorch Foundation projects and the wider open-source AI ecosystem. In this November roundup, we highlight some...</p>
+<p>The post <a href="https://pytorch.org/blog/pytorch-ambassador-community-highlights-november-2026/">PyTorch Foundation Ambassador Community Highlights November 2026</a> appeared first on <a href="https://pytorch.org">PyTorch</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p data-pm-slice="1 1 []"><a href="https://pytorch.org/programs/ambassadors/">PyTorch Foundation Ambassadors</a> bring people together to learn, share technical knowledge and contribute to PyTorch Foundation projects and the wider open-source AI ecosystem.</p>
+<p>In this November roundup, we highlight some of our ambassadors’ activities, including local meetups, university sessions, technical articles and practical learning resources.</p>
+<h2 style="font-size: 23px; font-weight: 600; line-height: 1.35; margin: 24px 0 10px; padding: 0;">PyTorch Community Meetup in Kampala</h2>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><span style="font-weight: 400;">On September 19, </span><b>Pacifique Mugisho</b><span style="font-weight: 400;"> organized an in-person PyTorch East Africa community meetup at Makerere University in Kampala, Uganda, in collaboration with the IndabaX Makerere Student Chapter and the IEEE Computer Society Makerere Student Branch.</span></p>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><span style="font-weight: 400;">The event received </span><b>103 registrations and welcomed 32 attendees</b><span style="font-weight: 400;">. Talks explored retrieval-augmented generation (RAG), external knowledge integration and advanced retrieval techniques. Pacifique also led a practical workshop covering embeddings, semantic search and how these components can be combined in PyTorch-based applications.</span></p>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><span style="font-weight: 400;">An interactive quiz gave participants another way to engage with the material. Following the event, the community gained 20 WhatsApp members and four LinkedIn members. The gathering also laid the groundwork for further in-person meetups.</span></p>
+<div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; width: 100%; max-width: 612px; margin: 18px 0 8px; clear: both;">
+<div style="flex: 1 1 240px; min-width: 0; max-width: 300px; margin: 0;"><img decoding="async" class="alignnone size-medium wp-image-211766" style="display: block; width: 100%; max-width: 300px; height: auto; margin: 0; float: none;" src="https://pytorch.org/wp-content/uploads/2026/11/IMG_4243-300x225.jpg" alt="" width="300" height="225" srcset="https://pytorch.org/wp-content/uploads/2026/11/IMG_4243-300x225.jpg 300w, https://pytorch.org/wp-content/uploads/2026/11/IMG_4243-1024x768.jpg 1024w, https://pytorch.org/wp-content/uploads/2026/11/IMG_4243.jpg 1989w" sizes="(max-width: 300px) 100vw, 300px" /></div>
+<div style="flex: 1 1 240px; min-width: 0; max-width: 300px; margin: 0;"><img decoding="async" class="alignnone wp-image-211763" style="display: block; width: 100%; max-width: 300px; height: auto; margin: 0; float: none;" src="https://pytorch.org/wp-content/uploads/2026/11/IMG_4235-300x225.jpg" alt="" width="300" height="225" srcset="https://pytorch.org/wp-content/uploads/2026/11/IMG_4235-300x225.jpg 300w, https://pytorch.org/wp-content/uploads/2026/11/IMG_4235-1024x768.jpg 1024w" sizes="(max-width: 300px) 100vw, 300px" /></div>
+</div>
+<p style="font-size: 14px; line-height: 1.5; color: #555555; margin: 0 0 22px; padding: 0; max-width: 612px; clear: both;" data-image-caption="true">Technical talks and hands-on learning at the PyTorch East Africa community meetup at Makerere University, Kampala.</p>
+<h2 style="font-size: 23px; font-weight: 600; line-height: 1.35; margin: 24px 0 10px; padding: 0;">Hands-on PyTorch on TPUs in Dhaka</h2>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><span style="font-weight: 400;">On October 30, </span><b>Zaynul Abedin Miah</b><span style="font-weight: 400;"> delivered a technical talk and live demonstration, “PyTorch on TPU with TorchTPU,” at a community meetup in Dhaka, Bangladesh.</span></p>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><span style="font-weight: 400;">The session showed students and early-career developers how to run native PyTorch on Google TPUs using free Colab notebooks. It covered device setup, tensor operations and </span><span style="font-weight: 400;">torch.compile</span><span style="font-weight: 400;">, with an interactive “predict, then run” exercise.</span></p>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><span style="font-weight: 400;">The event received </span><b>91 registrations</b><span style="font-weight: 400;">, and all </span><b>50 approved seats were filled</b><span style="font-weight: 400;">. Participants travelled from several cities, with some journeys exceeding 330 kilometres. Slides and a runnable notebook were shared with all registrants so they could continue experimenting afterward.</span></p>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><a href="https://luma.com/hzrj66ah"><span style="font-weight: 400;">View the event</span></a><span style="font-weight: 400;">. Colab: <a href="https://colab.research.google.com/drive/1Nwjd8by6cLhI-ZihMFK4JRyyHFaS7eH_?usp=sharing" rel="nofollow">Link</a> </span></p>
+<div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; width: 100%; max-width: 612px; margin: 18px 0 8px; clear: both;">
+<div style="flex: 1 1 240px; min-width: 0; max-width: 300px; margin: 0;"><img decoding="async" class="size-medium wp-image-211769" style="display: block; width: 100%; max-width: 300px; height: auto; margin: 0; float: none;" src="https://pytorch.org/wp-content/uploads/2026/11/692271901-52e05227-4b9f-40bd-a49e-0d79104c04c4-300x222.jpg" alt="" width="300" height="222" srcset="https://pytorch.org/wp-content/uploads/2026/11/692271901-52e05227-4b9f-40bd-a49e-0d79104c04c4-300x222.jpg 300w, https://pytorch.org/wp-content/uploads/2026/11/692271901-52e05227-4b9f-40bd-a49e-0d79104c04c4-1024x757.jpg 1024w, https://pytorch.org/wp-content/uploads/2026/11/692271901-52e05227-4b9f-40bd-a49e-0d79104c04c4.jpg 1170w" sizes="(max-width: 300px) 100vw, 300px" /></div>
+<div style="flex: 1 1 240px; min-width: 0; max-width: 300px; margin: 0;"><img decoding="async" class="alignnone size-medium wp-image-211761" style="display: block; width: 100%; max-width: 300px; height: auto; margin: 0; float: none;" src="https://pytorch.org/wp-content/uploads/2026/11/Zanuel-300x225.jpg" alt="" width="300" height="225" srcset="https://pytorch.org/wp-content/uploads/2026/11/Zanuel-300x225.jpg 300w, https://pytorch.org/wp-content/uploads/2026/11/Zanuel-1024x768.jpg 1024w, https://pytorch.org/wp-content/uploads/2026/11/Zanuel.jpg 1600w" sizes="(max-width: 300px) 100vw, 300px" /></div>
+</div>
+<p style="font-size: 14px; line-height: 1.5; color: #555555; margin: 0 0 22px; padding: 0; max-width: 612px; clear: both;" data-image-caption="true">Attendees and a live demonstration at the PyTorch on TPUs community session in Dhaka.</p>
+<h2 style="font-size: 23px; font-weight: 600; line-height: 1.35; margin: 24px 0 10px; padding: 0;">Efficient LLM Inference with PyTorch Community Nepal</h2>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><span style="font-weight: 400;">On November 1, </span><b>Arun Bhandari</b><span style="font-weight: 400;"> organized and hosted PyTorch Community Nepal’s first online technical session, “Accelerating LLM Inference with Speculative Decoding at the Edge.”</span></p>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><span style="font-weight: 400;">Guest speaker </span><b>Manjil Nepal</b><span style="font-weight: 400;">, a Research Associate at the Indian Institute of Science in Bangalore, discussed speculative decoding in edge–server environments and approaches to improving draft models through local and federated learning.</span></p>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><span style="font-weight: 400;">Arun coordinated the speaker, registration, promotion, moderation and audience discussion. The session attracted </span><b>86 registrations and 20 attendees</b><span style="font-weight: 400;">, with presentation slides and source code shared afterward.</span></p>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><span style="font-weight: 400;">The event created an opportunity for researchers and Nepal’s AI and machine learning community to exchange knowledge and connect through a technical discussion.</span></p>
+<div style="width: 100%; max-width: 300px; margin: 18px 0 8px; clear: both;"><img decoding="async" class="alignnone size-medium wp-image-211759" style="display: block; width: 100%; max-width: 300px; height: auto; margin: 0; float: none;" src="https://pytorch.org/wp-content/uploads/2026/11/Nepal-3-300x124.png" alt="" width="300" height="124" srcset="https://pytorch.org/wp-content/uploads/2026/11/Nepal-3-300x124.png 300w, https://pytorch.org/wp-content/uploads/2026/11/Nepal-3-1024x424.png 1024w, https://pytorch.org/wp-content/uploads/2026/11/Nepal-3.png 1815w" sizes="(max-width: 300px) 100vw, 300px" /></div>
+<p style="font-size: 14px; line-height: 1.5; color: #555555; margin: 0 0 22px; padding: 0; max-width: 612px; clear: both;" data-image-caption="true">PyTorch Community Nepal’s online session on efficient LLM inference.</p>
+<h2 style="font-size: 23px; font-weight: 600; line-height: 1.35; margin: 24px 0 10px; padding: 0;">AI Research with PyTorch in Nigeria</h2>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><span style="font-weight: 400;">During September, </span><b>Abdulsalam Yazid Bande</b><span style="font-weight: 400;"> delivered two introductory sessions for academic audiences in Nigeria, reaching </span><b>75 attendees</b><span style="font-weight: 400;">.</span></p>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><span style="font-weight: 400;">“From Research Question to PyTorch Experiment” introduced 35 graduate and postgraduate students to modern AI, neural networks, generative AI and PyTorch’s role in research.</span></p>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><span style="font-weight: 400;">A second session, “Getting Started with AI Research Using PyTorch,” welcomed 40 faculty members for a practical introduction to experimentation, model development and machine learning applications in academic research.</span></p>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><span style="font-weight: 400;">Together, the sessions helped students and faculty explore how PyTorch could support their own research questions.</span></p>
+<div style="width: 100%; max-width: 300px; margin: 18px 0 8px; clear: both;"><img decoding="async" class="alignnone size-medium wp-image-211756" style="display: block; width: 100%; max-width: 300px; height: auto; margin: 0; float: none;" src="https://pytorch.org/wp-content/uploads/2026/11/4-Abdul-300x225.png" alt="" width="300" height="225" srcset="https://pytorch.org/wp-content/uploads/2026/11/4-Abdul-300x225.png 300w, https://pytorch.org/wp-content/uploads/2026/11/4-Abdul-1024x768.png 1024w, https://pytorch.org/wp-content/uploads/2026/11/4-Abdul.png 2048w" sizes="(max-width: 300px) 100vw, 300px" /></div>
+<p style="font-size: 14px; line-height: 1.5; color: #555555; margin: 0 0 22px; padding: 0; max-width: 612px; clear: both;" data-image-caption="true">Introducing AI research with PyTorch to academic audiences in Nigeria.</p>
+<h2 style="font-size: 23px; font-weight: 600; line-height: 1.35; margin: 24px 0 10px; padding: 0;">LLM Application Development at Vilnius Tech</h2>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><span style="font-weight: 400;">In September, </span><b>Eyup Cinar</b><span style="font-weight: 400;"> visited Vilnius Tech University in Lithuania to deliver a guest lecture on rapid application development with large language models.</span></p>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><span style="font-weight: 400;">Approximately </span><b>30 undergraduate and graduate students</b><span style="font-weight: 400;"> attended. The session introduced the PyTorch ecosystem and its role in developing, training and deploying LLM-based applications, while providing an opportunity for academic exchange between institutions.</span></p>
+<div style="width: 100%; max-width: 300px; margin: 18px 0 8px; clear: both;"><img decoding="async" class="alignnone size-medium wp-image-211758" style="display: block; width: 100%; max-width: 300px; height: auto; margin: 0; float: none;" src="https://pytorch.org/wp-content/uploads/2026/11/Eyup-5-300x225.jpeg" alt="" width="300" height="225" srcset="https://pytorch.org/wp-content/uploads/2026/11/Eyup-5-300x225.jpeg 300w, https://pytorch.org/wp-content/uploads/2026/11/Eyup-5.jpeg 800w" sizes="(max-width: 300px) 100vw, 300px" /></div>
+<p style="font-size: 14px; line-height: 1.5; color: #555555; margin: 0 0 22px; padding: 0; max-width: 612px; clear: both;" data-image-caption="true">A guest lecture on LLM application development at Vilnius Tech.</p>
+<h2 style="font-size: 23px; font-weight: 600; line-height: 1.35; margin: 24px 0 10px; padding: 0;">Getting Started with Open Source at Duke University</h2>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><span style="font-weight: 400;">On September 4, </span><b>Sahdev Zala</b><span style="font-weight: 400;"> presented to more than </span><b>25 students</b><span style="font-weight: 400;"> in Duke University’s AI Engineering master’s program in Durham, North Carolina.</span></p>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><span style="font-weight: 400;">The session helped students understand how to get started contributing to PyTorch and Kubernetes. Participants joined both in person and online to explore opportunities to contribute to open-source projects.</span></p>
+<div style="width: 100%; max-width: 300px; margin: 18px 0 8px; clear: both;"><img decoding="async" class="alignnone size-medium wp-image-211757" style="display: block; width: 100%; max-width: 300px; height: auto; margin: 0; float: none;" src="https://pytorch.org/wp-content/uploads/2026/11/6-sahdev-300x225.jpeg" alt="" width="300" height="225" srcset="https://pytorch.org/wp-content/uploads/2026/11/6-sahdev-300x225.jpeg 300w, https://pytorch.org/wp-content/uploads/2026/11/6-sahdev-1024x768.jpeg 1024w" sizes="(max-width: 300px) 100vw, 300px" /></div>
+<p style="font-size: 14px; line-height: 1.5; color: #555555; margin: 0 0 22px; padding: 0; max-width: 612px; clear: both;" data-image-caption="true">Exploring open-source contributions with Duke University students.</p>
+<h2 style="font-size: 23px; font-weight: 600; line-height: 1.35; margin: 24px 0 10px; padding: 0;">LLM Post-Training at DevFest Kuala Lumpur</h2>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><span style="font-weight: 400;">On November 14, </span><b>Vensen Mu</b><span style="font-weight: 400;">, PyTorch Foundation Ambassador and RL-Kernel maintainer, delivered “Practical Train–Inference Consistency in LLM RL Post-Training” at Google DevFest Kuala Lumpur 2026.</span></p>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><span style="font-weight: 400;">The talk explored numerical discrepancies between training and inference systems in reinforcement learning for large language models. Vensen shared how the open-source RL-Kernel project works toward bitwise consistency across training and rollout workflows, including engineering considerations relevant to PyTorch and vLLM.</span></p>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><span style="font-weight: 400;">The session encouraged developers interested in AI infrastructure and reliable RL post-training to explore the problem and collaborate through open source.</span></p>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><a href="https://www.linkedin.com/posts/embedded-llm_devfestkl-reinforcementlearning-opensourceai-activity-7527001816417587200-EyG3"><span style="font-weight: 400;">Read the event announcement</span></a><span style="font-weight: 400;"> and</span><a href="https://github.com/RL-Align/RL-Kernel"> <span style="font-weight: 400;">explore RL-Kernel</span></a><span style="font-weight: 400;">.</span></p>
+<h2 style="font-size: 23px; font-weight: 600; line-height: 1.35; margin: 24px 0 10px; padding: 0;">Sharing PyTorch Updates in Simplified Chinese</h2>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><b>Zhiqing Xiao</b><span style="font-weight: 400;"> published a Simplified Chinese WeChat article introducing PyTorch 2.14.</span></p>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><span style="font-weight: 400;">The article received </span><b>more than 300 views</b><span style="font-weight: 400;">, helping Chinese-speaking readers learn about the release.</span></p>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><a href="https://mp.weixin.qq.com/s/mccUDLTrrYQ5gz8ZhVVvIA"><span style="font-weight: 400;">Read the article in Simplified Chinese</span></a><span style="font-weight: 400;">.</span></p>
+<h2 style="font-size: 23px; font-weight: 600; line-height: 1.35; margin: 24px 0 10px; padding: 0;">Transfer Learning: Articles, Code and Community Talks</h2>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><b>Sahdev Zala</b><span style="font-weight: 400;"> published an IBM Developer article based on a transfer-learning demonstration using PyTorch and Torchvision’s pretrained ResNet-18 model. He also made the accompanying source code publicly available, giving readers an example to explore and build on.</span></p>
+<p style="margin: 0 0 14px; padding: 0; line-height: 1.65;"><a href="https://developer.ibm.com/articles/transfer-learning-pytorch-ibm-bob/"><span style="font-weight: 400;">Read the transfer-learning article</span></a><span style="font-weight: 400;"> and</span><a href="https://github.com/IBM/bob-pytorch-transfer-learning"> <span style="font-weight: 400;">explore the accompanying code</span></a><span style="font-weight: 400;">.</span></p>
+<h2 data-pm-slice="1 1 []">Thank You to Our Ambassadors</h2>
+<p>Thank you to our ambassadors for sharing your knowledge, creating learning opportunities and bringing people together around PyTorch.</p>
+<p>The post <a href="https://pytorch.org/blog/pytorch-ambassador-community-highlights-november-2026/">PyTorch Foundation Ambassador Community Highlights November 2026</a> appeared first on <a href="https://pytorch.org">PyTorch</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Fast by Default: Compile-Time Heuristics for Helion Kernels</title>
+		<link>https://pytorch.org/blog/fast-by-default-compile-time-heuristics-for-helion-kernels/</link>
+		
+		<dc:creator><![CDATA[Caleb Min Sup Kim, Ethan Che, Jongsok Choi, Jason Ansel]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 16:45:26 +0000</pubDate>
+				<category><![CDATA[Blog]]></category>
+		<guid isPermaLink="false">https://pytorch.org/?p=210652</guid>
+
+					<description><![CDATA[<p>TL;DR Helion now uses compile-time heuristics that analyze a kernel&#8217;s IR and dataflow to pick fast settings without slow autotuning. It classifies the kernel as matmul, reduction, or pointwise and...</p>
+<p>The post <a href="https://pytorch.org/blog/fast-by-default-compile-time-heuristics-for-helion-kernels/">Fast by Default: Compile-Time Heuristics for Helion Kernels</a> appeared first on <a href="https://pytorch.org">PyTorch</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<h3>TL;DR</h3>
+<p>Helion now uses compile-time heuristics that analyze a kernel&#8217;s IR and dataflow to pick fast settings without slow autotuning. It classifies the kernel as matmul, reduction, or pointwise and chooses block sizes, warps, and stages, giving near-autotuned speed for free.</p>
+<h2>Introduction</h2>
+<p>Helion, PyTorch&#8217;s domain-specific language (DSL) for performance portable machine learning kernels, relies heavily on autotuning for its performance. Autotuning time can be a major bottleneck: for example, a previous team tuning a single paged-attention kernel across 72 shapes spent 10 hours in Helion&#8217;s quick mode, and 25 at full effort. To address these issues, we’ve developed <strong>a set of heuristics</strong> that read a kernel&#8217;s IR and dataflow at compile time and emit a config directly, <strong>without any autotuning</strong>.</p>
+<p>We classify kernels into broad families based on the operations they contain &#8211; matmul, reduction, or pointwise &#8211; and apply a family-specific heuristic to each. These families are intentionally general: the matmul heuristic, for example, looks for any kernel containing a matmul operation such as hl.dot or torch.baddbmm, not just standard m-n-k matrix multiplications. These are designed to be generic and apply broadly to custom kernels that users may write.</p>
+<p>Highlights:</p>
+<ul>
+<li><strong>Autotuner Heuristics.</strong> Our heuristics cover a large set of kernels, including GEMM, reductions, and even linear attention.</li>
+<li><strong>Linear attention.</strong> Over 96 kernel-and-shape cells spanning nine linear-attention variants, the computed config beats the hand-written Triton in <a href="https://github.com/fla-org/flash-linear-attention">Flash Linear Attention</a> (FLA) by <strong>1.18x</strong> in the forward pass, and by <strong>1.12x</strong> with backward included on H100. Overall the heuristic is <strong>2.13x</strong> faster than Helion’s previous no-autotune default on H100.</li>
+<li><strong>vLLM reduction kernels.</strong> Over 153 kernel-and-shape cells across six production kernels on H100, the computed config is <strong>1.27x</strong> faster than vLLM&#8217;s own handwritten CUDA/C++ operators, and <strong>2.2x</strong> faster than Helion&#8217;s previous default.</li>
+<li><strong>The analysis itself is cheap.</strong> Compiling a kernel with the heuristics on versus off differs negligibly (tens of milliseconds), which is lost in the noise of Triton compilation.</li>
+</ul>
+<h2>Our Approach: Decide the Config at Compile Time</h2>
+<p>A single Helion kernel can lower into thousands of different Triton kernels. One definition covers block sizes, loop orders, indexing modes and pipelining strategies, but the autotuner has to choose which of those thousands to emit, by compiling and benchmarking many candidates. And this autotuning cost is <em>per kernel and per shape</em>, which multiplies the problem the more kernels, shapes, and hardware backends you want to support.</p>
+<p>We compute the config at compile time instead of searching for it at tuning time. We read the device IR and record structural facts about it: which axes are tiled, which block sizes are tunable, which tiles are live at which part of the kernel, etc. A heuristic reads those facts and emits a config.</p>
+<p>The point here is not to come up with a better config than the autotuner, which has the benefit of benchmarking potentially thousands of configs before selecting one. It is to add a point in the tradeoff space between performance and wait time.</p>
+<p><!-- IMAGE PLACEHOLDER: Image 1 - performance vs. wait-time tradeoff diagram (after "...between performance and wait time."). Download from the Google Doc, upload to the WP media library, replace this comment with the image. --></p>
+<p><img decoding="async" class="alignnone wp-image-210659 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/page-02-image-01.png" alt="" width="1716" height="925" srcset="https://pytorch.org/wp-content/uploads/2026/11/page-02-image-01.png 1716w, https://pytorch.org/wp-content/uploads/2026/11/page-02-image-01-300x162.png 300w, https://pytorch.org/wp-content/uploads/2026/11/page-02-image-01-1024x552.png 1024w" sizes="(max-width: 1716px) 100vw, 1716px" /></p>
+<p>Our heuristics serve two purposes. A primary heuristic emits the default config used when autotuning is disabled. When autotuning is enabled, helper heuristics generate roughly 5–20 related or alternative configs that seed the autotuner. The goals are different: the default config should perform well on its own, while the seeds should give the autotuner several promising starting points to speed up autotuning. In this blog, we’ll touch on both, but focus on the primary heuristic that gets emitted with autotuning off.</p>
+<h2>How the Heuristics Work</h2>
+<p>A heuristic sets the values for various config knobs, which must be tuned carefully to achieve high performance and are normally picked by the autotuner. These include block sizes for each tiled axis, num_warps, num_stages, the L2 grouping, load eviction policies, and more.</p>
+<p>We pick a heuristic by scanning the device IR for the operations a kernel contains. Any matmul routes to the matmul heuristic regardless of what else is in the kernel; a reduction with no matmul routes to the reduction heuristic; everything else receives the pointwise heuristic. If a kernel&#8217;s extents are not all known at compile time, no heuristic fires and Helion falls back to the original default.</p>
+<p>Our heuristics all lean on the same underlying analysis, which estimates resource usage of the kernel. At any step of the kernel, the analysis determines: given a candidate set of block sizes, how many registers, shared memory, and &#8212; on Blackwell &#8212; how much tensor memory, one CTA needs at that moment.</p>
+<p>To do this, we run a liveness analysis on the compiler IR and walk each graph to find where every value is last used, and guess where it will be placed in memory. This is a hard problem: we are trying to predict what Triton will keep in registers, what it will stage through shared memory, what it will materialize at all rather than fuse away. Sometimes it is easier to predict (e.g., we assume the output of an hl.dot will be placed in TMEM on B200), but the estimate is approximate.</p>
+<p><!-- IMAGE PLACEHOLDER: Image 2 - liveness / resource-estimate diagram (after "...the estimate is approximate."). Download from the Google Doc, upload to the WP media library, replace this comment with the image. --></p>
+<p><img decoding="async" class="alignnone wp-image-210660 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/page-03-image-01.png" alt="" width="2048" height="843" srcset="https://pytorch.org/wp-content/uploads/2026/11/page-03-image-01.png 2048w, https://pytorch.org/wp-content/uploads/2026/11/page-03-image-01-300x123.png 300w, https://pytorch.org/wp-content/uploads/2026/11/page-03-image-01-1024x422.png 1024w" sizes="(max-width: 2048px) 100vw, 2048px" /></p>
+<p>Using this we can estimate things that matter for performance, such as:</p>
+<ul>
+<li><strong>Occupancy</strong>: how many CTAs fit on an SM at once. Whichever space runs out first decides it, e.g., a CTA needing a tenth of the SM&#8217;s registers and a tenth of its shared memory, but six tenths of its tensor memory, gets one CTA per SM, since two CTAs would go over the tensor memory budget by 20% (0.6 x 2 = 1.2).</li>
+<li><strong>Register pressure:</strong> Peak live registers spread over the threads we intend to launch tells us whether the assembler will be forced to spill.</li>
+</ul>
+<p>These considerations inform the selection of different config knobs. We’ll illustrate this for the <strong>matmul heuristic</strong>:</p>
+<ul>
+<li><strong>block_size:</strong> If the launch produces fewer CTAs than the GPU has SMs, we shrink block size on a grid axis to produce more of them.</li>
+<li><strong>num_stages:</strong> More stages hide more load latency, so we want as many as shared memory allows. But stages can also accidentally lose occupancy: six of them might fit while eating the CTA&#8217;s entire shared-memory budget, leaving one CTA per SM, where three stages and two CTAs per SM is the better trade.</li>
+<li><strong>num_warps.</strong> Two things pull on this:
+<ul>
+<li><em>Which instruction Triton emits.</em> Below four warps, or with an M block under 64, Triton uses the smaller synchronous MMA; otherwise it uses the big high-throughput one (wgmma on Hopper, tcgen05 on Blackwell). Usually we want the big one. But when there is little matmul work sometimes the better answer is many CTAs per SM running small MMAs that overlap each other&#8217;s loads. So we count <strong>dynamic matmul work</strong> (essentially counting the number of times the hl.dot will be executed dynamically) and choose based on that.</li>
+<li><em>Register pressure.</em> Warps divide the tile across more threads, so more warps means less pressure on each one. If the peak live state at the current count would spill, that argues for increasing warps.</li>
+</ul>
+</li>
+<li><strong>Feasibility Check.</strong> A final pessimistic pass over the whole kernel: add up tensor memory, shared memory and registers, and confirm the config can actually launch. The adjustments above already respect these budgets, so this is mostly defensive.</li>
+</ul>
+<p>In the case where there are <strong>multiple matmuls</strong> in one kernel (for example for attention and linear attention), we run the matmul heuristic on each hl.dot and use those as the starting point. They may disagree: two dots can share one block-size knob &#8212; one dot&#8217;s N is frequently the next dot&#8217;s K &#8212; and there is only one num_warps for the whole kernel.</p>
+<p>To resolve these tradeoffs, we rank each dot by estimated importance: priority goes to any dot with a loop-carried accumulator, since that accumulator stays resident for the whole loop and its tile sets the kernel&#8217;s footprint; then its dynamic matmul work; then its own output area. Wherever two dots disagree about a knob, the higher-ranked one wins (for example num_warps is set by the top-ranked dot alone).</p>
+<p>The <strong>reduction heuristic</strong> works through a similar set of knobs:</p>
+<ul>
+<li><strong>num_warps.</strong> Three pressures here, pulling in different directions:
+<ul>
+<li><em>Enough warps to do the reduction.</em> A wide reduction needs warps working on it, so a ladder off the largest selected reduction sets the starting point: 128 elements wants one or two warps, 16,384 wants many more.</li>
+<li><em>Residency.</em> More warps per CTA means fewer CTAs per SM (there is a per-SM CTA limit), so we also test fewer warps.</li>
+<li><em>Register pressure.</em> Adjust warps to not spill registers.</li>
+</ul>
+</li>
+<li><strong>block_size.</strong> Fitting more CTAs per SM means potentially <em>smaller</em> tiles, so we shrink blocks back down to buy residency. The constraint is that an axis with stride 1 is the one carrying the coalesced loads, and shrinking it too far loses load coalescing.</li>
+<li><strong>Persistence.</strong> A reduction can be kept resident and done in one pass, or walked in chunks. The case that matters is a row the kernel reads twice &#8212; RMSNorm reads it once to compute the scale and again to apply it &#8212; and when we can prove that, staying persistent is allowed to cost some spilling and some residency, because it saves the second trip to memory.</li>
+</ul>
+<p>Because the warp count depends on the blocks and the blocks depend on the warp count, we iterate until both hold still for a full round (in practice this doesn’t take very long).</p>
+<h2>Result 1: Config Quality, with No Tuning Time</h2>
+<h3>Linear attention</h3>
+<p>We measured nine linear-attention variants in forward and forward-plus-backward, over six production shapes, on H100. The six shapes span batch 1 to 8, 8 to 96 heads, sequence 1024 to 16384 and head dimension 64 to 256. The baseline is <a href="https://github.com/fla-org/flash-linear-attention">Flash Linear Attention</a> (FLA), an open-source, widely used library of hand-written Triton kernels. The autotuned arm in the charts (&#8220;Helion AOT config&#8221;) is the result of running the full autotuner once per shape and saving the winner — how you would ship a Helion kernel for a known set of shapes today.</p>
+<p><!-- IMAGE PLACEHOLDER: Image 3 - linear attention vs. FLA chart (H100). Download from the Google Doc, upload to the WP media library, replace this comment with the image. --></p>
+<p><img decoding="async" class="alignnone wp-image-210661 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/page-06-image-01.png" alt="" width="2048" height="1385" srcset="https://pytorch.org/wp-content/uploads/2026/11/page-06-image-01.png 2048w, https://pytorch.org/wp-content/uploads/2026/11/page-06-image-01-300x203.png 300w, https://pytorch.org/wp-content/uploads/2026/11/page-06-image-01-1024x693.png 1024w" sizes="(max-width: 2048px) 100vw, 2048px" /></p>
+<p>Before this work the choice was binary: take Helion&#8217;s no-autotune default and run at <strong>0.52x</strong> of handwritten FLA Triton, or spend GPU-hours autotuning and reach <strong>1.26x</strong>. The heuristic adds a third option that did not exist before: <strong>1.18x</strong>, with no autotuning price (most of what autotuning finds, available immediately) and it moves Helion&#8217;s out-of-the-box behavior from <em>losing</em> to handwritten Triton to <em>beating</em> it, at least for this set of kernels.</p>
+<h3>vLLM&#8217;s reduction kernels</h3>
+<p><a href="https://github.com/vllm-project/vllm">vLLM</a> is a widely deployed open-source LLM inference engine, and it ships its own hand-written CUDA/C++ kernels for the operations on its serving hot path. There are six reduction kernels &#8212; two FP8 quantizers, RMSNorm and SiLU-and-multiply each fused with quantization, and fused QK-normalization plus RoPE– for which vLLM already had Helion implementations, contributed by the team behind <a href="https://pytorch.org/blog/portable-vllm-model-inference-kernels-in-helion/">an earlier post in this series</a>. That makes them a good test: production kernels, written by someone else, against the hand-written CUDA they were meant to replace.</p>
+<p><!-- IMAGE PLACEHOLDER: Image 4 - vLLM reduction kernels vs. vLLM CUDA chart (H100). Download from the Google Doc, upload to the WP media library, replace this comment with the image. --></p>
+<p><img decoding="async" class="alignnone wp-image-210662 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/page-07-image-01.png" alt="" width="2048" height="968" srcset="https://pytorch.org/wp-content/uploads/2026/11/page-07-image-01.png 2048w, https://pytorch.org/wp-content/uploads/2026/11/page-07-image-01-300x142.png 300w, https://pytorch.org/wp-content/uploads/2026/11/page-07-image-01-1024x484.png 1024w" sizes="(max-width: 2048px) 100vw, 2048px" /></p>
+<p>And we get a similar result, in a different codebase. Helion&#8217;s no-autotune default runs at <strong>0.58x</strong> of vLLM&#8217;s CUDA; the computed config reaches <strong>1.27x</strong>; full autotuning gets to <strong>1.31x</strong>. The interesting number is the last gap: on these kernels autotuning buys only about <strong>3%</strong> over the config we compute for free.</p>
+<h3>The everyday kernels, against torch.compile</h3>
+<p>Both comparisons above are specialist libraries &#8212; linear-attention variants and FP8 quantizers. This one is deliberately the opposite: the kernels everybody writes. RMSNorm, LayerNorm, softmax, cross entropy and friends, similar to the suite the <a href="https://pytorch.org/blog/helion/">introduction post</a> benchmarked when it first measured Helion. Most of the kernels benchmarked in this section can be found <a href="https://github.com/pytorch/helion/tree/main/examples">here</a>.</p>
+<p>The reference baseline here is torch.compile(mode=&#8221;max-autotune-no-cudagraphs&#8221;): we force torch.compile onto its Triton backend so we are not comparing against handwritten libraries (e.g.. cuBLAS) but instead against generated Triton from a widely-used compiler. There is no tuned-config arm in this section, for the mundane reason that we do not have full autotune runs for these kernels (which would take many GPU hours to produce).</p>
+<p>On a suite of ten reduction kernels and 80 (kernel, shape) combinations, the computed config comes out at <strong>1.09x</strong> of max-autotune torch.compile, with no tuning of its own. Helion&#8217;s unseeded default is <strong>0.27x</strong>.</p>
+<p><!-- IMAGE PLACEHOLDER: Image 5 - reduction kernels vs. torch.compile max-autotune chart. Download from the Google Doc, upload to the WP media library, replace this comment with the image. --></p>
+<p><img decoding="async" class="alignnone wp-image-210663 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/page-08-image-01.png" alt="" width="2048" height="980" srcset="https://pytorch.org/wp-content/uploads/2026/11/page-08-image-01.png 2048w, https://pytorch.org/wp-content/uploads/2026/11/page-08-image-01-300x144.png 300w, https://pytorch.org/wp-content/uploads/2026/11/page-08-image-01-1024x490.png 1024w" sizes="(max-width: 2048px) 100vw, 2048px" /></p>
+<p>We also sweep across thirteen matmul kernel families over 70 shapes. The computed config comes out at <strong>1.88x</strong> of max-autotune torch.compile overall, against <strong>0.51x</strong> for Helion&#8217;s default. Two caveats on that 1.88x. The comparisons are not always apples-to-apples &#8211; for some of these kernels the PyTorch implementation materializes intermediates that the Helion kernel fuses. And jagged HSTU attention is a genuine regression: the old default happens to land on a good config there (3.72x) and the heuristic does worse (3.27x).</p>
+<p><!-- IMAGE PLACEHOLDER: Image 6 - matmul kernel families vs. torch.compile max-autotune chart. Download from the Google Doc, upload to the WP media library, replace this comment with the image. --></p>
+<h2><img decoding="async" class="alignnone wp-image-210666 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/page-08-image-02.png" alt="" width="2048" height="730" srcset="https://pytorch.org/wp-content/uploads/2026/11/page-08-image-02.png 2048w, https://pytorch.org/wp-content/uploads/2026/11/page-08-image-02-300x107.png 300w, https://pytorch.org/wp-content/uploads/2026/11/page-08-image-02-1024x365.png 1024w" sizes="(max-width: 2048px) 100vw, 2048px" /></h2>
+<h2>Result 2: Does the Seed Make the Search Faster?</h2>
+<p>Everything above is about the config Helion emits when autotuning is <em>off</em>. But the same configs can be handed to the autotuner as its starting population, and in principle a good starting point should let the search finish sooner. In addition to this primary config, the helper heuristics also add somewhere between 5 and 20 new variations / approaches.</p>
+<p>To test it we took 38 matmul and multi-matmul kernels &#8212; linear attention, attention, Mamba, and other wild cards like squeeze-and-excitation &#8212; and one shape for each kernel. Then we ran the full autotune effort on every cell twice: once from random configs, once with the compiler&#8217;s seeds in the initial population.</p>
+<p>The short answer from this run is that <strong>seeding buys a lot early but much less late</strong>. Here is one cell, chosen as a clear example of the pattern. The x-axis tracks the number of configs tried, while the y-axis tracks performance relative to the best config we found.</p>
+<p><!-- IMAGE PLACEHOLDER: Image 7 - seeded vs. unseeded autotuning search curve. Download from the Google Doc, upload to the WP media library, replace this comment with the image. --></p>
+<p><img decoding="async" class="alignnone wp-image-210667 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/page-09-image-01.png" alt="" width="1817" height="812" srcset="https://pytorch.org/wp-content/uploads/2026/11/page-09-image-01.png 1817w, https://pytorch.org/wp-content/uploads/2026/11/page-09-image-01-300x134.png 300w, https://pytorch.org/wp-content/uploads/2026/11/page-09-image-01-1024x458.png 1024w" sizes="(max-width: 1817px) 100vw, 1817px" /></p>
+<p>Seeded, the <em>first</em> config is far superior to the unseeded first config. But unseeded quickly catches up, and they end up sitting on the same answer while the search grinds through several hundred more configs. The early advantage is enormous while the final advantage is zero.</p>
+<p>That is the pattern across all 38 cells. Medians below; counts include configs that failed to compile or failed to produce a timing, since those consume budget too.</p>
+<table>
+<thead>
+<tr>
+<th>Search target</th>
+<th>Median configs (no seeds / seeded)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>within 50% of the best found</td>
+<td>35.5 / <strong>1.0</strong></td>
+</tr>
+<tr>
+<td>within 25%</td>
+<td>103.5 / <strong>2.5</strong></td>
+</tr>
+<tr>
+<td>within 5%</td>
+<td>255.5 / <strong>175.0</strong></td>
+</tr>
+<tr>
+<td>complete search</td>
+<td>521.5 / <strong>420.5</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The advantage is concentrated entirely at the start: 35x fewer configs to reach something merely decent, 41x to get within 25%, but only 1.5x to get within 5% and 1.2x to finish the search.</p>
+<p>One thing this result is not: seeding does not make the final config any better. Replaying both arms&#8217; winners on one GPU, they land within a fraction of a percent of each other. This is about how long the search takes, not where it ends up.</p>
+<h2>Limitations and Future Work</h2>
+<p>A central limitation is that these heuristics predict what another compiler will do. Every budget depends on guessing where a value ends up &#8212; registers, shared memory, or tensor memory &#8212; and that is Triton&#8217;s decision, not ours. Some of it is safe to bet on: on B200 a matmul result is going to be in tensor memory. Plenty of it we get wrong. There are several possible directions of future work.</p>
+<p><strong>Measure instead of predicting.</strong> The cleanest fix for the limitation above is to stop guessing: compile once, read the register and shared-memory usage the assembler reported, and correct the estimate from there.</p>
+<p><strong>Fire on more kernels.</strong> We currently decline whenever we lack the information to size anything &#8212; a loop tiled over a range only known at runtime, for instance. A less-educated guess would be easy: a default extent, a mean, something. Configs would be worse without that information, but the alternative today is the base default, which the results above show is very bad &#8212; so the guess is probably still worth making.</p>
+<p><strong>Touch more knobs.</strong> We set block sizes, num_warps and num_stages, plus some L2 grouping and L2 eviction policy. That leaves a long list untouched &#8212; tensor descriptors versus pointer arithmetic, persistent versus flat launch, etc. Individually these are probably worth less than the ones we do set, but there is certainly performance left on the table.</p>
+<p><strong>Specialize the heuristics.</strong> They are deliberately general: one multi-matmul heuristic has to do well on attention <em>and</em> linear attention, one reduction heuristic on RMSNorm <em>and</em> vLLM&#8217;s quantization kernels. An alternative is parent heuristics with children &#8212; a vLLMQuantizationHeuristic that starts from ReductionHeuristic&#8217;s answer and then specializes on what it knows about that family.</p>
+<p><strong>Other backends.</strong> Everything here is evaluated on NVIDIA, and the heuristics ship enabled for H100 and B200 on the Triton backend. Nothing in the approach is NVIDIA-specific — the analysis is parameterized by hardware limits that should apply across backends — but the constants and ladders were tuned against these two chips.</p>
+<h2>Conclusion</h2>
+<p>These heuristics are merged into Helion and enabled by default on H100 and B200 with the Triton backend. If you would like to learn more, please check out the <a href="https://github.com/pytorch/helion/tree/main/helion/_compiler/autotuner_heuristics">autotuner heuristics</a>.</p>
+<p>The point is not that static analysis beats search, but rather that the gap is now small enough that skipping the search is a reasonable thing to do for some kernels. Helion&#8217;s out-of-the-box behavior went from 0.52x handwritten FLA Triton to 1.18x, and from 0.58x vLLM&#8217;s handwritten CUDA to 1.27x, with nothing compiled and nothing benchmarked. On a general suite of reduction kernels it sits at 1.09x torch.compile max-autotune. Full autotuning remains the right call when you are shipping a fixed set of shapes and can pay for it once; what changed is that the alternative is no longer a large concession.</p>
+<p>The post <a href="https://pytorch.org/blog/fast-by-default-compile-time-heuristics-for-helion-kernels/">Fast by Default: Compile-Time Heuristics for Helion Kernels</a> appeared first on <a href="https://pytorch.org">PyTorch</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Integrating SGLang into Spyre in Under a Week with AI</title>
+		<link>https://pytorch.org/blog/integrating-sglang-into-spyre-in-under-a-week-with-ai/</link>
+		
+		<dc:creator><![CDATA[Gal Bloch (IBM), Itay Etelis (IBM), Raghu Ganti (IBM), Mudhakar Srivatsa (IBM), Alex Nails (RadixArk)]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 14:45:25 +0000</pubDate>
+				<category><![CDATA[Blog]]></category>
+		<guid isPermaLink="false">https://pytorch.org/?p=210676</guid>
+
+					<description><![CDATA[<p>TL;DR With help from AI coding agents, our two-person team integrated SGLang with IBM Spyre in less than a week, building a plugin of roughly 1,500 lines. Existing Spyre support...</p>
+<p>The post <a href="https://pytorch.org/blog/integrating-sglang-into-spyre-in-under-a-week-with-ai/">Integrating SGLang into Spyre in Under a Week with AI</a> appeared first on <a href="https://pytorch.org">PyTorch</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<h3>TL;DR</h3>
+<p>With help from AI coding agents, our two-person team integrated SGLang with IBM Spyre in less than a week, building a plugin of roughly 1,500 lines. Existing Spyre support in PyTorch and SGLang&#8217;s clear extension points made it straightforward to reuse the hardware code. SGLang delivered about 3.6× the throughput of the reference PyTorch inference implementation using torch-spyre. It was also on par with vLLM on the workloads measured for Granite 3.3 8B and Gemma 4 26B A4B. Prefix sharing through RadixCache worked without any Spyre-specific changes.</p>
+<p>We work on <a href="https://research.ibm.com/blog/lifting-the-cover-on-the-ibm-spyre-accelerator">IBM&#8217;s Spyre accelerator</a> and wanted to make <a href="https://docs.sglang.io/">SGLang</a>&#8216;s serving stack, including its built-in prefix sharing, available to Spyre users.</p>
+<p>In less than a week, the two of us used AI-assisted development to integrate SGLang into IBM Spyre with a plugin of just ~1,500 lines of code. A key factor was building on existing <a href="https://pytorch.org/">PyTorch</a> hardware support and SGLang&#8217;s well-defined extension points. This allowed the two of us, alongside our AI coding agents, to integrate a new accelerator into SGLang in a remarkably short time. The AI coding agents used existing PyTorch implementations of Spyre operations as reference code and adapted the integration code to SGLang&#8217;s backend interfaces. Their work focused on connecting the existing hardware support to the new serving framework.</p>
+<h2>Spyre and the starting point</h2>
+<p>Spyre is IBM&#8217;s accelerator for enterprise AI inference. It integrates using <a href="https://github.com/torch-spyre/torch-spyre">torch-spyre</a>, which registers Spyre as a PyTorch device and connects it to <a href="https://docs.pytorch.org/docs/stable/generated/torch.compile.html">torch.compile</a>, exposing hardware support through standard PyTorch APIs.</p>
+<h2>The result</h2>
+<p>The initial SGLang integration took the two of us less than a week of work. The plugin was roughly 1,500 lines, building on the compiler and reusable hardware support from PyTorch. Four small patches extended SGLang&#8217;s backend support: two made existing execution paths available without CUDA-specific dependencies, and two registered Spyre as a supported device and attention backend that does not use Triton. The compatibility changes can also support other accelerators; the registration changes are specific to Spyre.</p>
+<p>SGLang on Spyre achieved approximately 3.6× the throughput of the reference PyTorch inference implementation using torch-spyre.</p>
+<p>We also compared SGLang and vLLM on Spyre using Granite 3.3 8B and Gemma 4 26B A4B. Across the workloads we measured for these two models, SGLang&#8217;s performance was on par with vLLM.</p>
+<p><!-- IMAGE PLACEHOLDER: media/image1.png - "Relative performance of SGLang and vLLM / spyre-inference on Granite 3.3 8B and Gemma 4 26B-A4B, normalized to vLLM = 1.0. Lower is better." - upload via WP Media Library and insert here --></p>
+<p><em><img decoding="async" class="alignnone wp-image-210679 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/normalized_latency.png" alt="" width="1600" height="980" srcset="https://pytorch.org/wp-content/uploads/2026/11/normalized_latency.png 1600w, https://pytorch.org/wp-content/uploads/2026/11/normalized_latency-300x184.png 300w, https://pytorch.org/wp-content/uploads/2026/11/normalized_latency-1024x627.png 1024w" sizes="(max-width: 1600px) 100vw, 1600px" /></em></p>
+<p><em>Relative performance of SGLang and vLLM / spyre-inference on Granite 3.3 8B and Gemma 4 26B-A4B, normalized to vLLM = 1.0. Lower is better.</em></p>
+<h2>Why it worked</h2>
+<p>With a working compiler and an existing inference server in place, adding SGLang became a focused integration task. PyTorch and torch.compile supplied a shared implementation layer, expressing accelerator functionality through APIs that both serving frameworks could use.</p>
+<p>SGLang supplied clear places to connect that code. Its platform registration, attention backend, KV pool, and operator dispatch separated the integration into bounded tasks while preserving the existing scheduler, request handling, and serving loop. The reference code came from the existing <a href="https://github.com/torch-spyre/spyre-inference">vLLM integration for Spyre</a>, including its PyTorch implementations of accelerator operations. This gave the AI coding agents concrete code for Spyre&#8217;s hardware behavior, while SGLang&#8217;s extension points defined the interfaces their adapted code had to satisfy. Together, these reduced how much the agents had to infer about the hardware and where the integration belonged.</p>
+<p>The existing vLLM Spyre backend was about 3,500 lines, compared with roughly 1,500 for the SGLang plugin. In the initial integration, the attention base class supplied the surrounding logic, leaving the Spyre backend to override the inner scaled dot-product attention operation. Reusing that base class accounted for roughly two-thirds of the line-count difference between the two plugins. SGLang&#8217;s device-agnostic KV pool also allowed a single method override for buffer creation; allocation still needed PyTorch-based handling where the existing path relied on Triton.</p>
+<h2>Reusing the vLLM Spyre implementation</h2>
+<p>We reused the attention code from the vLLM Spyre integration, including how it groups inputs into buckets and handles tensor shapes. We also reused its PyTorch-based approach to allocating the KV cache. For RMSNorm, SiLU, GeLU, rotary embeddings, and linear layers, we connected the existing Spyre implementations to SGLang&#8217;s operator dispatch.</p>
+<p>Some features required no Spyre-specific work at all. RadixCache is a good example: prefix sharing is resolved entirely within SGLang&#8217;s scheduler before execution reaches the accelerator, so the existing scheduling logic worked unchanged.</p>
+<p>The plugin is available as open source alongside upstream SGLang.</p>
+<h2>Using SGLang with Spyre</h2>
+<p>The example assumes the Spyre runtime, torch-spyre, the SGLang plugin, and its compatibility patches are installed and configured.</p>
+<pre><code class="language-python">import sglang as sgl
+
+models = [
+    "ibm-ai-platform/micro-g3.3-8b-instruct-1b",
+    "mistralai/Ministral-8B-Instruct-2410",
+]
+
+for model in models:
+    engine = sgl.Engine(
+        model_path=model,
+        device="spyre",
+        attention_backend="spyre_paged",
+        dtype="float16",
+        page_size=64,
+        max_running_requests=1,
+        disable_cuda_graph=True,
+    )
+
+    try:
+        output = engine.generate(
+            "Why is the sky blue?",
+            {"temperature": 0, "max_new_tokens": 64},
+        )
+        print(model, output["text"])
+    finally:
+        engine.shutdown()</code></pre>
+<h2>Looking ahead</h2>
+<p>The Spyre software stack continues to evolve rapidly.</p>
+<p>Over the coming months, we expect to add support for dynamic shapes, reducing much of the shape management required today. Later this year, we also expect to bring Triton support to Spyre and enable RadixAttention on top of it, opening the door to additional kernel optimizations.</p>
+<p>Keeping hardware support in PyTorch and integration code at SGLang&#8217;s extension points gives future compiler and runtime improvements a path into the serving stack. The next integration can start from the same shared foundation, with concrete implementations and interfaces that developers and AI coding tools can work with.</p>
+<p>The post <a href="https://pytorch.org/blog/integrating-sglang-into-spyre-in-under-a-week-with-ai/">Integrating SGLang into Spyre in Under a Week with AI</a> appeared first on <a href="https://pytorch.org">PyTorch</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Training a 1T-Parameter MoE on EU public infrastructure with PyTorch and TorchTitan</title>
+		<link>https://pytorch.org/blog/training-a-1t-parameter-moe-on-eu-public-infrastructure-with-pytorch-and-torchtitan/</link>
+		
+		<dc:creator><![CDATA[The EUROPA consortium (Domyn, Fraunhofer IAIS and IIS)]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 12:00:19 +0000</pubDate>
+				<category><![CDATA[Blog]]></category>
+		<guid isPermaLink="false">https://pytorch.org/?p=210684</guid>
+
+					<description><![CDATA[<p>TL;DR Scaling pretraining for a ~1-trillion-parameter Mixture-of-Experts (MoE) model on shared, public infrastructure was previously considered unfeasible due to unique architectural and interconnect bottlenecks. However, by leveraging the fine-grained flexibility...</p>
+<p>The post <a href="https://pytorch.org/blog/training-a-1t-parameter-moe-on-eu-public-infrastructure-with-pytorch-and-torchtitan/">Training a 1T-Parameter MoE on EU public infrastructure with PyTorch and TorchTitan</a> appeared first on <a href="https://pytorch.org">PyTorch</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p><strong>TL;DR</strong></p>
+<p>Scaling pretraining for a ~1-trillion-parameter Mixture-of-Experts (MoE) model on shared, public infrastructure was previously considered unfeasible due to unique architectural and interconnect bottlenecks. However, by leveraging the fine-grained flexibility of PyTorch and TorchTitan, the EUROPA consortium successfully unlocked frontier-scale training on JUPITER, boosting throughput from 90 to ~1,300 tokens/sec per GPU across 384 NVIDIA GH200 GPUs per DP replica (96 nodes) as part of the EuroHPC Frontier AI Grand Challenge.</p>
+<p>The <a href="https://digital-strategy.ec.europa.eu/en/funding/turning-strategy-action-commission-launches-frontier-ai-grand-challenge">EuroHPC Frontier AI Grand Challenge</a> was designed to prove that sovereign, open-source AI could compete at frontier levels using shared public resources. As part of that process, we &#8211; as the EUROPA consortium, formed by Domyn and Fraunhofer IAIS and IIS &#8211; were selected to an open European Mixture-of-Experts (MoE) model of at least 400B parameters, support for all 24 official EU languages, and strict compliance with the EU AI Act.</p>
+<p>In this post, we describe how we scaled pretraining to 1T MoE on <a href="https://apps.fz-juelich.de/jsc/hps/jupiter/configuration.html">JUPITER</a>, the EuroHPC exascale supercomputer hosted at Forschungszentrum Jülich, proving that public infrastructure can indeed sustain frontier scale.</p>
+<table>
+<tbody>
+<tr>
+<td>Total parameters</td>
+<td>951.9B (32.8B active per token)</td>
+</tr>
+<tr>
+<td>Layers</td>
+<td>74</td>
+</tr>
+<tr>
+<td>Hidden size</td>
+<td>6,144</td>
+</tr>
+<tr>
+<td>Experts</td>
+<td>384 routed, top-8</td>
+</tr>
+<tr>
+<td>Expert hidden size</td>
+<td>1,792</td>
+</tr>
+<tr>
+<td>Vocabulary</td>
+<td>256,000</td>
+</tr>
+<tr>
+<td>Pretrain Sequence length</td>
+<td>65,536 tokens</td>
+</tr>
+<tr>
+<td>Optimizer</td>
+<td>Muon + AdamW</td>
+</tr>
+</tbody>
+</table>
+<p><em>The table lists the configuration used for the experiments in the post.</em></p>
+<p>Models of this size are usually trained on clusters that their developers operate or rent for exclusive use. JUPITER is instead publicly funded research infrastructure shared by hundreds of projects. It was also designed to support scientific research at large, which led to architectural choices that are somewhat atypical in the AI space, as we’ll describe in detail later in the post. As such, reaching the 1T parameter scale while maintaining viable throughput requires careful optimizations that go beyond standard distributed techniques.</p>
+<p>In order to have access to the necessary level of flexibility to perform fine-grained optimizations to the pre-training setup, we chose to go with <a href="https://pytorch.org">PyTorch</a> and <a href="https://github.com/pytorch/torchtitan">TorchTitan</a>. Under these conditions, we raised throughput from 90 to ~1,300 tokens/s per GPU on 384 GH200 GPUs (96 nodes). We want to share the main milestones that get us there, each of which builds on TorchTitan’s design and led to contributions back to TorchTitan and PyTorch:</p>
+<ol>
+<li>FlexShard placement for the Muon optimizer, which removes most of the optimizer’s communication.</li>
+<li>Activation-checkpoint offloading to the Grace CPU.</li>
+<li>Running FSDP’s all-gather setup on the compute stream (<code>unshard_async_op</code>), which frees ~14 GiB of HBM per GPU.</li>
+</ol>
+<p>The <a href="https://www.domyn.com/blog/training-1t-moe-eu-public-infrastructure-pytorch">full write-up</a> covers the remaining changes in detail, with interactive figures and profiler traces.</p>
+<p><!-- IMAGE PLACEHOLDER: Figure 1 – throughput per cumulative change (re-upload via Media Library) --></p>
+<p><em><img decoding="async" class="alignnone wp-image-210745 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/IMG_8916-scaled.png" alt="" width="2560" height="1780" srcset="https://pytorch.org/wp-content/uploads/2026/11/IMG_8916-scaled.png 2560w, https://pytorch.org/wp-content/uploads/2026/11/IMG_8916-300x209.png 300w, https://pytorch.org/wp-content/uploads/2026/11/IMG_8916-1024x712.png 1024w" sizes="(max-width: 2560px) 100vw, 2560px" /></em><!-- TODO: replace placeholder link --></p>
+<h2>The machine and its constraints</h2>
+<p>Each JUPITER Booster node has four NVIDIA GH200 Grace Hopper Superchips. Each superchip pairs a Hopper GPU (96 GB HBM3) with a 72-core Grace CPU (120 GB LPDDR5X), connected by a 900 GB/s NVLink-C2C link. GPUs in a node are connected by NVLink 4 at 150 GB/s per direction, and each node has four InfiniBand NDR200 adapters, about 25 GB/s per GPU.</p>
+<p><!-- IMAGE PLACEHOLDER: Figure 2 – bandwidths within a JUPITER node (re-upload via Media Library) --></p>
+<p><em><img decoding="async" class="alignnone wp-image-210692 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/gh200.png" alt="" width="2048" height="1544" srcset="https://pytorch.org/wp-content/uploads/2026/11/gh200.png 2048w, https://pytorch.org/wp-content/uploads/2026/11/gh200-300x226.png 300w, https://pytorch.org/wp-content/uploads/2026/11/gh200-1024x772.png 1024w" sizes="(max-width: 2048px) 100vw, 2048px" /></em></p>
+<p><em>Figure 2. Bandwidths within a JUPITER node, drawn to scale. All inter-node traffic leaves through the thin InfiniBand links.</em></p>
+<p>In addition to the accelerators, two key parts of the system are also relevant for the design:</p>
+<ul>
+<li><strong>Inter-node bandwidth.</strong> InfiniBand is 36 times slower than the link between a GPU and its own CPU, and distributing a 1T parameter model over hundreds of accelerators requires crossing that boundary continuously during training. Traffic over InfiniBand must therefore aggressively overlap with computation.</li>
+<li><strong>Host memory capacity.</strong> GH200 is available with up to 480 GB of LPDDR5X per Grace, but JUPITER’s compute nodes actually use the 120 GB configuration (as opposed to login nodes which sport 480GB), which favors bandwidth over capacity. After the kernel’s share, about 108 GiB per GPU is usable, and we found that in practice some nodes start jobs with much less. This limits how much state can be moved out of the HBM.</li>
+</ul>
+<p>These constraints dictate the parallelism layout: 384-way FSDP with 4-way expert parallelism inside each node and no pipeline parallelism. The MoE token all-to-all is hard to overlap, so we kept it on NVLink. Without pipeline parallelism steps tend to be shorter, which has the advantage of providing fast feedback at scale, and fixed costs are amortized via a large batch of 384 sequences of 65,536 tokens (~25M tokens per step). FSDP already provides us with the overlap of the gather of layer <em>n+1</em> with the compute of layer <em>n</em>, so most of the remaining work goes into making the overlap effective. We achieve this across three dimensions: moving to longer sequences to compute for longer, reducing the bytes transmitted over InfiniBand, and leveraging Grace memory to provide enough total capacity to hold the model, the gradients and the optimizer state.</p>
+<h2>FlexShard: Muon without the communication</h2>
+<p>We use <a href="https://kellerjordan.github.io/posts/muon/">Muon</a> for every weight matrix except the router and embeddings (about 99.5% of the parameters) and AdamW for the rest. Muon requires one fp32 state per parameter, while Adam requires two. Removing the second state is instrumental in making a 65,536-token sequence fit in memory.</p>
+<p>Muon orthogonalizes each update with a few Newton-Schulz iterations, which operate on the whole matrix. Because FSDP splits every matrix into 384 shards, a simple implementation gathers each matrix on one rank, runs Newton-Schulz there and scatters the result back. On our interconnect, this communication is too expensive.</p>
+<p><a href="https://github.com/pytorch/torchtitan/blob/main/torchtitan/distributed/flex_shard/README.md">FlexShard</a>, now part of TorchTitan, lets us control which rank owns which parameters. We shard the experts by whole expert, so every rank owns complete expert matrices and runs their Newton-Schulz iterations with no communication at all. The dense matrices, such as the attention projections, are still collected on an owning rank, and each rank processes its own experts while the dense matrices are in transit, so that communication is overlapped.</p>
+<p>With FSDP’s CPU offload, the optimizer runs on Grace, where the parameters are stored, and Newton-Schulz on 72 Arm cores takes ~35 s per step. We <a href="https://github.com/pytorch/torchtitan/pull/5352">contributed support to TorchTitan</a> for running Newton-Schulz on the GPU while parameters stay offloaded. The optimizer step went from 41.7 s to 2.2 s, and throughput rose from 441 to 597 tokens/s per GPU (+35%).</p>
+<p><!-- IMAGE PLACEHOLDER: Figure 3 – rank 0 profiled step, Newton-Schulz on Grace vs Hopper (re-upload via Media Library) --></p>
+<p><em><img decoding="async" class="alignnone wp-image-210694 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/profiler.png" alt="" width="2048" height="1877" srcset="https://pytorch.org/wp-content/uploads/2026/11/profiler.png 2048w, https://pytorch.org/wp-content/uploads/2026/11/profiler-300x275.png 300w, https://pytorch.org/wp-content/uploads/2026/11/profiler-1024x939.png 1024w" sizes="(max-width: 2048px) 100vw, 2048px" /></em></p>
+<p><em>Figure 3. Rank 0’s profiled step from 80 s onward. Top: Newton-Schulz on Grace, with the GPU idle for ~34 s after the backward pass while the CPU computes. Bottom: Newton-Schulz on Hopper, where the optimizer takes a small fraction of the step.</em></p>
+<h2>Activation offloading to Grace</h2>
+<p>The volume of weights gathered per layer does not depend on the number of tokens in our setup, so a longer sequence increases compute time while not impacting communication. We first stored activations only at layer boundaries and recomputed everything inside a layer during the backward pass. In TorchTitan this is named FullAC. Since GPU was idle for most of the baseline step, the extra compute did not lengthen it. As a result, throughput went from 90 to 370 tokens/s per GPU at 32,768 tokens.</p>
+<p>At 65,536 tokens, the boundary activations alone take 74 layers × 65,536 tokens × 6,144 × 2 bytes ≈ 55 GiB per GPU, which does not fit in HBM next to the weights. GH200 has a 900 GB/s link to 120 GB of CPU memory, so we decide to offload them. Each boundary activation is copied to Grace after the forward pass produces it, and copied back to Hopper one layer before the backward pass recomputes it. An offloading parameter sets the share of layers that offload, which trades HBM for Grace memory.</p>
+<p>TorchTitan’s activation-checkpointing wrapper made this change convenient. We <a href="https://github.com/pytorch/torchtitan/pull/5090">contributed the hooks for activation-checkpoint offloading</a> to TorchTitan and built our offloading strategy on top of them. With offload, throughput rose from 370 to 508 tokens/s per GPU (+37%), and the sequence length grew to 49,152 tokens and then, with Muon, to 65,536.</p>
+<p><!-- IMAGE PLACEHOLDER: Figure 4 – offload schedule (re-upload via Media Library) --></p>
+<p><em><img decoding="async" class="alignnone wp-image-210695 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/ACOffload.png" alt="" width="2048" height="921" srcset="https://pytorch.org/wp-content/uploads/2026/11/ACOffload.png 2048w, https://pytorch.org/wp-content/uploads/2026/11/ACOffload-300x135.png 300w, https://pytorch.org/wp-content/uploads/2026/11/ACOffload-1024x461.png 1024w" sizes="(max-width: 2048px) 100vw, 2048px" /></em></p>
+<p><em>Figure 4. Offload schedule, drawn with 16 layers in place of 74. During the forward pass, each boundary activation moves to Grace. During the backward pass, it returns to HBM one layer before its recomputation.</em></p>
+<h2>De-fragging FSDPs Streams</h2>
+<p>After an upgrade to our software stack, the CUDA caching allocator started retrying allocations on every rank at ~70% memory utilization. At the time of the retries, 25-30 GiB of HBM was free, but the allocator could not use it.</p>
+<p>After investigating the root cause, we identified it in how FSDP overlaps communication with computation. FSDP uses one compute stream and four side streams, and the allocator keeps a separate pool per stream. Memory freed by a stream can only be reused by that stream. FSDP allocates each buffer on the stream that writes it, and some of our other communication optimizations allocated temporary buffers inside FSDP’s calls, so these buffers also landed on side streams. Replaying the allocator’s event log at peak memory showed the side streams holding 27.3 GiB, of which only 6.4 GiB was in use. The remaining 20.9 GiB was out of reach of the compute stream, which then could not find a 4 GiB block for a MoE buffer.</p>
+<p><!-- IMAGE PLACEHOLDER: Figure 5 – HBM held by each allocator stream's cache (re-upload via Media Library) --></p>
+<p><em><img decoding="async" class="alignnone wp-image-210696 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/fsdp_streams.png" alt="" width="2048" height="1072" srcset="https://pytorch.org/wp-content/uploads/2026/11/fsdp_streams.png 2048w, https://pytorch.org/wp-content/uploads/2026/11/fsdp_streams-300x157.png 300w, https://pytorch.org/wp-content/uploads/2026/11/fsdp_streams-1024x536.png 1024w" sizes="(max-width: 2048px) 100vw, 2048px" /></em></p>
+<p><em>Figure 5. HBM held by each allocator stream’s cache at peak live memory, reconstructed from the allocator’s event trace on rank 0. Solid bars are live tensors, and dashed bars are cached memory that only the owning stream can reuse.</em></p>
+<p>Luckily, FSDP2 has a private flag, <code>unshard_async_op</code>, that runs the all-gather setup on the compute stream and lets NCCL run on its internal stream. The gather buffers are then allocated from, and returned to, the compute stream’s pool. We adapted our custom gather to run asynchronously, so the compute stream waits for the network only when it needs the weights. This brought the number of ranks with allocator retries from 384 to zero. Peak reserved memory went from 88.1 to 74.6 GiB, and throughput rose from 996 to 1,210 tokens/s per GPU.</p>
+<p>We <a href="https://github.com/pytorch/torchtitan/pull/5627">proposed a TorchTitan option</a> to enable the flag. Following the review, <code>unshard_async_op</code> is being moved into a public FSDP API (<a href="https://github.com/pytorch/pytorch/pull/202343">PyTorch #202343</a>), so other FSDP users can rely on it.</p>
+<h2>Upstreaming contributions and closing remarks</h2>
+<p>The configuration we just described allows to scale pre-training runs to 1T parameters at a workable throughput on public European infrastructure. In order to make it possible for others to reproduce these results (more details are available in a companion <a href="https://www.domyn.com/blog/training-1t-moe-eu-public-infrastructure-pytorch">post</a>), we upstreamed all the fixes to PyTorch and TorchTitan. <!-- TODO: replace placeholder link --></p>
+<p>In addition to the three contributions we already mentioned, we contributed a <a href="https://github.com/pytorch/torchtitan/pull/5583">shared RoPE cache</a> to TorchTitan (2.56 GiB per GPU at our sequence length), <a href="https://github.com/pytorch/torchtitan/pull/5579">skipping the embedding re-gather in the backward pass</a>, and <a href="https://github.com/pytorch/torchtitan/pull/4600">configurable seed-offset mesh axes</a>. In PyTorch, we fixed <a href="https://github.com/pytorch/pytorch/pull/196072">CPU initialization resetting the RNG state</a> and <a href="https://github.com/pytorch/pytorch/pull/201840"><code>trunc_normal_</code> all-gathering DTensors</a>. We also reported unattributed host memory at job start to the Jülich Supercomputing Centre, since it affects every user of the machine.</p>
+<p>Thanks to the level of control provided by PyTorch and TorchTitan, training now runs at a sustained throughput of ~1,300 tokens/s per GPU on 384 GH200s per DDP replica, for a total of 1536 GPUs for 4 DDP replicas, and fits in memory by fully leveraging the HBM and the Grace architecture. The companion <a href="https://www.domyn.com/blog/training-1t-moe-eu-public-infrastructure-pytorch">post</a> covers the rest of the path in Figure 1: data and expert load balancing, reducing the bytes sent over InfiniBand, node-local resharding, dynamic tile scheduling in SonicMoE and capping NCCL’s SM usage. <!-- TODO: replace placeholder link --></p>
+<p>We are grateful to the European Commission for Frontier AI Grand Challenge award. We hope that this work will motivate further investments in public compute infrastructure and the continued growth of the European AI ecosystem.</p>
+<p><strong>Learn more:</strong></p>
+<ul>
+<li><a href="https://www.domyn.com/blog/training-1t-moe-eu-public-infrastructure-pytorch">Training a 1T-Parameter MoE on Jupiter (full post)</a> <!-- TODO: replace placeholder link --></li>
+<li><a href="https://pytorch.org">PyTorch</a></li>
+<li><a href="https://github.com/pytorch/torchtitan">TorchTitan</a></li>
+<li><a href="https://github.com/pytorch/torchtitan/blob/main/torchtitan/distributed/flex_shard/README.md">FlexShard</a></li>
+<li><a href="https://digital-strategy.ec.europa.eu/it/news/commission-selects-europa-consortium-winner-frontier-ai-grand-challenge-project-build-european-open">Frontier AI Grand Challenge announcement</a></li>
+</ul>
+<p>The post <a href="https://pytorch.org/blog/training-a-1t-parameter-moe-on-eu-public-infrastructure-with-pytorch-and-torchtitan/">Training a 1T-Parameter MoE on EU public infrastructure with PyTorch and TorchTitan</a> appeared first on <a href="https://pytorch.org">PyTorch</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>ExecuTorch WebGPU: PyTorch Models on the GPU, in the Browser</title>
+		<link>https://pytorch.org/blog/executorch-webgpu-pytorch-models-on-the-gpu-in-the-browser/</link>
+		
+		<dc:creator><![CDATA[Julian Ng-Thow-Hing, Siddartha Pothapragada, Stephen Jia, Digant Desai, Bilgin Cagatay]]></dc:creator>
+		<pubDate>Tue, 10 Nov 2026 22:15:07 +0000</pubDate>
+				<category><![CDATA[Blog]]></category>
+		<guid isPermaLink="false">https://pytorch.org/?p=210178</guid>
+
+					<description><![CDATA[<p>TL;DR PyTorch models now run in the web browser on the GPU through ExecuTorch, with no conversion to another framework&#8217;s format. You export with torch.export to an ExecuTorch .pte file,...</p>
+<p>The post <a href="https://pytorch.org/blog/executorch-webgpu-pytorch-models-on-the-gpu-in-the-browser/">ExecuTorch WebGPU: PyTorch Models on the GPU, in the Browser</a> appeared first on <a href="https://pytorch.org">PyTorch</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<h3><span style="font-weight: 400;">TL;DR</span></h3>
+<ul>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">PyTorch models now run in the web browser on the GPU through ExecuTorch, with no conversion to another framework&#8217;s format. You export with torch.export to an ExecuTorch .pte file, and the same file runs in any </span><a href="https://webgpu.org/"><span style="font-weight: 400;">WebGPU</span></a><span style="font-weight: 400;"> browser via ExecuTorch&#8217;s new </span><a href="https://github.com/pytorch/executorch/tree/main/backends/webgpu"><span style="font-weight: 400;">WebGPU backend</span></a><span style="font-weight: 400;">.</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">It works across a broad range of models: LLMs (e.g. Llama 3.2, Qwen3, Gemma 3), vision-language (e.g. SmolVLM), segmentation, depth, object detection, super-resolution and speech-to-text (e.g. Whisper). Everything runs locally in the tab, and no data leaves the device. Try it in the ExecuTorch WebGPU </span><a href="https://executorch.ai/playground"><span style="font-weight: 400;">Playground</span></a><span style="font-weight: 400;">.</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">On the same machine, WebGPU is 4–7× faster than ExecuTorch&#8217;s CPU path (Webassembly + XNNPACK) on prefill and 2–10× faster on decode. </span></li>
+</ul>
+<h3><span style="font-weight: 400;">Why the Browser?</span></h3>
+<p><span style="font-weight: 400;">The web is the largest deployment surface with billions of users on Chrome, Firefox and Safari. Browser inference ensures privacy by keeping users’ prompts, model inputs, and outputs on the user’s device rather than the server. This reduces network latency, enables offline use-cases, and lowers server-side inference costs. With the ExecuTorch WebGPU backend, PyTorch models get a native path to GPU-accelerated inference in WebGPU-enabled browsers on desktop, laptop and mobile.</span></p>
+<p><span style="font-weight: 400;">WebGPU, the modern successor to WebGL, provides native compute shaders, shared memory, storage buffers, and barriers, making it viable for high-performance ML inference directly in the browser. Today, running a PyTorch model in the browser usually means first converting it to another framework&#8217;s format, such as GGUF, ONNX or TFLite. The ExecuTorch WebGPU backend lets PyTorch models reach the browser without leaving the PyTorch toolchain.</span></p>
+<h3><span style="font-weight: 400;">Backend Design</span></h3>
+<p><img decoding="async" class="aligncenter wp-image-210179 " src="https://pytorch.org/wp-content/uploads/2026/11/pytorch-model-1.jpg" alt="" width="247" height="685" srcset="https://pytorch.org/wp-content/uploads/2026/11/pytorch-model-1.jpg 371w, https://pytorch.org/wp-content/uploads/2026/11/pytorch-model-1-108x300.jpg 108w, https://pytorch.org/wp-content/uploads/2026/11/pytorch-model-1-369x1024.jpg 369w" sizes="(max-width: 247px) 100vw, 247px" /></p>
+<p style="text-align: center;"><i><span style="font-weight: 400;">[Figure 1: ExecuTorch WebGPU backend design: a PyTorch model is exported once to a .pte file and runs in any WebGPU browser through the ExecuTorch Wasm runtime]</span></i></p>
+<p><span style="font-weight: 400;">Three principles guided the WebGPU backend&#8217;s design:</span><span style="font-weight: 400;"><br />
+</span></p>
+<ul>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Architecture, export, and dynamic runtime. Models export through ExecuTorch&#8217;s </span><span style="font-weight: 400;"><code>torch.export()</code></span><span style="font-weight: 400;"> and WebGPUPartitioner</span> <span style="font-weight: 400;">and run via WGSL compute shaders. At runtime, the WebGPU runtime allocates GPU buffers and dispatches compute shaders into command buffers. Dynamic shapes are handled via allocate-at-max buffers with per-dispatch workgroup recalculation to enable batched prefill, and the runtime routes shapes to specialized WGSL kernels at runtime.</span><span style="font-weight: 400;"><br />
+</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Same artifact across multiple devices and browsers. One model (.pte file) runs in WebGPU browsers such as Chrome and Safari, natively on Metal (macOS), Vulkan (Linux/Android) and D3D12 (Windows), translating WGSL to Metal Shading Language, SPIR-V or HLSL depending on the platform. For browser deployment, the dynamic C++ runtime compiles to Webassembly via Emscripten and </span><span style="font-weight: 400;"><code>emdawnwebgpu</code></span><span style="font-weight: 400;"> bridges its WebGPU API calls to any browser’s WebGPU JavaScript API.</span><span style="font-weight: 400;"><br />
+</span></li>
+<li style="font-weight: 400;" aria-level="1"><span style="font-weight: 400;">Zero friction for the end user. With WebGPU, models run in the browser sandbox with no native installation, backend server, and no data leaving the device. For developers, deployment is a .pte file served over CDN on a web page. Pipeline compilation, memory management, and dispatch scheduling are all handled through the WebGPU backend, with all data staying in GPU device memory within the browser tab.</span></li>
+</ul>
+<h3><span style="font-weight: 400;">Performance</span></h3>
+<p><span style="font-weight: 400;">We benchmarked ExecuTorch WebGPU against ExecuTorch&#8217;s own Webassembly (wasm) CPU backend (XNNPACK, multi-threaded) on the same machine, using quantized Llama 3.2 1B and Qwen3-0.6B in Google Chrome on Apple M1 Pro. Each data point is the median of 5 runs after 3 warmups, across 128 to 8K tokens of context, with identical token IDs for both backends. Both are timed with wall-clock time, since GPU timestamps aren&#8217;t available for CPU execution. WebGPU uses 4-bit groupwise weights (group size 64) with fp32 activations; the CPU uses XNNPACK&#8217;s 4-bit weights with 8-bit dynamic activations.</span></p>
+<p><img decoding="async" class="aligncenter wp-image-210180 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/2.png" alt="" width="2048" height="1357" srcset="https://pytorch.org/wp-content/uploads/2026/11/2.png 2048w, https://pytorch.org/wp-content/uploads/2026/11/2-300x199.png 300w, https://pytorch.org/wp-content/uploads/2026/11/2-1024x679.png 1024w" sizes="(max-width: 2048px) 100vw, 2048px" /></p>
+<p style="text-align: center;"><i><span style="font-weight: 400;">[Figure 2: ExecuTorch WebGPU is 4–7× faster than ExecuTorch Wasm (XNNPACK) on prefill and 2–10× faster on decode, measured in Chrome on Apple M1 Pro]</span></i></p>
+<h3><span style="font-weight: 400;">Models in Practice</span></h3>
+<p><span style="font-weight: 400;">We&#8217;ve validated the WebGPU backend across models with very different architectures, demonstrating that the operator coverage generalizes beyond autoregressive text generation:</span></p>
+<p><span style="font-weight: 400;">LLM Inference</span></p>
+<ul>
+<li style="font-weight: 400;" aria-level="1"><a href="https://huggingface.co/executorch-community/Llama-3.2-1B-Instruct-ExecuTorch-WebGPU"><span style="font-weight: 400;">Llama 3.2 1B (4-bit quantized)</span></a></li>
+<li style="font-weight: 400;" aria-level="1"><a href="https://huggingface.co/executorch-community/Qwen2.5-0.5B-Instruct-ExecuTorch-WebGPU"><span style="font-weight: 400;">Qwen2.5-0.5B (4-bit quantized)</span></a></li>
+<li style="font-weight: 400;" aria-level="1"><a href="https://huggingface.co/executorch-community/Qwen3-0.6B-ExecuTorch-WebGPU"><span style="font-weight: 400;">Qwen3-0.6B (4-bit quantized)</span></a></li>
+<li style="font-weight: 400;" aria-level="1"><a href="https://huggingface.co/executorch-community/Gemma-3-1B-IT-ExecuTorch-WebGPU"><span style="font-weight: 400;">Gemma 3 1B</span></a></li>
+</ul>
+<p><span style="font-weight: 400;">Vision-Language Understanding</span></p>
+<ul>
+<li style="font-weight: 400;" aria-level="1"><a href="https://huggingface.co/executorch-community/SmolVLM-500M-Instruct-ExecuTorch-WebGPU"><span style="font-weight: 400;">SmolVLM</span></a><span style="font-weight: 400;">: image question answering and captioning</span></li>
+</ul>
+<p><span style="font-weight: 400;">Vision</span></p>
+<ul>
+<li style="font-weight: 400;" aria-level="1"><a href="https://huggingface.co/executorch-community/Depth-Anything-V2-Small-ExecuTorch-WebGPU"><span style="font-weight: 400;">Depth Anything V2</span></a><span style="font-weight: 400;">: monocular depth estimation</span></li>
+<li style="font-weight: 400;" aria-level="1"><a href="https://huggingface.co/executorch-community/SAM2-Hiera-Tiny-ExecuTorch-WebGPU"><span style="font-weight: 400;">SAM 2 (SAM 2.1 Hiera Tiny)</span></a><span style="font-weight: 400;">: promptable image segmentation</span></li>
+<li style="font-weight: 400;" aria-level="1"><a href="https://huggingface.co/executorch-community/D-FINE-Small-COCO-ExecuTorch-WebGPU"><span style="font-weight: 400;">D-FINE</span></a><span style="font-weight: 400;">: object detection</span></li>
+<li style="font-weight: 400;" aria-level="1"><a href="https://huggingface.co/executorch-community/Real-ESRGAN-General-x4v3-ExecuTorch-WebGPU"><span style="font-weight: 400;">Real-ESRGAN</span></a><span style="font-weight: 400;">: super-resolution</span></li>
+<li style="font-weight: 400;" aria-level="1"><a href="https://huggingface.co/executorch-community/MODNet-ExecuTorch-WebGPU"><span style="font-weight: 400;">Background Removal (MODNet)</span></a><span style="font-weight: 400;">: foreground segmentation</span></li>
+</ul>
+<p><span style="font-weight: 400;">Voice</span></p>
+<ul>
+<li style="font-weight: 400;" aria-level="1"><a href="https://huggingface.co/executorch-community/Whisper-Base-ExecuTorch-WebGPU"><span style="font-weight: 400;">Whisper (base)</span></a><span style="font-weight: 400;">: speech-to-text</span></li>
+<li style="font-weight: 400;" aria-level="1"><a href="https://huggingface.co/executorch-community/Phonon-31M-EN-ExecuTorch-WebGPU"><span style="font-weight: 400;">Phonon-31M-EN</span></a><span style="font-weight: 400;">: text-to-speech</span></li>
+</ul>
+<p><span style="font-weight: 400;">On-Device Training</span></p>
+<ul>
+<li style="font-weight: 400;" aria-level="1"><a href="https://github.com/pytorch/executorch/blob/main/backends/webgpu/README.md"><span style="font-weight: 400;">LoRA and DiReFT fine-tuning</span></a><span style="font-weight: 400;"> for Llama 3.2 1B, Qwen2.5 0.5B and Qwen3 0.6B, aimed at personalized assistants and domain adaptation on-device</span></li>
+</ul>
+<p style="text-align: center;"><i><span style="font-weight: 400;"><img decoding="async" class="aligncenter wp-image-210691 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/executorch-webgpu-four-demos-1.gif" alt="" width="1280" height="1268" /></span></i></p>
+<p style="text-align: center;"><i><span style="font-weight: 400;">[Figure 3: ExecuTorch WebGPU demonstration]</span></i></p>
+<h3><span style="font-weight: 400;">Try it: ExecuTorch WebGPU Playground</span></h3>
+<p><span style="font-weight: 400;">The ExecuTorch WebGPU </span><a href="https://executorch.ai/playground/"><span style="font-weight: 400;">Playground</span></a><span style="font-weight: 400;"> runs many of the models above, all on the same WebAssembly + WebGPU runtime. All the prompts, photos, camera frames and audio never leave your device. Each model&#8217;s Hugging Face repo includes the .pte files, a model card, and the exact export recipe.</span></p>
+<h3><span style="font-weight: 400;">What’s Next</span></h3>
+<p><span style="font-weight: 400;">The backend is still in early development. We&#8217;ll keep making the backend faster and more stable, and expand operator, data type, and model coverage.</span></p>
+<h3><span style="font-weight: 400;">Contributions / Feedback</span></h3>
+<p><span style="font-weight: 400;"> ExecuTorch is open source, and we&#8217;d love your contributions to the WebGPU backend. If something breaks or a model you care about isn&#8217;t supported, open an </span><a href="https://github.com/pytorch/executorch/issues"><span style="font-weight: 400;">issue</span></a><span style="font-weight: 400;"> or reach us on the </span><a href="https://discord.com/invite/Dh43CKSAdc"><span style="font-weight: 400;">ExecuTorch Discord</span></a><span style="font-weight: 400;">. Contributions are welcome too, whether that&#8217;s new operators, new models or performance improvements.</span></p>
+<p><span style="font-weight: 400;">Learn more at </span><a href="https://docs.pytorch.org/executorch/main/index.html"><span style="font-weight: 400;">ExecuTorch Documentation</span></a><span style="font-weight: 400;"> | </span><a href="https://github.com/pytorch/executorch"><span style="font-weight: 400;">ExecuTorch repo</span></a><span style="font-weight: 400;"> | </span><a href="https://github.com/pytorch/executorch/tree/main/backends/webgpu"><span style="font-weight: 400;">WebGPU Backend</span></a></p>
+<p>The post <a href="https://pytorch.org/blog/executorch-webgpu-pytorch-models-on-the-gpu-in-the-browser/">ExecuTorch WebGPU: PyTorch Models on the GPU, in the Browser</a> appeared first on <a href="https://pytorch.org">PyTorch</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Optimizing Muse Spark Open on TPU v7 with SGLang-TorchTPU</title>
+		<link>https://pytorch.org/blog/optimizing-muse-spark-open-on-tpu-v7-with-sglang-torchtpu/</link>
+		
+		<dc:creator><![CDATA[Haolin Fu, Xiaoyu Zhang, Junyan Xu, Wangyuan Zhang, Haoguang Cai, RadixArk Team]]></dc:creator>
+		<pubDate>Tue, 10 Nov 2026 16:45:24 +0000</pubDate>
+				<category><![CDATA[Blog]]></category>
+		<guid isPermaLink="false">https://pytorch.org/?p=210192</guid>
+
+					<description><![CDATA[<p>TL;DR We serve Meta&#8217;s Muse Spark Open, an 816B-parameter mixture-of-experts model, on a single TPU v7 host of four chips, with SGLang running on the TorchTPU PyTorch backend. At the...</p>
+<p>The post <a href="https://pytorch.org/blog/optimizing-muse-spark-open-on-tpu-v7-with-sglang-torchtpu/">Optimizing Muse Spark Open on TPU v7 with SGLang-TorchTPU</a> appeared first on <a href="https://pytorch.org">PyTorch</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<h2>TL;DR</h2>
+<p>We serve Meta&#8217;s Muse Spark Open, an 816B-parameter mixture-of-experts model, on a single TPU v7 host of four chips, with SGLang running on the TorchTPU PyTorch backend. At the center is a megakernel: all 62 layers of a decode or verify step run as one Pallas program, and every weight load, KV read and cross-device transfer is pipelined behind compute. The rest of the work falls into three groups: faster decode steps (collective folding, a max-free attention loop that pipelines its KV chunks, an expert loop that keeps register spills off its common path, and DFlash2 speculative decoding), more KV cache per chip (sequence-on-lane KV layout in the megakernel, and L2 HiCache on TPU with session-aware eviction), and faster prefill (a fused MoE kernel and sequence parallelism).</p>
+<ul>
+<li><strong>Decode speed.</strong> The megakernel halves the time per output token for one or two concurrent requests, where it helps the most; the gain narrows as concurrency grows. Its verify step runs within 1.5–1.7× of the time it takes just to stream its weights from HBM.</li>
+<li><strong>AgentX.</strong> On the 1M-context version of SemiAnalysis&#8217;s agentic-coding benchmark, our curve runs from 433 output tokens/s per request at 6,101 tokens/s per chip to 25,906 tokens/s per chip at 95 tokens/s per request (Figure 1).</li>
+</ul>
+<h2>Results</h2>
+<p><!-- IMAGE PLACEHOLDER: Figure 1 (image1) - InferenceX AgentX chart, tokens per dollar vs p90 interactivity. Download from the Doc and re-upload via WP Media Library. --></p>
+<p><strong><img decoding="async" class="alignnone wp-image-210193 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-1.png" alt="" width="1400" height="1009" srcset="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-1.png 1400w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-1-300x216.png 300w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-1-1024x738.png 1024w" sizes="(max-width: 1400px) 100vw, 1400px" /></strong></p>
+<p><em><strong>Figure 1.</strong> InferenceX AgentX, 1M-context trace set: tokens per dollar against p90 interactivity. TPU v7: one host, four chips, FP8 compute with NVFP4 expert weights. GB200 (FP4) is shown as a baseline from InferenceX&#8217;s published results as of 2026-11-02. Costs are InferenceX&#8217;s external owning costs: $1.21 per TPU v7 chip-hour and $1.86 per GB200 GPU-hour.</em></p>
+<p><a href="https://inferencex.semianalysis.com/blog/agentic-benchmark-agent-benchmark-guide">AgentX</a> is built from 393 opt-in Claude Code sessions. It replays their request lengths, prefix sharing between turns, tool pauses and subagent structure, with synthetic tokens in place of the original content. We run its 1M-context trace set, as the GB200 baseline does, where prompts reach about 990K tokens; models with shorter context windows run a version capped at 256K. Throughput counts input and output tokens. Every TPU point in Figure 1 finishes requests within 47 s at p90.</p>
+<h2>Background</h2>
+<h3>The model</h3>
+<p>Muse Spark Open is Meta&#8217;s open-weights mixture-of-experts (MoE) [1] model, with 816B parameters in total and about 42B active per token.</p>
+<ul>
+<li><strong>62 decoder layers, all of them MoE.</strong> Each layer routes every token to 8 of 256 experts.</li>
+<li><strong>Hybrid attention.</strong> 46 layers use sliding-window attention [2] over the last 2,048 tokens; the other 16 attend over the full context, up to 1M tokens. Attention has 128 query heads and 16 KV heads, each 64 wide.</li>
+<li><strong>NVFP4 experts.</strong> Expert weights are 4-bit, with one scale per 16 values, a microscaling format [3].</li>
+</ul>
+<h3>The hardware</h3>
+<p>One <a href="https://docs.cloud.google.com/tpu/docs/tpu7x">TPU v7 (Ironwood)</a> host has four chips. Each chip packs two chiplets, each with one TensorCore and its own HBM, and frameworks expose each chiplet as a device, so a host has 8 devices. We shard the model 8 ways with tensor parallelism [4], one shard per device.</p>
+<p><!-- IMAGE PLACEHOLDER: Figure 2 (image2) - TPU v7 chip diagram. Download from the Doc and re-upload via WP Media Library. --></p>
+<p><strong><img decoding="async" class="alignnone wp-image-210194 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-2.png" alt="" width="1400" height="1046" srcset="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-2.png 1400w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-2-300x224.png 300w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-2-1024x765.png 1024w" sizes="(max-width: 1400px) 100vw, 1400px" /></strong></p>
+<p><em><strong>Figure 2.</strong> One TPU v7 chip, simplified from the architecture diagram in <a href="https://docs.cloud.google.com/tpu/docs/tpu7x">Google Cloud&#8217;s TPU7x documentation</a>. The numbers are Google&#8217;s published figures.</em></p>
+<p>Each device is a single-threaded processor: one program runs at a time, so speed comes from keeping the matrix units fed and overlapping memory transfers with compute inside that program. These are the units that matter in this post, as described in <a href="https://docs.cloud.google.com/tpu/docs/tpu7x">Google Cloud&#8217;s TPU7x documentation</a> and JAX&#8217;s <a href="https://docs.jax.dev/en/latest/pallas/tpu/details.html">Pallas TPU guide</a>:</p>
+<ul>
+<li><strong>Scalar unit.</strong> One per device, with its own small scalar memory (SMEM). It runs the control flow: loops, branches and address math.</li>
+<li><strong>MXU, the matrix unit.</strong> Two per device. They do the matmuls; the chip&#8217;s peak is 2,307 TFLOPs in bf16 and 4,614 in fp8. At small batch they mostly wait for weights to arrive from HBM.</li>
+<li><strong>Vector unit (VPU).</strong> Elementwise work such as norms, softmax exponentials and format conversions. On recent TPUs it computes on 2D vector registers of 8 × 128 32-bit values, 8 sublanes by 128 lanes, so a data layout that leaves lanes empty wastes both vector work and memory (section 7). A cross-lane unit (XLU) next to it does transposes and permutes.</li>
+<li><strong>VMEM.</strong> On-chip SRAM next to the MXUs and the vector unit, with much higher bandwidth than HBM. Kernels stage their tiles here, so its size bounds how much a kernel can keep in flight.</li>
+<li><strong>DMA engines.</strong> They move data between HBM, VMEM and other devices in the background: a kernel starts a copy and waits for it later, while it computes. The megakernel&#8217;s pipelining (section 2) is built on them.</li>
+<li><strong>HBM.</strong> 192 GiB per chip at 7.37 TB/s, 96 GiB of it on each device.</li>
+<li><strong>Die-to-die link.</strong> It joins the two devices of a chip; Google documents it as six times faster than a 1D ICI link. Section 8&#8217;s pair exchange leans on it.</li>
+<li><strong>ICI.</strong> Six links per chip at 200 GB/s each, counting both directions, for 1,200 GB/s per chip. The four chips of a host talk to each other over it; slices of 64 chips or more form 3D tori.</li>
+<li><strong>Host.</strong> Each chip connects to the host&#8217;s CPUs over PCIe Gen5 ×16. A 4-chip host has 960 GB of DRAM, which L2 HiCache uses as a second cache tier (section 7).</li>
+<li><strong>SparseCores.</strong> Four per chip. This work does not use them.</li>
+</ul>
+<p>The <a href="https://pytorch.org/blog/introducing-torchtpu/">TorchTPU post</a> has a longer primer.</p>
+<h3>The software</h3>
+<p>The server is <a href="https://github.com/sgl-project/sglang-torchtpu">SGLang-TorchTPU</a>: SGLang&#8217;s [5] scheduler, KV cache and model code in PyTorch, with <a href="https://docs.jax.dev/en/latest/pallas/index.html">Pallas</a> kernels on the hot paths. We decode with speculative decoding [6, 7]: a small draft model guesses the next few tokens, and the full model checks them all in one forward pass, the <strong>verify step</strong>. Each (request, position) pair in a verify step is a <strong>row</strong>, so two requests verifying 8 tokens each make a 16-row step.</p>
+<h2>1. A megakernel</h2>
+<p>At small batch, generating a token does little math per weight, so the step is as fast as HBM can stream the weights, as long as nothing interrupts the stream. A decode or verify step should therefore be one uninterrupted stream of weights from HBM into the MXU. Our previous path (&#8220;native&#8221; below) ran each layer as several kernels plus collectives, and every boundary stopped the stream. The megakernel runs all 62 layers of a step as one Pallas program per device, so the next weights are always in flight. Whole-step megakernels have been built for GPUs [8, 9] and, on TPU v7, for Kimi K3 and Qwen 3.8 [10]. Ours runs inside SGLang&#8217;s serving path, on its paged KV cache, for the decode and DFlash2 verify steps of many requests at once.</p>
+<p>The native path was already built from fused Pallas blocks, yet its verify step took 2.9× the time needed to stream its weights. Profiling our first one-kernel prototype showed why: at batch 1 the matmuls and attention cost almost nothing, while collectives cost about 45 µs per layer. Nothing overlaps across a program boundary, so the step was bound by overhead, not by bandwidth.</p>
+<p><!-- IMAGE PLACEHOLDER: Figure 3 (image3) - one step through the megakernel. Download from the Doc and re-upload via WP Media Library. --></p>
+<p><strong><img decoding="async" class="alignnone wp-image-210195 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-3.png" alt="" width="1400" height="772" srcset="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-3.png 1400w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-3-300x165.png 300w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-3-1024x565.png 1024w" sizes="(max-width: 1400px) 100vw, 1400px" /></strong></p>
+<p><em><strong>Figure 3.</strong> One step. Inside the megakernel every layer runs the same flow (white); the shaded boxes are data movement the kernel issues itself.</em></p>
+<p>For each step, every device runs one <code>pallas_call</code> that covers all 62 layers and the final norm. SGLang still runs the embedding, the draft model, a small KV-write kernel, the LM head and sampling around it.</p>
+<p><!-- IMAGE PLACEHOLDER: Figure 4 (image4) - time per verify step, native vs megakernel. Download from the Doc and re-upload via WP Media Library. --></p>
+<p><strong><img decoding="async" class="alignnone wp-image-210196 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-4.png" alt="" width="1400" height="694" srcset="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-4.png 1400w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-4-300x149.png 300w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-4-1024x508.png 1024w" sizes="(max-width: 1400px) 100vw, 1400px" /></strong></p>
+<p><em><strong>Figure 4.</strong> Time per verify step, both paths with DFlash2 speculative decoding (GSM8K, measured on an earlier Muse Spark checkpoint). The floor is the time to stream that step&#8217;s distinct experts and dense weights from HBM.</em></p>
+<p>Per output token, the megakernel is 1.94× faster than the native path for a single request (1.95 ms against 3.78 ms) and 1.85× for two concurrent requests. The next sections show what made one program this fast.</p>
+<h2>2. Pipelining everything inside the megakernel</h2>
+<p>A step is mostly data movement: weights, KV cache and partial sums between devices. Once the whole step is one program, the kernel can schedule every transfer so that it lands just before the compute that needs it [11], including across layer boundaries [10]. Figure 5 sketches one layer.</p>
+<p><!-- IMAGE PLACEHOLDER: Figure 5 (image5) - one layer of a step, DMA streams vs compute. Download from the Doc and re-upload via WP Media Library. --></p>
+<p><strong><img decoding="async" class="alignnone wp-image-210197 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-5.png" alt="" width="1400" height="932" srcset="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-5.png 1400w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-5-300x200.png 300w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-5-1024x682.png 1024w" sizes="(max-width: 1400px) 100vw, 1400px" /></strong></p>
+<p><em><strong>Figure 5.</strong> One layer of a step, schematic. Each DMA stream runs ahead of, or alongside, the compute that consumes it.</em></p>
+<h3>Weights arrive before they are needed</h3>
+<ul>
+<li><strong>A ring for dense weights.</strong> Attention, o-proj and router weights stream through a ring of tiles that prefetches across layer boundaries. About ten tiles in flight sustain 3.34 TB/s per device, while a single DMA stream reaches only 1.13 TB/s.</li>
+<li><strong>Experts as soon as routing finishes.</strong> The router&#8217;s choice is known only mid-layer, so the kernel requests each chosen expert&#8217;s weights the moment routing ends, with three experts in flight.</li>
+<li><strong>The next layer during the expert loop.</strong> Refills for the next layer&#8217;s attention weights are held until the expert loop runs, so they never compete with the expert weights the current layer is waiting for.</li>
+</ul>
+<h3>Collectives leave as soon as their data exists</h3>
+<p>Tensor parallelism exchanges partial sums between the 8 devices several times per layer. Instead of a separate collective after each matmul, the kernel writes partial results straight into the owning device&#8217;s memory with remote DMAs issued from inside the kernel; a small round costs about 3 µs.</p>
+<ul>
+<li><strong>Streamed o-proj.</strong> Each o-proj output tile leaves for its owner as soon as it is computed, while the next tile is still being multiplied.</li>
+</ul>
+<h3>Pipelined KV writes</h3>
+<p>Each step writes its new K and V rows into the cache. In our fp8 sequence-on-lane cache (section 7), a token is one lane column of a 256-token page, so writing a token means reading the whole page block into VMEM, merging the new columns, and writing the page back.</p>
+<p>This runs as a small kernel right after the megakernel, because XLA copies the aliased operands of any kernel that issues remote DMA. It used to do every page in turn: read, wait, merge, write, wait, for each request and each of 62 layers.</p>
+<p><!-- IMAGE PLACEHOLDER: Figure 6 (image6) - pipelined KV-write kernel with two VMEM banks. Download from the Doc and re-upload via WP Media Library. --></p>
+<p><strong><img decoding="async" class="alignnone wp-image-210198 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-6.png" alt="" width="1400" height="1034" srcset="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-6.png 1400w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-6-300x222.png 300w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-6-1024x756.png 1024w" sizes="(max-width: 1400px) 100vw, 1400px" /></strong></p>
+<p><em><strong>Figure 6.</strong> Schematic. The pipelined kernel issues all of a layer&#8217;s page reads at once, merges each page as it lands, and starts its write; the next layer&#8217;s reads start immediately on a second VMEM bank.</em></p>
+<p>The new kernel loads all layers&#8217; new rows once, then keeps two VMEM banks: layer l reads into one while layer l−1&#8217;s writes drain from the other, and a bank is reused only after the writes of two layers earlier have landed. The write cost per step fell from 810 to 155 µs at 16 rows and from 2,286 to 336 µs at 64 rows, with bit-identical results.</p>
+<h2>3. Collective folding</h2>
+<p>Because each layer is split across 8 devices, a device often has to collect the others&#8217; results before it can continue. After the MoE and after attention, each device holds one slice of the layer&#8217;s output along the hidden dimension, and must all-gather the other seven slices before the next matvec can run. Collective folding lets that matvec start on the slices as they arrive instead of waiting for the whole gather, as decomposed collective matmuls do [12], here across the RMS norm that sits between the two.</p>
+<p><!-- IMAGE PLACEHOLDER: Figure 7 (image7) - folded matvec consuming gathered slices. Download from the Doc and re-upload via WP Media Library. --></p>
+<p><strong><img decoding="async" class="alignnone wp-image-210199 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-7.png" alt="" width="1400" height="924" srcset="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-7.png 1400w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-7-300x198.png 300w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-7-1024x676.png 1024w" sizes="(max-width: 1400px) 100vw, 1400px" /></strong></p>
+<p><em><strong>Figure 7.</strong> Schematic. The folded matvec multiplies each gathered slice as soon as it lands, starting with the device&#8217;s own, and applies the per-row normalization at the end.</em></p>
+<p>What makes this possible is where Muse Spark normalizes. The next layer&#8217;s attention input is an RMS norm [13] of the residual stream α·x + β·s·f, where x is the residual this device already holds, f is the gathered MoE output and s is f&#8217;s own norm factor. The two norm factors, s and the final r, are each one scalar per row. Scalars per row commute with the matmul, so the projection splits into a part the device can compute right away and a part that adds up slice by slice:</p>
+<p><!-- IMAGE PLACEHOLDER: image8 - EQUATION for the collective-folding projection split (not a figure; the following paragraph depends on it). Download from the Doc and re-upload via WP Media Library. --></p>
+<p>Here g is the norm&#8217;s gain vector, f_d is the slice from device d, and W_d is the matching block of weight rows. The kernel stacks the local part and the arriving slice into one product per block, consumes the slices in a fixed peer order, and reorders the weight ring so that W&#8217;s blocks stream in the same order. Once the last slice is in, it computes s and r and scales the result.</p>
+<p>The kernel folds two all-gathers per layer this way: the MoE output into the next layer&#8217;s qkv projection, and the attention output into the pooler and router. The residual stream itself is unchanged; only the point where the matmul input is rounded to bf16 moves, so results are not bit-identical, and our accuracy checks cover it.</p>
+<h2>4. Enabling better pipelining in attention</h2>
+<p>At long context, attention is the largest part of a step. The kernel walks the KV cache chunk by chunk, and the key bottleneck was the running max of online softmax [14]: it chained every chunk to the one before, so chunks could not be pipelined.</p>
+<h3>The running max chains every chunk</h3>
+<p>Online softmax, as used by FlashAttention [15], keeps the maximum score seen so far. Each new chunk computes its scores, updates that maximum, exponentiates against it, and rescales everything accumulated so far whenever the maximum grows. So each chunk is a serial chain (wait for its DMA, QK, max, exp, sum, P·V, rescale) that cannot start its exponentials until the previous chunk&#8217;s maximum is known. In a microbenchmark this chain costs about 0.17 µs per chunk, whether the chunk is fp8 or bf16.</p>
+<h3>Muse Spark makes the max unnecessary</h3>
+<p>Muse Spark normalizes q and k (QK-norm [16, 17]) with an RMS norm that has no learned weight, and gives q a fixed gain. No attention score can exceed 43.8 in magnitude, far from where exp overflows in f32. The running max exists only to prevent that overflow, so the kernel drops it, along with the rescale. It checks the bound from the model&#8217;s constants when it is built. FlashDecoding++ [18] breaks the same chain on GPUs with a unified max value and a recomputation path for the rare overflow; here the bound is exact, so the kernel needs no fallback.</p>
+<p><!-- IMAGE PLACEHOLDER: Figure 8 (image9) - chunk chains with vs without running max. Download from the Doc and re-upload via WP Media Library. --></p>
+<p><strong><img decoding="async" class="alignnone wp-image-210202 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-8.png" alt="" width="1400" height="854" srcset="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-8.png 1400w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-8-300x183.png 300w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-8-1024x625.png 1024w" sizes="(max-width: 1400px) 100vw, 1400px" /></strong></p>
+<p><em><strong>Figure 8.</strong> Schematic. With a running max, each chunk&#8217;s chain waits on the previous chunk. Without it, chunks are independent and their stages overlap.</em></p>
+<h3>Independent chunks pipeline</h3>
+<p>Without the max, chunks no longer depend on each other. The kernel issues all DMA waits at the top of each loop iteration, splits the chunks across several independent softmax streams that merge at the end, as Flash-Decoding does across the KV sequence [19], and software-pipelines the loop [11]: it scores the next chunks while it multiplies the previous chunks&#8217; probabilities by V.</p>
+<p>Three smaller changes shorten each chain further:</p>
+<ul>
+<li><strong>Chunk size by layer type.</strong> Global layers read the cache in long chunks of 1,024 to 2,048 tokens, so a 100K context needs far fewer chains. Sliding-window layers use 512-token chunks, since their window spans only a few.</li>
+<li><strong>fp8 keys straight into the MXU.</strong> Widening each fp8 chunk to bf16 on the vector unit cost more vector work than the MXU work it fed. Mixed bf16 × fp8 dots are exact, so the keys now go in as fp8.</li>
+<li><strong>The attention scale in the queries.</strong> Muse Spark&#8217;s attention scale is 1/8, a power of two, so multiplying the queries once instead of every score is exact.</li>
+</ul>
+<p><!-- IMAGE PLACEHOLDER: Figure 9 (image10) - attention microbenchmark at production shapes. Download from the Doc and re-upload via WP Media Library. --></p>
+<p><strong><img decoding="async" class="alignnone wp-image-210203 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-9.png" alt="" width="1400" height="842" srcset="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-9.png 1400w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-9-300x180.png 300w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-9-1024x616.png 1024w" sizes="(max-width: 1400px) 100vw, 1400px" /></strong></p>
+<p><em><strong>Figure 9.</strong> Microbenchmark at production shapes. The memory floor is the time to read the KV bytes.</em></p>
+<p>In the microbenchmark, longer chunks with independent streams cut attention time 2.4×, and dropping the running max took it to 3.9×. In the server, the pipelined loop raised per-request decode speed by 18% for two requests at 500K context.</p>
+<h2>5. Keeping register pressure off the common path</h2>
+<p>A processor computes on values held in its registers, a small, fixed set of storage slots next to the arithmetic units. When code needs more live values than the registers hold, the compiler spills some of them to memory and loads them back later [20], and those extra stores and loads cost time on every pass through the code. In a loop with several branches, the compiler has to fit the live values of all branches into the same registers, so one heavy branch can make every pass through the loop spill, even when that branch never runs.</p>
+<p>The megakernel&#8217;s expert loop had exactly this problem. A step loops over the experts its rows were routed to. For each one, the kernel waits for the expert&#8217;s weights and runs a path chosen by how many rows the expert serves: a few-row path, with small variants for one to eight rows, and a dequantize-then-multiply path for busier experts. As the batch grows, a step visits more experts, but most of them still serve only one or two rows, so the light path is the one that matters.</p>
+<h3>One heavy branch slows the light path</h3>
+<p>The 8-row variant keeps large f32 accumulators that do not fit in the vector registers even on their own. Because it shared one loop body with the one- and two-row variants, the common path spilled registers to memory and loaded them back on every expert: about 0.37 µs per expert, against roughly 1.2 µs to stream that expert&#8217;s weights. That overhead had nothing to do with the work the light path itself did.</p>
+<h3>Two loops instead of one</h3>
+<p>The fix keeps the heavy code out of the light path&#8217;s loop. The kernel sorts a step&#8217;s experts by row count and runs two loops: one for experts with at most four rows, and one for the rest. Each loop body now holds only its own variants, so the few-row loop carries 61–64% fewer spill instructions. Every expert still takes the same path as before, so the output is bit-identical.</p>
+<p><!-- IMAGE PLACEHOLDER: Figure 10 (image11) - shared loop body vs split loops. Download from the Doc and re-upload via WP Media Library. --></p>
+<p><strong><img decoding="async" class="alignnone wp-image-210204 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-10.png" alt="" width="1400" height="847" srcset="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-10.png 1400w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-10-300x182.png 300w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-10-1024x620.png 1024w" sizes="(max-width: 1400px) 100vw, 1400px" /></strong></p>
+<p><em><strong>Figure 10.</strong> Schematic. In one shared loop body, every few-row expert is followed by a spill and refill, and the loop falls behind its weight stream. In their own loop, few-row experts keep pace with the weights.</em></p>
+<p>In a kernel test with random routing, decode steps with many requests got 13–19% faster, and the expert loop now keeps pace with its weight stream.</p>
+<h2>6. Speculative decoding with DFlash2</h2>
+<p>Without speculation, every output token costs one full pass over the active weights. <a href="https://arxiv.org/html/2602.06036">DFlash</a> [21] drafts a whole block of tokens in one forward pass of a small model; we use Muse Spark&#8217;s DFlash2 draft model.</p>
+<p><!-- IMAGE PLACEHOLDER: Figure 11 (image12) - one speculative step with DFlash2. Download from the Doc and re-upload via WP Media Library. --></p>
+<p><strong><img decoding="async" class="alignnone wp-image-210205 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-11.png" alt="" width="1400" height="772" srcset="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-11.png 1400w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-11-300x165.png 300w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-11-1024x565.png 1024w" sizes="(max-width: 1400px) 100vw, 1400px" /></strong></p>
+<p><em><strong>Figure 11.</strong> One speculative step. The draft model reads hidden states captured from the full model. The token strip is an illustration.</em></p>
+<p>The draft attends bidirectionally within its block and proposes all of the block&#8217;s tokens at once. The full model checks the whole block in one megakernel step and keeps the longest prefix of drafts that matches its own choices, plus one token of its own.</p>
+<p>This suits TPU well: MXU time grows with the number of row and output tiles, not with multiply-adds, and a block&#8217;s few rows fit in the same row tile as one token, so verifying a block costs little more than verifying one token. Measured on GSM8K with real acceptance, DFlash2 cut the megakernel&#8217;s time per output token for a single request from 3.93 to 1.95 ms, 2.0×.</p>
+<h2>7. More context per device: KV layout and L2 HiCache</h2>
+<p>On agent traffic, KV capacity is throughput: every prefix that falls out of the cache comes back as a 100K-token re-prefill. After the weights, each device has only about 20 GiB left for KV, split between a full-attention pool for the 16 global layers and a sliding-window pool for the other 46.</p>
+<h3>fp8 KV in a sequence-on-lane layout</h3>
+<p>Each device holds 2 of the 16 KV heads, each 64 values wide: half of a vector register&#8217;s 128 lanes. A token-major cache packs a head&#8217;s K and V side by side to fill the lanes. That works in bf16, but fp8 [22] packs four values per 32-bit word down the sublanes, so a K-and-V pair is padded to four slots and switching to fp8 alone saves nothing.</p>
+<table>
+<thead>
+<tr>
+<th>KV bytes per token, per layer, per device</th>
+<th>bf16</th>
+<th>fp8</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Token-major, K and V packed per head</td>
+<td>512 B</td>
+<td>512 B</td>
+</tr>
+<tr>
+<td>Sequence-on-lane</td>
+<td>512 B</td>
+<td>256 B</td>
+</tr>
+</tbody>
+</table>
+<p>The sequence-on-lane layout puts a page&#8217;s tokens along the 128 lanes and the head dimension down the sublanes, so each word holds four fp8 values of one token and nothing is padded. It halves both the KV memory and the KV bytes each step reads. Google engineers added this layout to SGLang-TorchTPU&#8217;s ragged paged attention kernel (<a href="https://github.com/sgl-project/sglang-torchtpu/pull/344">#344</a>), which serves prefill here, and the <a href="https://pytorch.org/blog/introducing-torchtpu/">TorchTPU post</a> describes it for Qwen 3.5. We rewrote the megakernel&#8217;s attention reads and its KV writes for it.</p>
+<h3>The draft model&#8217;s KV in the sliding-window pool</h3>
+<p>The draft model only attends to the last 2,048 tokens, but the server allocated its KV for the full context, almost a third of all KV memory per cached token. Serving it from the sliding-window pool lets the same HBM hold 38% more tokens.</p>
+<h3>L2 HiCache on TPU</h3>
+<p>We enabled SGLang&#8217;s hierarchical cache (HiCache) [23] on TPU, with host DRAM as an L2 behind every HBM pool: full-attention, sliding-window and draft. When HBM evicts a session&#8217;s prefix during a tool pause, its pages stay in host memory and are copied back on the next turn instead of being recomputed, as in multi-turn KV caching systems such as CachedAttention [24]. Making it work alongside speculative decoding and the overlap scheduler needed a new synchronization fence. On agent traffic, the L2 cache raised throughput by up to 77%.</p>
+<h3>Session-aware eviction</h3>
+<p>Agent traffic brought a second problem: the cache did not know which old prefixes would be needed again. An agent session is a tree of conversations: a main agent can sit idle for a quarter of an hour while its sub-agents run, then come back with its whole context. To plain LRU eviction, that idle conversation looks like the coldest data in the cache, so it goes first, and its next turn recomputes a long prefix. A hybrid model makes the loss worse: reusing a prefix needs both its full-attention KV and the sliding-window KV of its last 2,048 tokens, so losing only the small window makes the large full-attention KV useless. On this trace, prefill computed about 1.2× the tokens that the best possible cache would.</p>
+<p><!-- IMAGE PLACEHOLDER: Figure 12 (image13) - plain LRU vs session-aware eviction. Download from the Doc and re-upload via WP Media Library. --></p>
+<p><strong><img decoding="async" class="alignnone wp-image-210206 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-12.png" alt="" width="1400" height="815" srcset="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-12.png 1400w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-12-300x175.png 300w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-12-1024x596.png 1024w" sizes="(max-width: 1400px) 100vw, 1400px" /></strong></p>
+<p><em><strong>Figure 12.</strong> Schematic. A main agent idles while its sub-agents run. Plain LRU evicts its KV first; session-aware eviction keeps it in host memory until everything else has gone.</em></p>
+<p>SGLang&#8217;s session-aware radix cache [5] (<a href="https://github.com/sgl-project/sglang/pull/29173">sgl-project/sglang#29173</a>) gives the cache that knowledge. Requests from the same conversation share a session id, and KV that a live session will reuse is evicted only after everything else. We adapted it to agent traffic: the session id comes from the per-conversation id the client already sends, and the protection applies only in host memory, so HBM stays plain LRU for the requests that are running while host memory holds the idle conversations. In the highest-throughput run of Figure 1, prefill now computes within 1–5% of what the best possible cache would.</p>
+<h2>8. Prefill: a fused MoE kernel and fair batching</h2>
+<p>Before a request can start decoding, the server runs its new prompt tokens through the model in chunks of 4,096 tokens [25, 26]: the prefill. A chunk has enough rows to keep the matrix unit busy, so unlike decode, prefill time goes to compute and to moving results between devices. On agent traffic a single turn can bring hundreds of thousands of new tokens, so prefill speed decides how long requests wait before their first token.</p>
+<p>In the MoE layers of prefill, every device computes a partial result for every (token, expert) pair, and each token&#8217;s owner must add up 8 of them. Moving those partials, one small write at a time, cost more than the matrix math.</p>
+<h3>The fused MoE kernel and the pair exchange</h3>
+<p>Experts are sharded with tensor parallelism: each device holds 1/8 of every expert. Each device therefore runs every (token, expert) row of a prefill chunk against its slice, producing a full-width partial per row; Muse Spark normalizes each expert&#8217;s output before the weighted sum, so a row&#8217;s 8 partials must all be added up before its owner can apply the norm and combine experts. The kernel streams one expert&#8217;s weights while the next prefetches, runs gate/up, SwiGLU [27] and down, and writes each finished row straight into its owner&#8217;s HBM, overlapping later tiles.</p>
+<p><!-- IMAGE PLACEHOLDER: Figure 13 (image14) - die-to-die link between the two devices on a chip. Download from the Doc and re-upload via WP Media Library. --></p>
+<p><strong><img decoding="async" class="alignnone wp-image-210207 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-13.png" alt="" width="1400" height="952" srcset="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-13.png 1400w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-13-300x204.png 300w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-13-1024x696.png 1024w" sizes="(max-width: 1400px) 100vw, 1400px" /></strong></p>
+<p><em><strong>Figure 13.</strong> The two devices on a chip share a die-to-die link, which Google documents as six times faster than a 1D ICI link to another chip.</em></p>
+<p>Each row&#8217;s write took about 50 ns of scalar work on the same unit that issues the matmuls, so writes serialized with compute. The pair exchange uses the chip&#8217;s topology instead. Each device sends its whole tile to its sibling on the same chip over the fast on-chip link, and the pair&#8217;s sum then goes to each remote owner once, as one DMA per contiguous run of rows. Cross-chip bytes halve, each owner adds 5 blocks instead of 8, and the MoE kernel went from 3,247 to 2,368 µs per layer.</p>
+<p>Smaller changes trimmed the rest of the path:</p>
+<ul>
+<li><strong>Weight ping-pong.</strong> Alternating two weight buffers lets each expert&#8217;s fetch start while the previous expert computes.</li>
+<li><strong>A one-pass combine.</strong> The owner&#8217;s sum of partials, per-expert norm and weighted sum ran as three XLA passes; one fused Pallas pass reads the partials once.</li>
+<li><strong>No zero fill, unrolled writes.</strong> Every output row is written exactly once, so the zero fill of the output buffer was dropped, and the per-row DMA loop issues 8 rows per iteration.</li>
+</ul>
+<p>Together with these smaller changes, the pair exchange cut a 4,096-token prefill chunk from 440 to 384 ms on a cold 100K-token prompt.</p>
+<h3>Sequence-parallel prefill</h3>
+<p>Tensor parallelism splits every matmul across the 8 devices, but each device still holds the activations of the whole chunk, so the per-token work between the matmuls, such as norms, residual updates and routing, is repeated on every device. Sequence parallelism [28] splits the tokens instead: between layers, each device keeps only its own 512 of the chunk&#8217;s 4,096 tokens. The norms and residual updates then run on an eighth of the tokens, and attention&#8217;s all-reduce becomes a reduce-scatter, which delivers each device only its own tokens&#8217; sums. Routing packs each token&#8217;s expert ids and weights into one small all-gather. The MoE output reaches its tokens&#8217; devices through an all-to-all: each device receives only its own tokens&#8217; columns from the other seven, an eighth of the bytes of the all-gather it replaces, which sent every device the columns of all 4,096 tokens. This cut a 4,096-token forward at 131K context by 51 ms, about 11%. It changes the order of some reductions, so results are not bit-identical, and our accuracy checks cover it.</p>
+<h3>Chunk sharing</h3>
+<p>A cold prompt of hundreds of thousands of tokens is prefilled in 4,096-token chunks of about half a second each. The scheduler used to give every chunk to that prompt until it finished, so other turns&#8217; few thousand new tokens waited 15 to 95 s behind it.</p>
+<p><!-- IMAGE PLACEHOLDER: Figure 14 (image15) - chunk sharing between a long prompt and waiting turns. Download from the Doc and re-upload via WP Media Library. --></p>
+<p><strong><img decoding="async" class="alignnone wp-image-210208 size-full" src="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-14.png" alt="" width="1400" height="992" srcset="https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-14.png 1400w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-14-300x213.png 300w, https://pytorch.org/wp-content/uploads/2026/11/Muse-Figure-14-1024x726.png 1024w" sizes="(max-width: 1400px) 100vw, 1400px" /></strong></p>
+<p><em><strong>Figure 14.</strong> Schematic. The long prompt keeps at least 1,024 tokens of each batch, waiting turns fill the rest, and the long prompt finishes a little later.</em></p>
+<p>Now a prompt in the middle of a chunked prefill keeps at least 1,024 tokens of each batch, and waiting turns fill the rest. In an AgentX test, this cut median end-to-end latency by 58% and p90 by 33%, with throughput within 5%.</p>
+<h2>Future work</h2>
+<ul>
+<li><strong>Attention closer to the memory floor</strong>, by packing the 64-wide heads to fill the MXU and shortening the per-chunk chain further.</li>
+<li><strong>A topology-aware MoE layout</strong>, with expert parallelism across chips and tensor parallelism inside each chip, to make most of the MoE exchange local.</li>
+<li><strong>Faster prefill</strong>, now the limit at high concurrency, through larger prefill graphs, collectives overlapped with compute and a reworked MoE prefill kernel.</li>
+<li><strong>Prefill/decode (P/D) disaggregation</strong>, optimizing AgentX performance with prefill and decode on separate hosts.</li>
+<li><strong>Upstreaming</strong> this work into SGLang-TorchTPU&#8217;s main branch.</li>
+</ul>
+<h2>Code</h2>
+<p>Everything here is open source in <a href="https://github.com/sgl-project/sglang-torchtpu">SGLang-TorchTPU</a>, branch <a href="https://github.com/sgl-project/sglang-torchtpu/tree/haolin/ms-v11">haolin/ms-v11</a>. The megakernel lives in <code>sglang_tpu/muse_megakernel/</code>, the fused MoE prefill kernel in <code>sglang_tpu/moe/pallas/fused_rs/</code>.</p>
+<h2>Acknowledgments</h2>
+<p>We thank Google and Meta for their kernel contributions to SGLang-TorchTPU, which this work builds on, and give special thanks to Qi Zhou, Yunlong Liu, Charles Chen, Yin Lin, Jiaxin Cao and Anne Stern for their work on the kernels and AgentX optimization described here. We also thank SemiAnalysis, Google, Meta and the SGLang community for InferenceX, TPU v7 and TorchTPU, Muse Spark Open, and SGLang.</p>
+<h2>References</h2>
+<ol>
+<li> N. Shazeer, A. Mirhoseini, K. Maziarz, et al. Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer. ICLR 2017. <a href="https://arxiv.org/abs/1701.06538">arXiv:1701.06538</a></li>
+<li>I. Beltagy, M. E. Peters, A. Cohan. Longformer: The Long-Document Transformer. 2020. <a href="https://arxiv.org/abs/2004.05150">arXiv:2004.05150</a></li>
+<li>B. D. Rouhani, R. Zhao, A. More, et al. Microscaling Data Formats for Deep Learning. 2023. <a href="https://arxiv.org/abs/2310.10537">arXiv:2310.10537</a></li>
+<li> M. Shoeybi, M. Patwary, R. Puri, et al. Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism. 2019. <a href="https://arxiv.org/abs/1909.08053">arXiv:1909.08053</a></li>
+<li>L. Zheng, L. Yin, Z. Xie, et al. SGLang: Efficient Execution of Structured Language Model Programs. NeurIPS 2024. <a href="https://arxiv.org/abs/2312.07104">arXiv:2312.07104</a></li>
+<li>Y. Leviathan, M. Kalman, Y. Matias. Fast Inference from Transformers via Speculative Decoding. ICML 2023. <a href="https://arxiv.org/abs/2211.17192">arXiv:2211.17192</a></li>
+<li>C. Chen, S. Borgeaud, G. Irving, et al. Accelerating Large Language Model Decoding with Speculative Sampling. 2023. <a href="https://arxiv.org/abs/2302.01318">arXiv:2302.01318</a></li>
+<li>B. Spector, J. Juravsky, et al. Look Ma, No Bubbles! Designing a Low-Latency Megakernel for Llama-1B. Hazy Research, 2025. <a href="https://hazyresearch.stanford.edu/blog/2025-05-27-no-bubbles">Blog post</a></li>
+<li>X. Cheng, Z. Zhang, Y. Zhou, et al. MPK: A Compiler and Runtime for Mega-Kernelizing Tensor Programs. OSDI 2026. <a href="https://www.usenix.org/conference/osdi26/presentation/cheng">Paper</a></li>
+<li>G. Novack, X. Liu, J. Ma, W. Kwon. TPU megakernels for Kimi K3 and Qwen3.8-27B. 2026. <a href="https://github.com/Inferact/tpu-megakernels/tree/4048f0820aa4ff8787f707ca9d99b2bada9751aa">Code</a></li>
+<li>M. Lam. Software Pipelining: An Effective Scheduling Technique for VLIW Machines. PLDI 1988. <a href="https://doi.org/10.1145/53990.54022">doi:10.1145/53990.54022</a></li>
+<li>S. Wang, J. Wei, A. Sabne, et al. Overlap Communication with Dependent Computation via Decomposition in Large Deep Learning Models. ASPLOS 2023. <a href="https://doi.org/10.1145/3567955.3567959">doi:10.1145/3567955.3567959</a></li>
+<li>B. Zhang, R. Sennrich. Root Mean Square Layer Normalization. NeurIPS 2019. <a href="https://arxiv.org/abs/1910.07467">arXiv:1910.07467</a></li>
+<li>M. Milakov, N. Gimelshein. Online Normalizer Calculation for Softmax. 2018. <a href="https://arxiv.org/abs/1805.02867">arXiv:1805.02867</a></li>
+<li>T. Dao, D. Y. Fu, S. Ermon, et al. FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness. NeurIPS 2022. <a href="https://arxiv.org/abs/2205.14135">arXiv:2205.14135</a></li>
+<li>A. Henry, P. R. Dachapally, S. Pawar, et al. Query-Key Normalization for Transformers. Findings of EMNLP 2020. <a href="https://arxiv.org/abs/2010.04245">arXiv:2010.04245</a></li>
+<li>M. Dehghani, J. Djolonga, B. Mustafa, et al. Scaling Vision Transformers to 22 Billion Parameters. ICML 2023. <a href="https://arxiv.org/abs/2302.05442">arXiv:2302.05442</a></li>
+<li>K. Hong, G. Dai, J. Xu, et al. FlashDecoding++: Faster Large Language Model Inference on GPUs. MLSys 2024. <a href="https://arxiv.org/abs/2311.01282">arXiv:2311.01282</a></li>
+<li>T. Dao, D. Haziza, F. Massa, G. Sizov. Flash-Decoding for Long-Context Inference. Stanford CRFM, 2023. <a href="https://crfm.stanford.edu/2023/10/12/flashdecoding.html">Blog post</a></li>
+<li>G. J. Chaitin. Register Allocation &amp; Spilling via Graph Coloring. SIGPLAN Symposium on Compiler Construction, 1982. <a href="https://doi.org/10.1145/800230.806984">doi:10.1145/800230.806984</a></li>
+<li>J. Chen, Y. Liang, Z. Liu, et al. DFlash: Block Diffusion for Flash Speculative Decoding. 2026. <a href="https://arxiv.org/abs/2602.06036">arXiv:2602.06036</a></li>
+<li>P. Micikevicius, D. Stosic, N. Burgess, et al. FP8 Formats for Deep Learning. 2022. <a href="https://arxiv.org/abs/2209.05433">arXiv:2209.05433</a></li>
+<li>SGLang Team. SGLang HiCache: Fast Hierarchical KV Caching with Your Favorite Storage Backends. LMSYS Org, 2025. <a href="https://lmsys.org/blog/2025-09-10-sglang-hicache/">Blog post</a></li>
+<li>B. Gao, Z. He, P. Sharma, et al. Cost-Efficient Large Language Model Serving for Multi-turn Conversations with CachedAttention. USENIX ATC 2024. <a href="https://arxiv.org/abs/2403.19708">arXiv:2403.19708</a></li>
+<li>A. Agrawal, A. Panwar, J. Mohan, et al. SARATHI: Efficient LLM Inference by Piggybacking Decodes with Chunked Prefills. 2023. <a href="https://arxiv.org/abs/2308.16369">arXiv:2308.16369</a></li>
+<li>A. Agrawal, N. Kedia, A. Panwar, et al. Taming Throughput-Latency Tradeoff in LLM Inference with Sarathi-Serve. OSDI 2024. <a href="https://arxiv.org/abs/2403.02310">arXiv:2403.02310</a></li>
+<li>N. Shazeer. GLU Variants Improve Transformer. 2020. <a href="https://arxiv.org/abs/2002.05202">arXiv:2002.05202</a></li>
+<li>V. Korthikanti, J. Casper, S. Lym, et al. Reducing Activation Recomputation in Large Transformer Models. MLSys 2023. <a href="https://arxiv.org/abs/2205.05198">arXiv:2205.05198</a></li>
+</ol>
+<p>The post <a href="https://pytorch.org/blog/optimizing-muse-spark-open-on-tpu-v7-with-sglang-torchtpu/">Optimizing Muse Spark Open on TPU v7 with SGLang-TorchTPU</a> appeared first on <a href="https://pytorch.org">PyTorch</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Call for Proposals: PyTorch Day China 2026</title>
+		<link>https://pytorch.org/blog/call-for-proposals-pytorch-day-china-2026/</link>
+		
+		<dc:creator><![CDATA[PyTorch Foundation]]></dc:creator>
+		<pubDate>Wed, 04 Nov 2026 20:29:55 +0000</pubDate>
+				<category><![CDATA[Announcements]]></category>
+		<category><![CDATA[Blog]]></category>
+		<guid isPermaLink="false">https://pytorch.org/?p=209539</guid>
+
+					<description><![CDATA[<p>The Call for Proposals for PyTorch Day China 2026 closes November 10 at 23:59 China Standard Time. The event takes place in Beijing on December 12, bringing together PyTorch developers,...</p>
+<p>The post <a href="https://pytorch.org/blog/call-for-proposals-pytorch-day-china-2026/">Call for Proposals: PyTorch Day China 2026</a> appeared first on <a href="https://pytorch.org">PyTorch</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p><img decoding="async" class="alignnone size-large wp-image-209574" src="https://pytorch.org/wp-content/uploads/2026/11/PyTorch-Day-China-2026-CFP-email-header-1024x536.png" alt="CFP PyTorch Day China 2026" width="1024" height="536" srcset="https://pytorch.org/wp-content/uploads/2026/11/PyTorch-Day-China-2026-CFP-email-header-1024x536.png 1024w, https://pytorch.org/wp-content/uploads/2026/11/PyTorch-Day-China-2026-CFP-email-header-300x157.png 300w, https://pytorch.org/wp-content/uploads/2026/11/PyTorch-Day-China-2026-CFP-email-header.png 1200w" sizes="(max-width: 1024px) 100vw, 1024px" />The <a href="https://www.lfopensource.cn/pytorch-day-china/program/call-for-proposals/#overview">Call for Proposals</a> for <a href="https://www.lfopensource.cn/pytorch-day-china/">PyTorch Day China 2026</a> closes <strong>November 10 at 23:59 China Standard Time</strong>. The event takes place in <strong>Beijing on December 12</strong>, bringing together PyTorch developers, machine learning engineers, AI researchers, and open source AI leaders from across China and beyond.</p>
+<p>The call welcomes <a href="https://www.lfopensource.cn/pytorch-day-china/program/call-for-proposals/#submission-types">session presentations and lightning talks</a> across five topic areas:</p>
+<ul>
+<li><a href="https://www.lfopensource.cn/pytorch-day-china/program/call-for-proposals/#suggested-topics"><strong>Model Training &amp; Post-Training</strong></a><strong>:</strong> Distributed training, SFT, reinforcement learning, preference optimization, and techniques for improving training efficiency and performance.</li>
+<li><a href="https://www.lfopensource.cn/pytorch-day-china/program/call-for-proposals/#suggested-topics"><strong>Efficient Inference &amp; Deployment</strong></a><strong>:</strong> LLM inference, quantization, optimization, deployment strategies, and production-ready AI solutions.</li>
+<li><a href="https://www.lfopensource.cn/pytorch-day-china/program/call-for-proposals/#suggested-topics"><strong>PyTorch Core &amp; Hardware Acceleration</strong></a><strong>:</strong> Compilation, kernel optimization, performance profiling, and GPU and AI accelerator technologies.</li>
+<li><a href="https://www.lfopensource.cn/pytorch-day-china/program/call-for-proposals/#suggested-topics"><strong>Physical AI</strong></a><strong>:</strong> Robotics, intelligent devices, Vision-Language-Action (VLA) models, perception and control systems, and simulation-based training.</li>
+<li><a href="https://www.lfopensource.cn/pytorch-day-china/program/call-for-proposals/#suggested-topics"><strong>PyTorch Ecosystem &amp; Applications</strong></a><strong>:</strong> Tools, applications, and innovations expanding the PyTorch ecosystem.</li>
+</ul>
+<p>CFP notifications are scheduled for <strong>November 17</strong>, followed by the <strong>schedule announcement on November 18</strong>.</p>
+<p><a href="https://www.lfopensource.cn/pytorch-day-china/program/call-for-proposals/">Submit a proposal by November 10 at 23:59 China Standard Time.</a></p>
+<p>The post <a href="https://pytorch.org/blog/call-for-proposals-pytorch-day-china-2026/">Call for Proposals: PyTorch Day China 2026</a> appeared first on <a href="https://pytorch.org">PyTorch</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>KVCache Meetup Korea 2026: Event Recap</title>
+		<link>https://pytorch.org/blog/kvcache-meetup-korea-2026-event-recap/</link>
+		
+		<dc:creator><![CDATA[Junghwan Park (PyTorch Foundation Ambassador, Lead maintainer of PyTorchKR)]]></dc:creator>
+		<pubDate>Tue, 03 Nov 2026 09:22:03 +0000</pubDate>
+				<category><![CDATA[Ambassador Post]]></category>
+		<category><![CDATA[Blog]]></category>
+		<guid isPermaLink="false">https://pytorch.org/?p=209226</guid>
+
+					<description><![CDATA[<p>On the evening of Sep 30, 2026, PyTorchKR and XCENA co-hosted KVCache Meetup Korea. PyTorchKR is a major AI/ML community in Korea, and XCENA is a startup that focuses on...</p>
+<p>The post <a href="https://pytorch.org/blog/kvcache-meetup-korea-2026-event-recap/">KVCache Meetup Korea 2026: Event Recap</a> appeared first on <a href="https://pytorch.org">PyTorch</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>On the evening of Sep 30, 2026, <a href="https://pytorch.kr">PyTorchKR</a> and <a href="https://xcena.com">XCENA</a> co-hosted KVCache Meetup Korea. PyTorchKR is a major AI/ML community in Korea, and XCENA is a startup that focuses on CXL (Compute Express Link). Tensormesh, the company behind LMCache, also sponsored the event. Speakers from XCENA, SK hynix, FuriosaAI, and LMCache shared their work on large language model (LLM) inference and KV Cache optimization. LLM inference runs a language model to generate output. KV Cache stores attention data for reuse during inference.</p>
+<p><em><img decoding="async" class="alignnone wp-image-209227" src="https://pytorch.org/wp-content/uploads/2026/11/01-audience-300x146.jpg" alt="" width="600" height="293" srcset="https://pytorch.org/wp-content/uploads/2026/11/01-audience-300x146.jpg 300w, https://pytorch.org/wp-content/uploads/2026/11/01-audience-1024x500.jpg 1024w" sizes="(max-width: 600px) 100vw, 600px" />  <img decoding="async" class="alignnone wp-image-209230" src="https://pytorch.org/wp-content/uploads/2026/11/02-audience-300x135.jpg" alt="" width="600" height="270" srcset="https://pytorch.org/wp-content/uploads/2026/11/02-audience-300x135.jpg 300w, https://pytorch.org/wp-content/uploads/2026/11/02-audience-1024x461.jpg 1024w" sizes="(max-width: 600px) 100vw, 600px" /></em><br />
+<em>Attendees at KVCache Meetup Korea 2026.</em></p>
+<p>Talks covered CXL memory expansion, GPU and high-bandwidth memory (HBM) bottlenecks, request scheduling on RNGD, and LMCache MP Mode. The sessions showed how hardware and serving software handle KV Cache in different ways. Serving software processes requests that run a model.</p>
+<h2>Registration and Opening</h2>
+<p>The program combined technical talks with opportunities for attendees to connect. Attendees who wanted to join the networking chose up to two interest stickers at registration. The five categories were Model, Serving, Infra, Hardware, and Memory.</p>
+<p><em><img decoding="async" class="alignnone wp-image-209240" src="https://pytorch.org/wp-content/uploads/2026/11/03-registration-300x200.jpg" alt="" width="600" height="400" srcset="https://pytorch.org/wp-content/uploads/2026/11/03-registration-300x200.jpg 300w, https://pytorch.org/wp-content/uploads/2026/11/03-registration-1024x683.jpg 1024w" sizes="(max-width: 600px) 100vw, 600px" />  <img decoding="async" class="alignnone wp-image-209246" src="https://pytorch.org/wp-content/uploads/2026/11/04-registration-300x200.jpg" alt="" width="600" height="400" srcset="https://pytorch.org/wp-content/uploads/2026/11/04-registration-300x200.jpg 300w, https://pytorch.org/wp-content/uploads/2026/11/04-registration-1024x683.jpg 1024w" sizes="(max-width: 600px) 100vw, 600px" /></em><br />
+<em>Attendees chose their interest stickers at registration.</em></p>
+<p>PyTorchKR organizer Junghwan Park and XCENA CPO Juhyun Kim opened the event. The speakers were Jooho Lee from XCENA, Sejin Oh from SK hynix, Donghun Lee from FuriosaAI, and Baoloong Mao from LMCache. They shared their experiences and approaches.</p>
+<p><em><img decoding="async" class="alignnone wp-image-209249" src="https://pytorch.org/wp-content/uploads/2026/11/05-opening-pytorchkr-300x169.jpg" alt="" width="600" height="338" srcset="https://pytorch.org/wp-content/uploads/2026/11/05-opening-pytorchkr-300x169.jpg 300w, https://pytorch.org/wp-content/uploads/2026/11/05-opening-pytorchkr-1024x576.jpg 1024w" sizes="(max-width: 600px) 100vw, 600px" />   <img decoding="async" class="alignnone wp-image-209251" src="https://pytorch.org/wp-content/uploads/2026/11/06-opening-xcena-300x200.jpg" alt="" width="600" height="400" srcset="https://pytorch.org/wp-content/uploads/2026/11/06-opening-xcena-300x200.jpg 300w, https://pytorch.org/wp-content/uploads/2026/11/06-opening-xcena-1024x683.jpg 1024w" sizes="(max-width: 600px) 100vw, 600px" /></em><br />
+<em>Junghwan Park from PyTorchKR (left) and Juhyun Kim, CPO at XCENA (right), welcomed the attendees.</em></p>
+<h2>CXL and KV Cache Storage: Jooho Lee, XCENA</h2>
+<p>The session “CXL for KVCache” started with the basics of CXL and memory expansion. Jooho Lee explained how CXL expands the memory space that CPUs can access with load/store instructions. He also described a setup where multiple hosts use a memory pool and introduced <a href="https://github.com/xcena-dev/maru">Maru</a>. Maru is a high-performance KV Cache storage engine that XCENA released as an open-source project. It helps LLM inference use shared CXL memory efficiently.</p>
+<p><em><img decoding="async" class="alignnone wp-image-209252 size-large" src="https://pytorch.org/wp-content/uploads/2026/11/07-xcena-1024x683.jpg" alt="" width="1024" height="683" srcset="https://pytorch.org/wp-content/uploads/2026/11/07-xcena-1024x683.jpg 1024w, https://pytorch.org/wp-content/uploads/2026/11/07-xcena-300x200.jpg 300w" sizes="(max-width: 1024px) 100vw, 1024px" /></em><br />
+<em>Jooho Lee from XCENA presented “CXL for KVCache.”</em></p>
+<p>The KV Cache design combined DRAM and SSD storage in a CXL memory pool. It kept frequently used cache in DRAM and less frequently used cache on SSDs. Maru connects the inference engine to these storage layers. Optimizing LLM inference requires more than storing a large amount of cache. The path and cost of moving cache to the GPU also matter.</p>
+<p>The talk also covered splitting computation for experts in mixture-of-experts (MoE) models between a GPU and MX1. Experts are specialized parts of a model. The design places some weights in memory near MX1 and processes them there. It transfers intermediate values, called activations, and computation results instead of the full weights. The session started with KV Cache storage and also covered weight placement and ways to reduce data movement.</p>
+<h2>GPU Compute and HBM Bandwidth: Sejin Oh, SK hynix</h2>
+<p>Sejin Oh presented “Analyzing Utilization of GPU and HBM in LLM Serving Systems.” The talk examined how prefill and decode use system resources. Prefill processes the prompt, and decode generates output tokens. The session presented Roofline analysis alongside measurements from a running system. Roofline analysis compares compute and memory bandwidth limits.</p>
+<p><em><img decoding="async" class="alignnone wp-image-209253 size-large" src="https://pytorch.org/wp-content/uploads/2026/11/08-skhynix-session__image-1024x576.png" alt="" width="1024" height="576" srcset="https://pytorch.org/wp-content/uploads/2026/11/08-skhynix-session__image-1024x576.png 1024w, https://pytorch.org/wp-content/uploads/2026/11/08-skhynix-session__image-300x169.png 300w" sizes="(max-width: 1024px) 100vw, 1024px" /></em><br />
+<em>Sejin Oh from SK hynix presented the analysis of GPU compute and HBM bandwidth.</em></p>
+<p>The experiments used two H100 GPUs, Llama 3.1 8B, and vLLM. GPU compute use was high during the main projection operations in prefill. During decode, HBM bandwidth use was high. The experiments also explained the difference between TTFT and TPOT. TTFT measures the time to the first output token. TPOT measures the time per output token.</p>
+<p>Reusing KV Cache reduces computation during prefill. After that reduction, memory bandwidth can become the bottleneck. Whether a service needs more memory capacity or bandwidth depends on its input and output lengths, batch size, and other operating conditions.</p>
+<h2>Scheduling and KV Cache on RNGD: Donghun Lee, FuriosaAI</h2>
+<p><a href="https://furiosa.ai/">FuriosaAI</a> is building Furiosa-LLM, its own inference engine for running LLMs on RNGD. In “LLM Inference Engine for RNGD,” Donghun Lee shared engineering problems from building the engine, including request scheduling and KV Cache management. He followed each request from arrival to execution. He explained PagedAttention for KV Cache blocks, Continuous batching for active requests, and Chunked prefill for smaller prompt segments. He also introduced buckets, or tensor shapes compiled before execution.</p>
+<p><em><img decoding="async" class="alignnone wp-image-209254 size-large" src="https://pytorch.org/wp-content/uploads/2026/11/09-furiosaai-1024x576.jpg" alt="" width="1024" height="576" srcset="https://pytorch.org/wp-content/uploads/2026/11/09-furiosaai-1024x576.jpg 1024w, https://pytorch.org/wp-content/uploads/2026/11/09-furiosaai-300x169.jpg 300w" sizes="(max-width: 1024px) 100vw, 1024px" /></em><br />
+<em>Donghun Lee from FuriosaAI explained how to share KV Cache outside a node.</em></p>
+<p>Combining requests into one batch increases throughput, or the number of requests processed over time. Larger batches can need larger buckets and increase latency, or response delay. Furiosa-LLM measures the execution cost on the actual hardware. It merges two batches when the combined cost is lower than processing them separately. The decision also accounts for the context length of each request and the cost of padding. Padding fills unused positions in a fixed tensor shape.</p>
+<p>The talk compared the benefit of cache reuse with the cost of transferring it. The slides used a 12,370-token prompt, with one request at a time and three measurements for each condition. Retrieving the host cache and generating the first token took about 92 ms. Recomputing the cache took about 900 ms. Under those test conditions, retrieving the host cache was faster. He also explained how to overlap cache transfer with computation at each layer.</p>
+<p>The benefit depends on the amount of data transferred and the available bandwidth. Experimental features included a network-shared cache and running prefill and decode on separate resources. He also discussed plans for future expansion.</p>
+<h2>‘LMCache: A Unified KV Cache Management Layer with Multi-Platform Architecture’: Baoloong Mao, LMCache</h2>
+<p><a href="https://lmcache.ai/">LMCache</a> maintainer and core architect Baoloong Mao presented “A Unified KV Cache Management Layer with Multi-Platform Architecture.” LMCache is an open-source KV Cache project created by the team that founded <a href="https://tensormesh.ai/about/">Tensormesh</a>. He explained how LMCache connects different inference engines with storage systems and hardware. He focused on MP Mode, which moves cache management from inside the inference engine into a separate process.</p>
+<p><em><img decoding="async" class="alignnone wp-image-209255 size-large" src="https://pytorch.org/wp-content/uploads/2026/11/10-lmcache-1024x576.jpg" alt="" width="1024" height="576" srcset="https://pytorch.org/wp-content/uploads/2026/11/10-lmcache-1024x576.jpg 1024w, https://pytorch.org/wp-content/uploads/2026/11/10-lmcache-300x169.jpg 300w" sizes="(max-width: 1024px) 100vw, 1024px" /></em><br />
+<em>Baoloong Mao from LMCache introduced the unified KV Cache layer and MP Mode.</em></p>
+<p>In MP Mode, CUDA IPC allows processes to share GPU memory. IPC means communication between processes. The processes exchange control information such as block IDs. They use a shared CPU memory pool within a node to reduce duplicate storage. MP Mode also reads and loads data from several storage layers in parallel. This design separates inference computation from cache I/O, or data transfers, to reduce competition for resources.</p>
+<p>The session also covered deployment and operations. Topics included deployment on Kubernetes and monitoring cache hit rates and cache lifetimes. A cache hit means that the requested data is available. The talk also covered isolating failures between inference and cache processes. External plugins allow connections to more storage systems and devices.</p>
+<h2>Q&amp;A and Networking</h2>
+<p>In the Q&amp;A session, the speakers returned to the stage to answer questions from attendees. Questions included separating prefill and decode, compared with mixed batching. Mixed batching processes prefill and decode work together. Attendees also asked about the roles of LMCache and the cache features built into vLLM. Another topic was the plan to extend MP Mode across multiple nodes.</p>
+<p><em>  <img decoding="async" class="alignnone wp-image-209256" src="https://pytorch.org/wp-content/uploads/2026/11/11-qa-session-300x169.jpg" alt="" width="600" height="338" srcset="https://pytorch.org/wp-content/uploads/2026/11/11-qa-session-300x169.jpg 300w, https://pytorch.org/wp-content/uploads/2026/11/11-qa-session-1024x576.jpg 1024w" sizes="(max-width: 600px) 100vw, 600px" />    <img decoding="async" class="alignnone wp-image-209257" src="https://pytorch.org/wp-content/uploads/2026/11/12-qa-panel-left__image-300x200.png" alt="" width="600" height="400" srcset="https://pytorch.org/wp-content/uploads/2026/11/12-qa-panel-left__image-300x200.png 300w, https://pytorch.org/wp-content/uploads/2026/11/12-qa-panel-left__image-1024x683.png 1024w" sizes="(max-width: 600px) 100vw, 600px" />    <img decoding="async" class="alignnone wp-image-209258" src="https://pytorch.org/wp-content/uploads/2026/11/13-qa-panel-right__image-300x200.png" alt="" width="600" height="400" srcset="https://pytorch.org/wp-content/uploads/2026/11/13-qa-panel-right__image-300x200.png 300w, https://pytorch.org/wp-content/uploads/2026/11/13-qa-panel-right__image-1024x683.png 1024w" sizes="(max-width: 600px) 100vw, 600px" /></em><br />
+<em>The speakers answered live questions together after the talks.</em></p>
+<p>After the Q&amp;A, attendees from different fields gathered in small groups to talk. Their interest stickers helped them find people with similar interests. Speakers and attendees exchanged ideas and heard different perspectives.</p>
+<p>Conversations also continued around the CXL server from XCENA at the venue. Attendees examined the hardware up close and asked questions. They linked the memory expansion techniques from the talks to the hardware on display.</p>
+<p><em><img decoding="async" class="alignnone wp-image-209259" src="https://pytorch.org/wp-content/uploads/2026/11/14-networking-conversation__image-300x200.png" alt="" width="600" height="400" srcset="https://pytorch.org/wp-content/uploads/2026/11/14-networking-conversation__image-300x200.png 300w, https://pytorch.org/wp-content/uploads/2026/11/14-networking-conversation__image.png 800w" sizes="(max-width: 600px) 100vw, 600px" />  <img decoding="async" class="alignnone wp-image-209260" src="https://pytorch.org/wp-content/uploads/2026/11/15-networking-cxl-server__image-300x169.png" alt="" width="600" height="338" srcset="https://pytorch.org/wp-content/uploads/2026/11/15-networking-cxl-server__image-300x169.png 300w, https://pytorch.org/wp-content/uploads/2026/11/15-networking-cxl-server__image-1024x576.png 1024w" sizes="(max-width: 600px) 100vw, 600px" /></em><br />
+<em>Attendees talked during the networking session.</em></p>
+<h2>Feedback from 72 Survey Responses</h2>
+<p>The following summary draws on 72 survey responses. All numbers and percentages below use the survey responses as their base. Some questions allowed multiple selections.</p>
+<p><img decoding="async" class="alignnone wp-image-209261" src="https://pytorch.org/wp-content/uploads/2026/11/19-survey-72-satisfaction-en-300x201.png" alt="" width="600" height="402" srcset="https://pytorch.org/wp-content/uploads/2026/11/19-survey-72-satisfaction-en-300x201.png 300w, https://pytorch.org/wp-content/uploads/2026/11/19-survey-72-satisfaction-en-1024x687.png 1024w" sizes="(max-width: 600px) 100vw, 600px" /> <img decoding="async" class="alignnone wp-image-209264" src="https://pytorch.org/wp-content/uploads/2026/11/20-survey-72-role-career-matrix-en-300x194.png" alt="" width="600" height="388" srcset="https://pytorch.org/wp-content/uploads/2026/11/20-survey-72-role-career-matrix-en-300x194.png 300w, https://pytorch.org/wp-content/uploads/2026/11/20-survey-72-role-career-matrix-en-1024x663.png 1024w" sizes="(max-width: 600px) 100vw, 600px" /><br />
+<em>Event satisfaction and work experience by role, based on 72 survey responses.</em></p>
+<p>In the feedback questions, 48 respondents selected the program as a positive point (66.7%). The venue and facilities received 30 selections (41.7%). The atmosphere for conversations and the event timing each received 22 selections (30.6%). This question allowed multiple selections. Respondents gave positive feedback on the talks and the chance to meet other attendees.</p>
+<p>Repeated comments mentioned microphone quality and volume, screen visibility from the back rows, and limited space. Some respondents also asked for interpretation or translation to help them follow the English talks. Some respondents also asked for a dedicated session where developers in the same field can talk. Requests for future events included real production examples, vLLM and SGLang internals, compilers for neural processing units (NPUs), recent inference optimization techniques, and demos. Respondents wanted details about problems, trial and error, and solutions from real deployments. They asked speakers to explain these experiences, as well as their products.</p>
+<p><em><img decoding="async" class="alignnone wp-image-209267 size-large" src="https://pytorch.org/wp-content/uploads/2026/11/18-group-photo__image-1024x576.png" alt="" width="1024" height="576" srcset="https://pytorch.org/wp-content/uploads/2026/11/18-group-photo__image-1024x576.png 1024w, https://pytorch.org/wp-content/uploads/2026/11/18-group-photo__image-300x169.png 300w" sizes="(max-width: 1024px) 100vw, 1024px" /></em><br />
+<em>Group photo from KVCache Meetup Korea.</em></p>
+<p><a href="https://pytorch.kr">PyTorchKR</a> will use this feedback to plan and run future events. Thank you to everyone who joined the event on a weekday evening. The organizers also thank the speakers who shared their knowledge and experience. Thank you to PyTorchKR and XCENA for organizing the event, and to Tensormesh for its support.</p>
+<p>The post <a href="https://pytorch.org/blog/kvcache-meetup-korea-2026-event-recap/">KVCache Meetup Korea 2026: Event Recap</a> appeared first on <a href="https://pytorch.org">PyTorch</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Announcing the Special Interest Group (SIG) for Ray on Accelerators</title>
+		<link>https://pytorch.org/blog/announcing-the-special-interest-group-sig-for-ray-on-accelerators/</link>
+		
+		<dc:creator><![CDATA[Zhe Zhang, Mengjin Yan, Ryan O’Leary, Richard Liaw]]></dc:creator>
+		<pubDate>Mon, 02 Nov 2026 17:45:32 +0000</pubDate>
+				<category><![CDATA[Blog]]></category>
+		<guid isPermaLink="false">https://pytorch.org/?p=208672</guid>
+
+					<description><![CDATA[<p>Today, we are announcing the Special Interest Group (SIG) for Ray on hardware accelerators. When Ray was created in UC Berkeley over 10 years ago, the computing landscape looked very...</p>
+<p>The post <a href="https://pytorch.org/blog/announcing-the-special-interest-group-sig-for-ray-on-accelerators/">Announcing the Special Interest Group (SIG) for Ray on Accelerators</a> appeared first on <a href="https://pytorch.org">PyTorch</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>Today, we are announcing the Special Interest Group (SIG) for Ray on hardware accelerators.</p>
+<p>When Ray was created in UC Berkeley over 10 years ago, the computing landscape looked very different. At the time, “distributed computing” referred to CPU clusters running frameworks like Apache Hadoop and Apache Spark. GPUs were only just moving from graphics and scientific computing into machine learning.</p>
+<p>Today, <em>accelerated computing</em> is front and center in the development and deployment of AI, and accelerators and their capabilities have become more specialized and diverse. For example:</p>
+<ul>
+<li>NVIDIA RTX PRO 6000 Blackwell Server Edition GPUs support flexible workloads spanning AI training, inference, graphics, and video</li>
+<li>NVIDIA HGX B200 and the full-stack platform provide substantially greater memory capacity to support larger models, and NVIDIA GB200 NVL72 connects 72 NVIDIA Blackwell GPUs for communication-intensive, large-scale training and inference.</li>
+<li>AMD MI355X also provides substantial memory capacity for large models</li>
+<li>Google Ironwood TPUs target massive-scale AI workloads</li>
+<li>NVIDIA Groq 3 LPUs specialize in low-latency inference.</li>
+</ul>
+<p>The Ray community has been actively working on keeping up with this shift. Today, Ray <a href="https://docs.ray.io/en/latest/ray-core/scheduling/accelerators.html">supports more than a dozen kinds of hardware accelerators</a>, from NVIDIA and AMD GPUs to TPUs, Trainium, Gaudi and others. We believe now is a crucial time to build on this foundation with a more ambitious, systematic effort across Ray to make accelerators easy to use, efficient at scale, and reliable in production.</p>
+<p>The Accelerator Special Interest Group aims to bring together hardware vendors, Ray contributors, and application developers to define and advance a shared, vendor-neutral roadmap for accelerator support in Ray. This public interest group will be responsible for enabling Ray workloads to continue evolving in an era of fragmented, specialized accelerators.</p>
+<p>Our initial roadmap focuses on 3 core areas: <strong>Development and Testing Infrastructure, Hardware Awareness Capabilities, and Networking/Transport</strong>, outlined in the following sections.</p>
+<h2>Development and Testing Infra</h2>
+<p>Reliable accelerator support requires dependable access to hardware for development, testing, and debugging. Maintainers and contributors need to validate changes on the devices they affect, reproduce failures, and catch regressions before they reach users. As agentic software engineering accelerates development, reliable testing and verification become even more important: both human contributors and coding agents need reproducible feedback from real hardware and representative workloads. We want to make this a routine part of contributing to Ray, with a clear path for hardware vendors and cloud providers to contribute resources and expertise.</p>
+<p>Our initial priorities are:</p>
+<ul>
+<li><strong>Shared hardware access</strong>. Establish a documented process for bringing cloud and vendor-hosted accelerators into Ray’s development and testing infrastructure, including access for contributors to reproduce and debug failures.</li>
+<li><strong>Reproducible development and test environments</strong>. Provide maintained environments with explicit driver, runtime, and dependency versions, so contributors can reproduce CI results and validate changes consistently across providers.</li>
+<li><strong>Broader CI coverage</strong>. Extend existing pipelines with targeted checks for pull requests and broader nightly and release testing. Coverage should include distributed workloads, failure recovery, and performance regressions, alongside basic device functionality.</li>
+<li><strong>Sustainable operation and ownership</strong>. Define responsibilities for maintaining environments, investigating failures, and keeping integrations working across releases. Make test results and infrastructure health visible, and manage capacity and costs so the infrastructure can grow with participation.</li>
+</ul>
+<h2>Hardware-aware Scheduling</h2>
+<p>For applications to get the most out of an accelerator, Ray first has to know what hardware each node has and how it is structured. As the accelerator ecosystem evolves, accelerator nodes are no longer just a count of identical devices. Workload performance depends on the interconnectivity of devices, their relationship to CPUs and NICs, and node groupings into larger domains like racks and TPU slices.</p>
+<p>Our goal is to give Ray an accurate and consistent picture of this structure across vendors and platforms. With that picture, Ray’s scheduler can place tasks and actors on the right hardware, and users can see what their cluster is made of and how it is connected.</p>
+<p>Our initial priorities are:</p>
+<ul>
+<li><strong>Common hardware interfaces.</strong> Define vendor-neutral interfaces for labeling hardware, representing its architecture, and describing its specifications, so applications and libraries can target capabilities instead of writing vendor-specific code. This includes a consistent way to identify accelerator SKUs, including new ones at launch. It also includes a documented extension point and checklist for vendors adding a new accelerator.</li>
+<li><strong>Hardened discovery.</strong> Strengthen Ray’s discovery mechanism, with clear ownership for each accelerator’s integration, and back it with the CI coverage described in the previous section. Discovery should capture the topology and architecture of the hardware, not just the type and number of devices.</li>
+<li><strong>Platform and cloud integration.</strong> Work with cloud providers and deployment platforms so that discovery reflects the underlying structure wherever a cluster runs. Some of this information, such as which rack or slice a node belongs to, is only available from the platform, not from the node itself.</li>
+<li><strong>Hardware visibility.</strong> Provide ways to view the accelerators in a cluster and how they are connected, alongside accelerator metrics on the Ray dashboard. This lets users confirm that Ray sees their hardware correctly and understand where their work was placed. It also gives contributors a way to verify new integrations.</li>
+<li><strong>Clear user guides.</strong> Document how Ray discovers and represents hardware, and how to use that information when placing work. Good guides help both application developers and the coding agents that increasingly write Ray code for them.</li>
+</ul>
+<h2>Networking and I/O Transport</h2>
+<p>Moving data between accelerators is often just as important as running computation on the accelerator itself. Modern AI workloads, like large scale reinforcement learning, require moving large model weight tensors across devices and nodes from training to inference workers. Historically, Ray’s object store was built for CPU data, meaning accelerator tensors had to be copied to host memory, serialized, and sent over standard host networking before reaching another device.</p>
+<p>To avoid that bottleneck, <strong>Ray Direct Transport (RDT)</strong> was introduced to enable actors to pass references to tensors through Ray while transferring the actual data directly between devices and using high performance transports like UCX and RDMA. Our goal is to make high-speed, direct data transfer work reliably across different accelerators, frameworks, and network fabrics, while keeping Ray’s familiar programming model.</p>
+<p>Our initial priorities are:</p>
+<ul>
+<li><strong>Broad transport integrations</strong>. Support a wider range of accelerators, frameworks, and interconnects in RDT so Ray can select the fastest path between Actors, whether over intra-slice TPU ICI, scale-up NVIDIA NVLink, or scale-out GPUDirect RDMA.</li>
+<li><strong>Transport lifecycle and recovery</strong>. Ensure each hardware transport cleanly handles initialization, teardown, and error recovery on real devices, so RDT works reliably as actors scale or restart in dynamic workloads like reinforcement learning and disaggregated serving.</li>
+<li><strong>Validated recipes and observability</strong>. Enable cloud and hardware providers to publish validated deployment configurations, benchmark high-throughput workloads, and surface clear diagnostics and transport metrics.</li>
+</ul>
+<h2>Scope</h2>
+<p>While core scheduling and placement logic remain in Ray Core, SIG Accelerator is responsible for defining the plug-in interfaces, CI testing, and maturity tiers for accelerators in Ray. Hardware vendors and cloud providers contribute and maintain their own device plugins, transports, and day-zero support for new SKUs, while framework authors and ML practitioners ground our roadmap in real workload needs.</p>
+<h2>Get Involved</h2>
+<p>Whether you are building a new accelerator integration, running large-scale training or inference on Ray, or providing cloud and CI infrastructure, we invite you to get involved!</p>
+<ul>
+<li>Join the conversation on the <a href="https://www.ray.io/join-slack">Ray Slack</a>.</li>
+<li>Attend our community meetings to discuss proposals, review roadmap priorities, and share workload feedback.</li>
+<li>Check out open accelerator related <a href="https://github.com/ray-project/ray/issues">issues</a> and PRs on Github and contribute upstream.</li>
+</ul>
+<p>The post <a href="https://pytorch.org/blog/announcing-the-special-interest-group-sig-for-ray-on-accelerators/">Announcing the Special Interest Group (SIG) for Ray on Accelerators</a> appeared first on <a href="https://pytorch.org">PyTorch</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+	</channel>
+</rss>

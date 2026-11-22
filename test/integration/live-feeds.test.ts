@@ -12,6 +12,7 @@ import {
   resetFeeds,
   scriptFeed,
   sleeps,
+  TEST_ARXIV_INTERVAL_MS,
   workerSettings,
 } from "./fake-source-fetcher-factory";
 
@@ -236,7 +237,7 @@ describe("Runs read live feeds over HTTP", () => {
     expect(third - second).toBeGreaterThanOrEqual(interval);
   });
 
-  it("a Run of the seed Topic requests the five live URLs, Daily Papers for the day before it started", async () => {
+  it("a Run of the seed Topic requests the 13 live URLs, Daily Papers for the day before it started", async () => {
     const run = await runTopic("live-seed", { topic: "ai-infra" });
 
     expect(run.status).toBe("completed_no_new_findings");
@@ -248,18 +249,64 @@ describe("Runs read live feeds over HTTP", () => {
       .slice(0, 10);
     expect(requests.map((r) => r.url)).toEqual([
       "https://export.arxiv.org/api/query?search_query=%28cat:cs.DC+OR+cat:cs.PF+OR+cat:cs.OS%29+AND+%28abs:%22LLM+serving%22+OR+abs:%22LLM+inference%22+OR+abs:%22KV+cache%22+OR+abs:%22speculative+decoding%22+OR+abs:%22inference+serving%22%29&sortBy=submittedDate&sortOrder=descending&max_results=50",
+      "https://export.arxiv.org/api/query?search_query=cat:cs.DC+AND+%28abs:%22distributed+training%22+OR+abs:%22pipeline+parallelism%22+OR+abs:%22tensor+parallelism%22+OR+abs:%22mixture+of+experts%22+OR+abs:%22GPU+cluster%22+OR+abs:%22fine-tuning%22%29&sortBy=submittedDate&sortOrder=descending&max_results=50",
+      "https://blog.cloudflare.com/tag/workers-ai/rss/",
+      "https://cloudblog.withgoogle.com/topics/ai-infrastructure/rss/",
       `https://huggingface.co/api/daily_papers?date=${dayBefore}`,
       "https://modal.com/blog/atom.xml",
+      "https://developer.nvidia.com/blog/tag/inference-performance/feed/",
+      "https://pytorch.org/feed/",
+      "https://newsletter.semianalysis.com/feed",
+      "https://github.com/sgl-project/sglang/releases.atom",
+      "https://www.together.ai/blog/rss.xml",
       "https://vllm.ai/blog/rss.xml",
       "https://github.com/vllm-project/vllm/releases.atom",
     ]);
     expect((await polls(run.id)).map((p) => [p.source_id, p.outcome, p.items_read])).toEqual([
       ["arxiv-serving", "succeeded", 50],
+      ["arxiv-training", "succeeded", 50],
+      ["cloudflare-workers-ai", "succeeded", 20],
+      ["google-cloud-ai-infra", "succeeded", 20],
       ["hf-daily-papers", "succeeded", 34],
       ["modal-blog", "succeeded", 157],
+      ["nvidia-inference", "succeeded", 84],
+      ["pytorch-blog", "succeeded", 10],
+      ["semianalysis", "succeeded", 20],
+      ["sglang-releases", "succeeded", 10],
+      ["together-blog", "succeeded", 100],
       ["vllm-blog", "succeeded", 50],
       ["vllm-releases", "succeeded", 10],
     ]);
+    // Each Source read its own capture: several hold the same number of entries, so the counts
+    // can't tell. The first entry of each can.
+    const firstEntry = async (sourceId: string) => {
+      const raw = await env.ARTIFACTS.get(`runs/${run.id}/raw/${sourceId}.json`);
+      return ((await raw?.json()) as { externalId: string }[] | undefined)?.[0]?.externalId;
+    };
+    for (const [sourceId, externalId] of [
+      ["arxiv-serving", "http://arxiv.org/abs/2611.17097v1"],
+      ["arxiv-training", "http://arxiv.org/abs/2611.26156v1"],
+      ["cloudflare-workers-ai", "01M7R89D5X67THE8N5T2YSWARZ"],
+      [
+        "google-cloud-ai-infra",
+        "https://cloud.google.com/blog/products/storage-data-transfer/cost-effective-ai-context-extraction-from-unstructured-gcs-data/",
+      ],
+      ["nvidia-inference", "https://developer.nvidia.com/blog/?p=125544"],
+      ["pytorch-blog", "https://pytorch.org/?p=211820"],
+      ["semianalysis", "https://newsletter.semianalysis.com/p/nvidia-and-the-world-without-jensen"],
+      ["sglang-releases", "tag:github.com,2008:Repository/740303686/router-v0.1.0"],
+      [
+        "together-blog",
+        "https://www.together.ai/blog/security-event-prompt-leakage-for-requests-in-june-and-july-of-2026",
+      ],
+    ] as const) {
+      expect(await firstEntry(sourceId), sourceId).toBe(externalId);
+    }
+    // The two arXiv Sources share a host, so the second request waits for the interval.
+    const [serving, training] = requests.filter(
+      (r) => new URL(r.url).hostname === "export.arxiv.org",
+    );
+    expect((training?.at ?? 0) - (serving?.at ?? 0)).toBeGreaterThanOrEqual(TEST_ARXIV_INTERVAL_MS);
     // The fetch Step artifact shows what was requested.
     const artifact = await env.ARTIFACTS.get(`runs/${run.id}/steps/fetch.json`);
     const stored = (await artifact?.json()) as
@@ -283,9 +330,22 @@ describe("Runs read live feeds over HTTP", () => {
     expect(filtered["vllm-releases"]).toBe(7);
     expect(filtered["hf-daily-papers"]).toBeGreaterThan(0);
     expect(filtered["hf-daily-papers"]).toBeLessThan(34);
-    expect([filtered["arxiv-serving"], filtered["modal-blog"], filtered["vllm-blog"]]).toEqual([
-      0, 0, 0,
-    ]);
+    // No release candidate in the SGLang capture; the other Sources have no filters.
+    for (const id of [
+      "arxiv-serving",
+      "arxiv-training",
+      "cloudflare-workers-ai",
+      "google-cloud-ai-infra",
+      "modal-blog",
+      "nvidia-inference",
+      "pytorch-blog",
+      "semianalysis",
+      "sglang-releases",
+      "together-blog",
+      "vllm-blog",
+    ]) {
+      expect(filtered[id], id).toBe(0);
+    }
   });
 
   it("fails the Run at fetch when every feed keeps failing, with each Poll's attempts recorded", async () => {
