@@ -11,6 +11,27 @@ describe("parseReplayArgs", () => {
       from: "synthesis",
       config: "alt.ts",
       port: 8787,
+      from_prod: false,
+    });
+  });
+
+  it("reads --from-prod as the source Run, to be copied from production first", () => {
+    expect(
+      parseReplayArgs([
+        "--from-prod",
+        "topic-ai-infra-20261117T1200Z",
+        "--from",
+        "synthesis",
+        "--config",
+        "alt.ts",
+      ]),
+    ).toEqual({
+      ok: true,
+      run: "topic-ai-infra-20261117T1200Z",
+      from: "synthesis",
+      config: "alt.ts",
+      port: 8787,
+      from_prod: true,
     });
   });
 
@@ -27,6 +48,11 @@ describe("parseReplayArgs", () => {
     ["no --config", ["--run", "r1", "--from", "triage"]],
     ["--from fetch", ["--run", "r1", "--from", "fetch", "--config", "a.ts"]],
     ["a Run ID with a quote", ["--run", "r1'--", "--from", "triage", "--config", "a.ts"]],
+    ["both --run and --from-prod", [...BASE, "--from-prod", "r2", "--config", "a.ts"]],
+    [
+      "a --from-prod Run ID with a quote",
+      ["--from-prod", "r1'--", "--from", "triage", "--config", "a.ts"],
+    ],
     ["a flag without a value", [...BASE, "--config"]],
     ["an unknown flag", [...BASE, "--config", "a.ts", "--remote", "x"]],
     ["a non-numeric port", [...BASE, "--config", "a.ts", "--port", "abc"]],

@@ -1,11 +1,15 @@
 // Replays a local Run from a stage with an alternate config. Needs `npm run dev` running.
 // Run: npm run replay -- --run <id> --from triage|synthesis --config <file> [--port <port>]
-import { spawnSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+// With --from-prod <id> in place of --run, the Run is first copied from production into local D1
+// and R2. Production is only read.
+import { execFile, spawnSync } from "node:child_process";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseRunConfig } from "../src/core/replay.ts";
 import { type ReplayParams, replayRunId } from "../src/core/run-ids.ts";
+import { copyFromProd, type Exec } from "./prod-copy.ts";
 import { parseReplayArgs, USAGE } from "./replay-args.ts";
 
 function fail(message: string, code = 2): never {
@@ -31,6 +35,41 @@ try {
 }
 const config = parseRunConfig(raw);
 if (!config.ok) fail(`Invalid config ${args.config}: ${config.reason}`);
+
+if (args.from_prod) {
+  // One Wrangler process per command; the copy logs each command before it runs.
+  const exec: Exec = (argv) =>
+    new Promise((resolve) => {
+      execFile(
+        "npx",
+        ["wrangler", ...argv],
+        { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 },
+        (err, stdout, stderr) => {
+          const status = err ? (typeof err.code === "number" ? err.code : 1) : 0;
+          resolve({ status, stdout, stderr: err && !stderr ? err.message : stderr });
+        },
+      );
+    });
+  const tmpDir = mkdtempSync(path.join(tmpdir(), "replay-from-prod-"));
+  // `fail` exits at once, so the temp directory is removed before it is called.
+  let failure: string | undefined;
+  try {
+    const copied = await copyFromProd({
+      runId: args.run,
+      from: args.from,
+      exec,
+      tmpDir,
+      log: (line) => console.error(line),
+    });
+    console.error(
+      `Copied Run ${args.run} from production: ${copied.artifacts} Step artifacts, ${copied.items} Items, ${copied.objects} objects`,
+    );
+  } catch (err) {
+    failure = err instanceof Error ? err.message : String(err);
+  }
+  rmSync(tmpDir, { recursive: true, force: true });
+  if (failure !== undefined) fail(failure, 1);
+}
 
 // The source Run's Topic, from local D1. The Run ID is validated, so quoting it is safe.
 const query = spawnSync(
